@@ -4,12 +4,12 @@
 
 PlantFactory::PlantFactory(entt::registry& registry) : registry(registry) {};
 
-void PlantFactory::spawn_random() {
+void PlantFactory::spawn_random(int world_size_x, int world_size_y) {
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<float> pos_x_dist(0.0f, 800.0f);
-    std::uniform_real_distribution<float> pos_y_dist(0.0f, 600.f);
+    std::uniform_real_distribution<float> pos_x_dist(world_size_x / -2.0f, world_size_x / 2.0f);
+    std::uniform_real_distribution<float> pos_y_dist(world_size_y / -2.0f, world_size_y / 2.0f);
 
     entt::entity plant = registry.create();
     registry.emplace<Position>(plant, pos_x_dist(gen), pos_y_dist(gen));

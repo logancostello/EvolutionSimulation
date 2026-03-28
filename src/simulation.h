@@ -10,6 +10,8 @@ class Simulation {
         void update(float dt);
 
     private:
+        int world_size_x;
+        int world_size_y;
         CreatureFactory creature_factory;
         PlantFactory plant_factory;
         MovementSystem movement_system;
