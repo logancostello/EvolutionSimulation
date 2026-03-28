@@ -12,6 +12,7 @@ int main() {
         "Evolution Simulation"
     );
     window.setFramerateLimit(60);
+    sf::View view = window.getDefaultView();
 
     entt::registry registry;
     Simulation sim = Simulation(registry);
@@ -26,6 +27,12 @@ int main() {
             if (const auto* key = event->getIf<sf::Event::KeyPressed>())
                 if (key->code == sf::Keyboard::Key::Escape)
                     window.close();
+            if (const auto* scroll = event->getIf<sf::Event::MouseWheelScrolled>()) {
+                float zoom_factor = 1.0f - (scroll->delta * 0.1f);
+                zoom_factor = std::clamp(zoom_factor, 0.5f, 2.0f);
+                view.zoom(zoom_factor);
+                window.setView(view);
+            }
         }
 
         window.clear(sf::Color(15, 15, 20));
