@@ -8,11 +8,14 @@
 int main() {
 
     sf::RenderWindow window(
-        sf::VideoMode({800, 600}),
+        sf::VideoMode({1600, 1000}),
         "Evolution Simulation"
     );
     window.setFramerateLimit(60);
-    sf::View view = window.getDefaultView();
+
+    sf::Vector2f window_size((float)window.getSize().x, (float)window.getSize().y);
+    sf::View view(sf::FloatRect(-window_size / 2.f, window_size));
+    window.setView(view);
 
     entt::registry registry;
     Simulation sim = Simulation(registry);
@@ -20,7 +23,6 @@ int main() {
 
     sim.initialize();
 
-    // Track pan state outside the event loop
     bool panning = false;
     sf::Vector2i last_mouse_pos;
 
@@ -31,10 +33,26 @@ int main() {
             if (const auto* key = event->getIf<sf::Event::KeyPressed>())
                 if (key->code == sf::Keyboard::Key::Escape)
                     window.close();
+            if (const auto* resized = event->getIf<sf::Event::Resized>()) {
+                sf::Vector2f new_size(resized->size);
+                view.setSize(new_size);
+                window.setView(view);
+            }
             if (const auto* scroll = event->getIf<sf::Event::MouseWheelScrolled>()) {
                 float zoom_factor = 1.0f - (scroll->delta * 0.1f);
                 zoom_factor = std::clamp(zoom_factor, 0.5f, 2.0f);
+
+                // Get mouse position in world space before zooming
+                sf::Vector2f mouse_world_before = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+
                 view.zoom(zoom_factor);
+                window.setView(view);
+
+                // Get mouse position in world space after zooming
+                sf::Vector2f mouse_world_after = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+
+                // Shift view by the difference so mouse stays fixed
+                view.move(mouse_world_before - mouse_world_after);
                 window.setView(view);
             }
             if (const auto* mouse = event->getIf<sf::Event::MouseButtonPressed>()) {
@@ -43,19 +61,16 @@ int main() {
                     last_mouse_pos = sf::Mouse::getPosition(window);
                 }
             }
-
             if (const auto* mouse = event->getIf<sf::Event::MouseButtonReleased>()) {
                 if (mouse->button == sf::Mouse::Button::Left) {
                     panning = false;
                 }
             }
-
             if (const auto* mouse = event->getIf<sf::Event::MouseMoved>()) {
                 if (panning) {
                     sf::Vector2i current_pos = sf::Vector2i(mouse->position.x, mouse->position.y);
                     sf::Vector2i delta = last_mouse_pos - current_pos;
 
-                    // Scale pan speed by current zoom level so it feels consistent
                     float zoom_level = view.getSize().x / window.getSize().x;
                     view.move(sf::Vector2f(delta) * zoom_level);
 
