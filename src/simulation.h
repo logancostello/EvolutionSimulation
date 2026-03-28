@@ -1,5 +1,6 @@
 #include <entt/entt.hpp>
 #include "factories/creature_factory.h"
+#include "factories/plant_factory.h"
 
 class Simulation {
     public:
@@ -10,4 +11,5 @@ class Simulation {
     private:
         entt::registry& registry;
         CreatureFactory creature_factory;
+        PlantFactory plant_factory;
 };
