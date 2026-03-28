@@ -17,5 +17,6 @@ void CreatureFactory::spawn_random() {
     entt::entity creature = registry.create();
     registry.emplace<Position>(creature, pos_x_dist(gen), pos_y_dist(gen));
     registry.emplace<Velocity>(creature, vel_dist(gen), vel_dist(gen));
+    registry.emplace<Color>(creature, 255, 255, 255);
+    registry.emplace<Size>(creature, 5.0f);
 }
-
