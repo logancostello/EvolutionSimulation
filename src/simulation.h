@@ -1,6 +1,13 @@
 #include <entt/entt.hpp>
+#include "factories/creature_factory.h"
 
 class Simulation {
     public:
-        void update(entt::registry& registry, float dt);
+        Simulation(entt::registry& registry);
+        void initialize();
+        void update(float dt);
+
+    private:
+        entt::registry& registry;
+        CreatureFactory creature_factory;
 };

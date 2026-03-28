@@ -3,7 +3,7 @@
 
 #include "simulation.h"
 #include "components.h"
-#include "renderer.h"
+#include "systems/renderer.h"
 
 int main() {
 
@@ -14,13 +14,10 @@ int main() {
     window.setFramerateLimit(60);
 
     entt::registry registry;
-    Simulation sim = Simulation();
+    Simulation sim = Simulation(registry);
     Renderer renderer = Renderer();
 
-    // Add testing entity for now
-    entt::entity testing_entity = registry.create();
-    registry.emplace<Position>(testing_entity, 400.0f, 300.0f);
-    registry.emplace<Velocity>(testing_entity, 50.0f, 0.0f);
+    sim.initialize();
 
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
@@ -34,7 +31,7 @@ int main() {
         window.clear(sf::Color(15, 15, 20));
 
         float dt = 1 / 60.0f;
-        sim.update(registry, dt);
+        sim.update(dt);
 
         renderer.draw(window, registry);
 

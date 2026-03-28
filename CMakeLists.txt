@@ -18,7 +18,8 @@ find_package(EnTT REQUIRED)
 add_executable(main 
     src/main.cpp
     src/simulation.cpp
-    src/renderer.cpp
+    src/systems/renderer.cpp
+    src/factories/creature_factory.cpp
 )
 
 target_include_directories(main PRIVATE src/)
