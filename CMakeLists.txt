@@ -13,9 +13,17 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(main src/main.cpp)
+find_package(EnTT REQUIRED)
+
+add_executable(main 
+    src/main.cpp
+    src/simulation.cpp
+    src/renderer.cpp
+)
+
+target_include_directories(main PRIVATE src/)
 target_compile_features(main PRIVATE cxx_std_17)
 target_compile_options(main PRIVATE -Wall -Wextra)
-target_link_libraries(main PRIVATE SFML::Graphics)
+target_link_libraries(main PRIVATE SFML::Graphics EnTT::EnTT)
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT main)
