@@ -3,6 +3,7 @@
 #include "factories/plant_factory.h"
 #include "systems/movement_system.h"
 #include "systems/metabolism_system.h"
+#include "systems/cleanup_system.h"
 
 class Simulation {
     public:
@@ -17,4 +18,5 @@ class Simulation {
         PlantFactory plant_factory;
         MovementSystem movement_system;
         MetabolismSystem metabolism_system;
+        CleanupSystem cleanup_system;
 };

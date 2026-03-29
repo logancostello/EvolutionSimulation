@@ -13,6 +13,7 @@ Simulation::Simulation(entt::registry& registry)
     , plant_factory(registry)
     , movement_system(registry)
     , metabolism_system(registry)
+    , cleanup_system(registry)
 {}
 
 void Simulation::initialize() {
@@ -28,4 +29,5 @@ void Simulation::initialize() {
 void Simulation::update(float dt) {
     movement_system.update(dt);
     metabolism_system.update(dt);
+    cleanup_system.update();
 }
