@@ -15,4 +15,5 @@ void PlantFactory::spawn_random(int world_size_x, int world_size_y) {
     registry.emplace<Position>(plant, pos_x_dist(gen), pos_y_dist(gen));
     registry.emplace<Color>(plant, 66, 247, 98);
     registry.emplace<Size>(plant, 2.0f);
+    registry.emplace<Plant>(plant);
 }
