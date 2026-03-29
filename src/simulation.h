@@ -4,6 +4,7 @@
 #include "systems/movement_system.h"
 #include "systems/metabolism_system.h"
 #include "systems/cleanup_system.h"
+#include "systems/eating_system.h"
 
 class Simulation {
     public:
@@ -19,4 +20,5 @@ class Simulation {
         MovementSystem movement_system;
         MetabolismSystem metabolism_system;
         CleanupSystem cleanup_system;
+        EatingSystem eating_system;
 };
