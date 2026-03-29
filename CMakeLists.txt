@@ -22,6 +22,7 @@ add_executable(main
     src/factories/creature_factory.cpp
     src/factories/plant_factory.cpp
     src/systems/movement_system.cpp
+    src/systems/metabolism_system.cpp
 )
 
 target_include_directories(main PRIVATE src/)

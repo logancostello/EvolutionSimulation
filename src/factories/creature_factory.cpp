@@ -17,4 +17,5 @@ void CreatureFactory::spawn_random(int world_size_x, int world_size_y) {
     registry.emplace<Velocity>(creature, vel_dist(gen), vel_dist(gen));
     registry.emplace<Color>(creature, 255, 255, 255);
     registry.emplace<Size>(creature, 5.0f);
+    registry.emplace<Energy>(creature, 10);
 }
