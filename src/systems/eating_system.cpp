@@ -17,6 +17,7 @@ void EatingSystem::update() {
             if (sq_dist < std::pow(p_size.radius + c_size.radius, 2)) {
                 c_energy.energy += 1;
                 registry.emplace<Dead>(p_entity);
+                break;
             }
         }
     }
