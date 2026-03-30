@@ -1,5 +1,5 @@
 #include "simulation.h"
-#include "components.h"
+#include "components/components.h"
 
 const int WORLD_SIZE_X = 2400;
 const int WORLD_SIZE_Y = 1800;

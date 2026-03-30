@@ -2,7 +2,7 @@
 #include <entt/entt.hpp>
 
 #include "simulation.h"
-#include "components.h"
+#include "components/components.h"
 #include "systems/renderer.h"
 
 int main() {

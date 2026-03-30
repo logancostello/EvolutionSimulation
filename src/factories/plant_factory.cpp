@@ -1,5 +1,5 @@
 #include "factories/plant_factory.h"
-#include "components.h"
+#include "components/components.h"
 #include <random>
 
 PlantFactory::PlantFactory(entt::registry& registry) : registry(registry) {};

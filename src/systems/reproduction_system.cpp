@@ -1,5 +1,5 @@
 #include "reproduction_system.h"
-#include "components.h"
+#include "components/components.h"
 
 const float TIME_FOR_REPRODUCTION = 12.5;
 

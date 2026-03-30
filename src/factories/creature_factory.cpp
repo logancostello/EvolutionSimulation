@@ -1,5 +1,5 @@
 #include "factories/creature_factory.h"
-#include "components.h"
+#include "components/components.h"
 #include <random>
 #include <cmath>
 

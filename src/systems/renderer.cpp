@@ -1,5 +1,5 @@
 #include "systems/renderer.h"
-#include "components.h"
+#include "components/components.h"
 
 #include <SFML/Graphics.hpp>
 #include <entt/entt.hpp>

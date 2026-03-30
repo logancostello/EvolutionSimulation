@@ -1,6 +1,6 @@
 #include "systems/movement_system.h"
 #include <entt/entt.hpp>
-#include "components.h"
+#include "components/components.h"
 
 MovementSystem::MovementSystem(entt::registry& registry) : registry(registry) {};
 

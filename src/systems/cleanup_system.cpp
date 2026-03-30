@@ -1,6 +1,6 @@
 #include "systems/cleanup_system.h"
 #include <entt/entt.hpp>
-#include "components.h"
+#include "components/components.h"
 
 CleanupSystem::CleanupSystem(entt::registry& registry) : registry(registry) {};
 

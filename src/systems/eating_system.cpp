@@ -1,5 +1,5 @@
 #include "eating_system.h"
-#include "components.h"
+#include "components/components.h"
 #include <cmath>
 
 EatingSystem::EatingSystem(entt::registry& registry) : registry(registry) {};

@@ -1,5 +1,5 @@
 #include "systems/metabolism_system.h"
-#include "components.h"
+#include "components/components.h"
 
 MetabolismSystem::MetabolismSystem(entt::registry& registry) : registry(registry) {};
 
