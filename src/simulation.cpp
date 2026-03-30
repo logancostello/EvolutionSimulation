@@ -1,10 +1,10 @@
 #include "simulation.h"
 #include "components.h"
 
-const int WORLD_SIZE_X = 800;
-const int WORLD_SIZE_Y = 600;
-const int NUM_INIT_CREATURES = 10;
-const int NUM_INIT_PLANTS = 100;
+const int WORLD_SIZE_X = 2400;
+const int WORLD_SIZE_Y = 1800;
+const int NUM_INIT_CREATURES = 100;
+const int NUM_INIT_PLANTS = 500;
 
 Simulation::Simulation(entt::registry& registry) 
     : world_size_x(WORLD_SIZE_X)
