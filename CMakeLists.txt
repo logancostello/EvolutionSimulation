@@ -25,6 +25,7 @@ add_executable(main
     src/systems/metabolism_system.cpp
     src/systems/cleanup_system.cpp
     src/systems/eating_system.cpp
+    src/systems/reproduction_system.cpp
 )
 
 target_include_directories(main PRIVATE src/)

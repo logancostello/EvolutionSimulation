@@ -6,3 +6,4 @@ struct Energy { float energy; };
 struct Dead {};
 struct Creature {};
 struct Plant {};
+struct TimeOf { float birth, last_reproduction; };
