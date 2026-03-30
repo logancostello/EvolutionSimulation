@@ -1,3 +1,5 @@
+#include "components/brain/brain.h"
+
 struct Position { float x, y; };
 struct Velocity { float dx, dy; };
 struct Color { int r, g, b; };

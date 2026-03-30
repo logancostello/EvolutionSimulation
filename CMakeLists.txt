@@ -26,6 +26,8 @@ add_executable(main
     src/systems/cleanup_system.cpp
     src/systems/eating_system.cpp
     src/systems/reproduction_system.cpp
+    src/components/brain/brain.cpp
+    src/components/brain/node.cpp
 )
 
 target_include_directories(main PRIVATE src/)
