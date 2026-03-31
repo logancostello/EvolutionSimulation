@@ -34,7 +34,7 @@ void Simulation::initialize() {
 
 void Simulation::update(float dt) {
     sensor_system.update();
-    thinking_system.update();
+    thinking_system.update(dt);
     movement_system.update(dt);
     eating_system.update();
     metabolism_system.update(dt);

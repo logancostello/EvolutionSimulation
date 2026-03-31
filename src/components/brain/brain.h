@@ -25,7 +25,7 @@ struct Brain {
     Brain clone() const;
     void load_inputs(entt::registry& registry, entt::entity& entity);
     void populate_outputs(entt::registry& registry, entt::entity& entity);
-    void think();
+    void think(float dt);
 
     void add_random_edge();
     void remove_random_edge();
@@ -37,7 +37,7 @@ struct Brain {
         Node& get_node(int id);
         void set_buffer_to_bias();
         void apply_weights();
-        void activate_nodes();
+        void update_nodes(float dt);
         void apply_buffer();
         int get_random_non_output_node();
         int get_random_non_input_node();

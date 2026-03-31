@@ -36,10 +36,10 @@ Node& Brain::get_node(int id) {
     throw std::runtime_error("Node not found: " + std::to_string(id));
 }
 
-void Brain::think() {
+void Brain::think(float dt) {
     set_buffer_to_bias();
     apply_weights();
-    activate_nodes();
+    update_nodes(dt);
     apply_buffer();
 }
 
@@ -59,13 +59,13 @@ void Brain::apply_weights() {
     }
 }
 
-void Brain::activate_nodes() {
+void Brain::update_nodes(float dt) {
     for (OutputNode& node : output_nodes) {
-        node.activate();
+        node.update(dt);
     }
 
     for (Node& node : hidden_nodes) {
-        node.activate();
+        node.update(dt);
     }
 }
 
