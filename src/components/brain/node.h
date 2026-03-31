@@ -13,7 +13,9 @@ struct Node {
 };
 
 enum class InputSource {
-    Energy
+    Energy,
+    DistToFood,
+    DirToFood
 };
 
 struct InputNode : Node {

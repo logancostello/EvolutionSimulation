@@ -30,6 +30,7 @@ add_executable(main
     src/components/brain/node.cpp
     src/systems/thinking_system.cpp
     src/factories/brain_factory.cpp
+    src/systems/sensor_system.cpp
 )
 
 target_include_directories(main PRIVATE src/)

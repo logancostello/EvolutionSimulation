@@ -18,6 +18,7 @@ Simulation::Simulation(entt::registry& registry)
     , eating_system(registry)
     , reproduction_system(registry, creature_factory)
     , thinking_system(registry)
+    , sensor_system(registry)
 {}
 
 void Simulation::initialize() {
@@ -31,6 +32,7 @@ void Simulation::initialize() {
 }
 
 void Simulation::update(float dt) {
+    sensor_system.update();
     thinking_system.update();
     movement_system.update(dt);
     eating_system.update();

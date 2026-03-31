@@ -8,6 +8,7 @@
 #include "systems/eating_system.h"
 #include "systems/reproduction_system.h"
 #include "systems/thinking_system.h"
+#include "systems/sensor_system.h"
 
 class Simulation {
     public:
@@ -27,4 +28,5 @@ class Simulation {
         EatingSystem eating_system;
         ReproductionSystem reproduction_system;
         ThinkingSystem thinking_system;
+        SensorSystem sensor_system;
 };
