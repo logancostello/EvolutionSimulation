@@ -17,11 +17,11 @@ void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
 
 void OutputNode::populate_output(entt::registry& registry, entt::entity& entity) {
     switch (output_source) {
-        case OutputSource::VelocityX:
-            registry.get<Velocity>(entity).dx = value; 
+        case OutputSource::VelocityMag:
+            registry.get<Velocity>(entity).mag = value; 
             break;
-        case OutputSource::VelocityY:
-            registry.get<Velocity>(entity).dy = value; 
+        case OutputSource::VelocityDir:
+            registry.get<Velocity>(entity).dir = value; 
             break;
     }
 };

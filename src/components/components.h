@@ -2,7 +2,7 @@
 #include "components/brain/brain.h"
 
 struct Position { float x, y; };
-struct Velocity { float dx, dy; };
+struct Velocity { float mag, dir; };
 struct Color { int r, g, b; };
 struct Size { float radius; };
 struct Energy { float energy; };
@@ -10,3 +10,4 @@ struct Dead {};
 struct Creature {};
 struct Plant {};
 struct TimeOf { float birth, last_reproduction; };
+struct VisionSensors { float dist_to_food, rads_to_food; };

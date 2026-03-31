@@ -8,8 +8,8 @@ void BrainFactory::create_basic_brain(entt::entity& entity) {
 
     InputNode input1 = InputNode(0, 0, InputSource::Energy);
 
-    OutputNode output1 = OutputNode(1, 0, OutputSource::VelocityX);
-    OutputNode output2 = OutputNode(2, 0, OutputSource::VelocityY);
+    OutputNode output1 = OutputNode(1, 0, OutputSource::VelocityMag);
+    OutputNode output2 = OutputNode(2, 0, OutputSource::VelocityDir);
 
     std::vector<InputNode> input_nodes = {input1};
     std::vector<OutputNode> output_nodes = {output1, output2};

@@ -26,8 +26,8 @@ struct InputNode : Node {
 };
 
 enum class OutputSource {
-    VelocityX,
-    VelocityY
+    VelocityMag,
+    VelocityDir
 };
 
 struct OutputNode: Node {
