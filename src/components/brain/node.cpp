@@ -4,12 +4,15 @@
 
 // For now just tanh. Many possible activation functions in future
 float Node::activate() {
-    return std::tanh(value);
+    return std::tanh(next_value);
 }
 
-// For now just constant input, eventually this will get a corresponding value from the components
 void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
-    value = 1.0f;
+    switch (input_source) {
+        case InputSource::Energy:
+            value = registry.get<Energy>(entity).energy;
+            break;
+    }
 };
 
 void OutputNode::populate_output(entt::registry& registry, entt::entity& entity) {

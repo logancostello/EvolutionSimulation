@@ -4,14 +4,24 @@
 struct Node {
     int id;
     float value;
+    float next_value;
     float bias;
 
-    Node(int id, float value, float bias) : id(id), value(value), bias(bias) {}
+    Node(int id, float bias) : id(id), value(0), next_value(0), bias(bias) {}
 
     float activate();    
 };
 
+enum class InputSource {
+    Energy
+};
+
 struct InputNode : Node {
+    InputSource input_source;
+
+    InputNode(int id, float bias, InputSource input_source)
+        : Node(id, bias), input_source(input_source) {}
+
     void load_input(entt::registry& registry, entt::entity& entity);
 };
 
@@ -23,8 +33,8 @@ enum class OutputSource {
 struct OutputNode: Node {
     OutputSource output_source;
 
-    OutputNode(int id, float value, float bias, OutputSource output_source)
-        : Node(id, value, bias), output_source(output_source) {}
+    OutputNode(int id, float bias, OutputSource output_source)
+        : Node(id, bias), output_source(output_source) {}
 
     void populate_output(entt::registry& registry, entt::entity& entity);
 };
