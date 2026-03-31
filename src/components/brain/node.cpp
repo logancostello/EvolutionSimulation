@@ -33,8 +33,8 @@ void OutputNode::populate_output(entt::registry& registry, entt::entity& entity)
         case OutputSource::VelocityMag:
             registry.get<Velocity>(entity).mag = value * 100; 
             break;
-        case OutputSource::VelocityDir:
-            registry.get<Velocity>(entity).dir = value * 100; 
+        case OutputSource::VelocityTurnRate:
+            registry.get<Velocity>(entity).turn_rate = value * 3.14; 
             break;
     }
 };
