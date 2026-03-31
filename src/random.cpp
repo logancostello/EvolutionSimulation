@@ -16,4 +16,8 @@ namespace Random {
         return dist(rng());
     }
 
+    float Random::normal(float mean, float std) {
+        std::normal_distribution<float> dist(mean, std);
+        return dist(rng());
+    }
 }

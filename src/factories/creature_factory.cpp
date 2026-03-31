@@ -30,11 +30,12 @@ void CreatureFactory::spawn_random(int world_size_x, int world_size_y, float tim
 }
 
 
-void CreatureFactory::spawn_child(entt::entity parent, float time) {
+entt::entity CreatureFactory::spawn_child(entt::entity parent, float time) {
     entt::entity child = registry.create();
 
     Position& parent_pos = registry.get<Position>(parent);
     Velocity& parent_vel = registry.get<Velocity>(parent);
+    Brain& parent_brain = registry.get<Brain>(parent);
 
     // Give child a position behind the parent using direction
     float behind_angle = parent_vel.dir + M_PI;  // opposite of travel direction
@@ -49,6 +50,6 @@ void CreatureFactory::spawn_child(entt::entity parent, float time) {
     registry.emplace<Creature>(child);
     registry.emplace<TimeOf>(child, time, time); 
     registry.emplace<VisionSensors>(child, 0.0f, 0.0f);
-
-    brain_factory.create_basic_brain(child);
+    registry.emplace<Brain>(child, parent_brain.clone());
+    return child;
 }

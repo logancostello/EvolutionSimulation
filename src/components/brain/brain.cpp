@@ -79,7 +79,7 @@ void Brain::apply_buffer() {
     }
 }
 
-void Brain::add_random_connection() {
+void Brain::add_random_edge() {
     for (int i = 0; i < 10; i++) {
         int from_node = get_random_non_output_node();
         int to_node = get_random_non_input_node();
@@ -125,4 +125,89 @@ int Brain::get_random_non_input_node() {
         int index = Random::int_range(0, hidden_nodes.size() - 1);
         return hidden_nodes[index].id;
     }
+}
+
+void Brain::remove_random_edge() {
+    if (edges.empty()) return;
+    int index = Random::int_range(0, edges.size() - 1);
+    edges.erase(edges.begin() + index);
+}
+
+void Brain::add_random_node() {
+    if (edges.empty()) return;
+    int index = Random::int_range(0, edges.size() - 1);
+    Edge& edge = edges[index];
+
+    Node node = Node(next_node_id++, 0);
+    hidden_nodes.push_back(node);
+
+    if (Random::float_range() < 0.5) {
+        edges.push_back(Edge(edge.from_node, node.id, edge.weight));
+        edges.push_back(Edge(node.id, edge.to_node, 1));
+    } else {
+        edges.push_back(Edge(edge.from_node, node.id, 1));
+        edges.push_back(Edge(node.id, edge.to_node, edge.weight));
+    }
+
+    edges.erase(edges.begin() + index);
+};
+
+void Brain::remove_random_node() {
+    if (hidden_nodes.empty()) return;
+
+    int index = Random::int_range(0, hidden_nodes.size() - 1);
+    int remove_id = hidden_nodes[index].id;
+
+    std::vector<int> in_nodes;
+    std::vector<int> out_nodes;
+
+    for (Edge& edge : edges) {
+        if (edge.from_node == remove_id) out_nodes.push_back(edge.to_node);
+        if (edge.to_node   == remove_id) in_nodes.push_back(edge.from_node);
+    }
+
+    for (int in_id : in_nodes) {
+        for (int out_id : out_nodes) {
+            bool exists = false;
+            for (Edge& edge : edges) {
+                if (edge.from_node == in_id && edge.to_node == out_id) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (exists) continue;
+
+            float weight;
+            if (Random::float_range() < 0.5f) {
+                for (Edge& edge : edges)
+                    if (edge.from_node == in_id && edge.to_node == remove_id)
+                        weight = edge.weight;
+            } else {
+                for (Edge& edge : edges)
+                    if (edge.from_node == remove_id && edge.to_node == out_id)
+                        weight = edge.weight;
+            }
+
+            edges.push_back(Edge(in_id, out_id, weight));
+        }
+    }
+
+    edges.erase(
+        std::remove_if(edges.begin(), edges.end(), [remove_id](const Edge& edge) {
+            return edge.from_node == remove_id || edge.to_node == remove_id;
+        }),
+        edges.end()
+    );
+
+    hidden_nodes.erase(hidden_nodes.begin() + index);
+}
+
+
+Brain Brain::clone() const {
+    Brain copy;
+    copy.input_nodes = input_nodes;  
+    copy.output_nodes = output_nodes; 
+    copy.hidden_nodes = hidden_nodes;
+    copy.edges = edges;
+    return copy;
 }

@@ -30,6 +30,6 @@ void BrainFactory::create_basic_brain(entt::entity& entity) {
     Brain& brain = registry.get<Brain>(entity);
 
     for (int i = 0; i < 4; i++) {
-        brain.add_random_connection();
+        brain.add_random_edge();
     }
 };

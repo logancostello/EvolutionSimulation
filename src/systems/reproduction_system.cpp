@@ -21,7 +21,7 @@ void ReproductionSystem::update(float time) {
     }
 
     for (auto entity : to_reproduce) {
-        creature_factory.spawn_child(entity, time);
-        brain_mutator.mutate(entity);
+        entt::entity child = creature_factory.spawn_child(entity, time);
+        brain_mutator.mutate(child);
     }
 }
