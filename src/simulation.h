@@ -9,6 +9,7 @@
 #include "systems/reproduction_system.h"
 #include "systems/thinking_system.h"
 #include "systems/sensor_system.h"
+#include "mutators/brain_mutator.h"
 
 class Simulation {
     public:
@@ -22,6 +23,7 @@ class Simulation {
         int world_size_y;
         CreatureFactory creature_factory;
         PlantFactory plant_factory;
+        BrainMutator brain_mutator;
         MovementSystem movement_system;
         MetabolismSystem metabolism_system;
         CleanupSystem cleanup_system;

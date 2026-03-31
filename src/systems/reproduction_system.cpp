@@ -3,9 +3,10 @@
 
 const float TIME_FOR_REPRODUCTION = 12.5;
 
-ReproductionSystem::ReproductionSystem(entt::registry& registry, CreatureFactory& creature_factory) 
+ReproductionSystem::ReproductionSystem(entt::registry& registry, CreatureFactory& creature_factory, BrainMutator& brain_mutator) 
     : registry(registry) 
     , creature_factory(creature_factory)
+    , brain_mutator(brain_mutator)
 {};
 
 void ReproductionSystem::update(float time) {
@@ -21,5 +22,6 @@ void ReproductionSystem::update(float time) {
 
     for (auto entity : to_reproduce) {
         creature_factory.spawn_child(entity, time);
+        brain_mutator.mutate(entity);
     }
 }
