@@ -31,6 +31,7 @@ add_executable(main
     src/systems/thinking_system.cpp
     src/factories/brain_factory.cpp
     src/systems/sensor_system.cpp
+    src/random.cpp
 )
 
 target_include_directories(main PRIVATE src/)

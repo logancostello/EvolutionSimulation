@@ -23,7 +23,13 @@ void BrainFactory::create_basic_brain(entt::entity& entity) {
     std::vector<InputNode> input_nodes = get_basic_inputs();
     std::vector<OutputNode> output_nodes = get_basic_outputs();
     std::vector<Node> hidden_nodes = {};
-    std::vector<Edge> edges = {Edge(0, 3, 5), Edge(0, 4, 5), Edge(1, 3, 5), Edge(1, 4, 5), Edge(2, 3, 5), Edge(2, 4, 5)};
+    std::vector<Edge> edges = {};
 
-    registry.emplace<Brain>(entity, input_nodes.size(), output_nodes.size(), input_nodes, output_nodes, hidden_nodes, edges);
+    registry.emplace<Brain>(entity, input_nodes, output_nodes, hidden_nodes, edges);
+
+    Brain& brain = registry.get<Brain>(entity);
+
+    for (int i = 0; i < 4; i++) {
+        brain.add_random_connection();
+    }
 };
