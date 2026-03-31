@@ -29,6 +29,7 @@ add_executable(main
     src/components/brain/brain.cpp
     src/components/brain/node.cpp
     src/systems/thinking_system.cpp
+    src/factories/brain_factory.cpp
 )
 
 target_include_directories(main PRIVATE src/)

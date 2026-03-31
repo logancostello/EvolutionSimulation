@@ -6,7 +6,9 @@ struct Node {
     float value;
     float bias;
 
-    float activate();
+    Node(int id, float value, float bias) : id(id), value(value), bias(bias) {}
+
+    float activate();    
 };
 
 struct InputNode : Node {
@@ -20,6 +22,9 @@ enum class OutputSource {
 
 struct OutputNode: Node {
     OutputSource output_source;
+
+    OutputNode(int id, float value, float bias, OutputSource output_source)
+        : Node(id, value, bias), output_source(output_source) {}
 
     void populate_output(entt::registry& registry, entt::entity& entity);
 };

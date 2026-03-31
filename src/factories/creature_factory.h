@@ -1,5 +1,6 @@
 #pragma once
 #include <entt/entt.hpp>
+#include "factories/brain_factory.h"
 
 class CreatureFactory {
     public:
@@ -9,4 +10,5 @@ class CreatureFactory {
         
     private:
         entt::registry& registry;
+        BrainFactory brain_factory;
 };

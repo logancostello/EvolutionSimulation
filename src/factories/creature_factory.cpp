@@ -3,7 +3,10 @@
 #include <random>
 #include <cmath>
 
-CreatureFactory::CreatureFactory(entt::registry& registry) : registry(registry) {};
+CreatureFactory::CreatureFactory(entt::registry& registry) 
+    : registry(registry)
+    , brain_factory(registry)
+{};
 
 void CreatureFactory::spawn_random(int world_size_x, int world_size_y, float time) {
 
@@ -21,7 +24,8 @@ void CreatureFactory::spawn_random(int world_size_x, int world_size_y, float tim
     registry.emplace<Energy>(creature, 10);
     registry.emplace<Creature>(creature);
     registry.emplace<TimeOf>(creature, time, time);
-    registry.emplace<Brain>(creature, 0, 0);
+    
+    brain_factory.create_basic_brain(creature);
 }
 
 void CreatureFactory::spawn_child(entt::entity parent, float time) {
@@ -45,5 +49,6 @@ void CreatureFactory::spawn_child(entt::entity parent, float time) {
     registry.emplace<Energy>(child, 10);
     registry.emplace<Creature>(child);
     registry.emplace<TimeOf>(child, time, time); 
-    registry.emplace<Brain>(child, 0, 0);
+    
+    brain_factory.create_basic_brain(child);
 }

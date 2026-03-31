@@ -15,10 +15,10 @@ void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
 void OutputNode::populate_output(entt::registry& registry, entt::entity& entity) {
     switch (output_source) {
         case OutputSource::VelocityX:
-            registry.replace<Velocity>(entity).dx = value; 
+            registry.get<Velocity>(entity).dx = value; 
             break;
         case OutputSource::VelocityY:
-            registry.replace<Velocity>(entity).dy = value; 
+            registry.get<Velocity>(entity).dy = value; 
             break;
     }
 };
