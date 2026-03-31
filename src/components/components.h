@@ -1,3 +1,4 @@
+#pragma once 
 #include "components/brain/brain.h"
 
 struct Position { float x, y; };

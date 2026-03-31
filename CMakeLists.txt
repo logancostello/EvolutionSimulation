@@ -28,6 +28,7 @@ add_executable(main
     src/systems/reproduction_system.cpp
     src/components/brain/brain.cpp
     src/components/brain/node.cpp
+    src/systems/thinking_system.cpp
 )
 
 target_include_directories(main PRIVATE src/)

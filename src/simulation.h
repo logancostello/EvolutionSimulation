@@ -7,6 +7,7 @@
 #include "systems/cleanup_system.h"
 #include "systems/eating_system.h"
 #include "systems/reproduction_system.h"
+#include "systems/thinking_system.h"
 
 class Simulation {
     public:
@@ -25,4 +26,5 @@ class Simulation {
         CleanupSystem cleanup_system;
         EatingSystem eating_system;
         ReproductionSystem reproduction_system;
+        ThinkingSystem thinking_system;
 };
