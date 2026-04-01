@@ -7,6 +7,13 @@ float Node::activate() {
     return std::tanh(next_value);
 }
 
+void Node::update(float dt) {
+    float target = activate();
+    float tau = (target > value) ? tau_rise : tau_fall;
+    float d_value = (-value + target) / tau;
+    next_value = value + d_value * dt;
+}
+
 void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
     switch (input_source) {
         case InputSource::Energy:
@@ -24,10 +31,10 @@ void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
 void OutputNode::populate_output(entt::registry& registry, entt::entity& entity) {
     switch (output_source) {
         case OutputSource::VelocityMag:
-            registry.get<Velocity>(entity).mag = value; 
+            registry.get<Velocity>(entity).mag = value * 100; 
             break;
-        case OutputSource::VelocityDir:
-            registry.get<Velocity>(entity).dir = value; 
+        case OutputSource::VelocityTurnRate:
+            registry.get<Velocity>(entity).turn_rate = value * 3.14; 
             break;
     }
 };

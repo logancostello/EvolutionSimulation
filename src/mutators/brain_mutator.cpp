@@ -1,19 +1,23 @@
 #include "mutators/brain_mutator.h"
 #include "components/brain/brain.h"
 #include "random.h"
+#include <algorithm>
 
-const float PROB_WEIGHT_FLIP = 0.1;
-const float PROB_WEIGHT_CHANGE = 0.5;
-const float PROB_BIAS_CHANGE = 0.5;
-const float PROB_NEW_EDGE = 0.3;
-const float PROB_REMOVE_EDGE = 0.3;
-const float PROB_NEW_NODE = 0.15;
-const float PROB_REMOVE_NODE = 0.15;
+const float PROB_WEIGHT_FLIP = 0.05;
+const float PROB_WEIGHT_CHANGE = 0.3;
+const float PROB_BIAS_CHANGE = 0.3;
+const float PROB_TAU_CHANGE = 0.3;
+const float PROB_NEW_EDGE = 0.1;
+const float PROB_REMOVE_EDGE = 0.1;
+const float PROB_NEW_NODE = 0.05;
+const float PROB_REMOVE_NODE = 0.05;
 
 const float WEIGHT_OFFSET_MEAN = 0;
-const float WEIGHT_OFFSET_STD = 1;
+const float WEIGHT_OFFSET_STD = 0.5;
 const float BIAS_OFFSET_MEAN = 0;
-const float BIAS_OFFSET_STD = 1;
+const float BIAS_OFFSET_STD = 0.5;
+const float TAU_OFFSET_MEAN = 0;
+const float TAU_OFFSET_STD = 0.15;
 
 BrainMutator::BrainMutator(entt::registry& registry) : registry(registry) {};
 
@@ -34,6 +38,16 @@ void BrainMutator::mutate(entt::entity entity) {
     for (Node& node : brain.hidden_nodes) {
         if (Random::float_range() < PROB_BIAS_CHANGE) {
             node.bias += Random::normal(BIAS_OFFSET_MEAN, BIAS_OFFSET_STD);
+        }
+
+        if (Random::float_range() < PROB_TAU_CHANGE) {
+            node.tau_rise += Random::normal(TAU_OFFSET_MEAN, TAU_OFFSET_STD);
+            node.tau_rise = std::max(node.tau_rise, 0.0001f);
+        }
+
+        if (Random::float_range() < PROB_TAU_CHANGE) {
+            node.tau_fall += Random::normal(TAU_OFFSET_MEAN, TAU_OFFSET_STD);
+            node.tau_fall = std::max(node.tau_fall, 0.0001f);
         }
     }
 
