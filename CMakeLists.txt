@@ -33,6 +33,7 @@ add_executable(main
     src/systems/sensor_system.cpp
     src/random.cpp
     src/mutators/brain_mutator.cpp
+    src/systems/plant_system.cpp
 )
 
 target_include_directories(main PRIVATE src/)

@@ -10,6 +10,7 @@
 #include "systems/thinking_system.h"
 #include "systems/sensor_system.h"
 #include "mutators/brain_mutator.h"
+#include "systems/plant_system.h"
 
 class Simulation {
     public:
@@ -31,4 +32,5 @@ class Simulation {
         ReproductionSystem reproduction_system;
         ThinkingSystem thinking_system;
         SensorSystem sensor_system;
+        PlantSystem plant_system;
 };
