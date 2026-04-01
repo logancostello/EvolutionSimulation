@@ -20,6 +20,7 @@ Simulation::Simulation(entt::registry& registry)
     , reproduction_system(registry, creature_factory, brain_mutator)
     , thinking_system(registry)
     , sensor_system(registry)
+    , plant_system(plant_factory)
 {}
 
 void Simulation::initialize() {
@@ -33,6 +34,7 @@ void Simulation::initialize() {
 }
 
 void Simulation::update(float dt) {
+    plant_system.update(dt, world_size_x, world_size_y);
     sensor_system.update();
     thinking_system.update(dt);
     movement_system.update(dt);
