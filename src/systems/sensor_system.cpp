@@ -3,17 +3,26 @@
 #include <cmath>
 #include <limits>
 
+const int VIEW_DISTANCE = 500;
+
 SensorSystem::SensorSystem(entt::registry& registry) : registry(registry) {};
 
-void SensorSystem::update() {
+void SensorSystem::update(QuadTree& lookup_tree) {
     auto creature_view = registry.view<Creature, Position, VisionSensors, Velocity>();
-    auto food_view = registry.view<Plant, Position>();
 
     for (auto [c_entity, c_pos, vision, vel] : creature_view.each()) {
         float closest_dist = std::numeric_limits<float>::max();
         float closest_rads = 0.0f;
 
-        for (auto [p_entity, p_pos] : food_view.each()) {
+        auto nearby = std::vector<entt::entity>{};
+        lookup_tree.query(c_pos.x, c_pos.y, VIEW_DISTANCE, nearby);
+
+        for (entt::entity e : nearby) {
+
+            if (!registry.all_of<Plant>(e)) continue;
+
+            auto& p_pos = registry.get<Position>(e);
+
             float dx = p_pos.x - c_pos.x;
             float dy = p_pos.y - c_pos.y;
             float dist = std::sqrt(dx * dx + dy * dy);

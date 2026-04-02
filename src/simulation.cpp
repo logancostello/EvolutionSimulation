@@ -49,7 +49,7 @@ void Simulation::update(float dt) {
     build_entity_lookup_tree();
 
     plant_system.update(dt, world_size_x, world_size_y);
-    sensor_system.update();
+    sensor_system.update(entity_lookup_tree);
     thinking_system.update(dt);
     movement_system.update(dt);
     eating_system.update(entity_lookup_tree);
