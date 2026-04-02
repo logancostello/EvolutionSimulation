@@ -1,7 +1,10 @@
 #pragma once 
 #include "components/brain/brain.h"
 
-struct Position { float x, y; };
+struct Position { 
+    float x, y; 
+    Position(float x, float y) : x(x), y(y) {};
+};
 struct Velocity { float mag, dir, turn_rate; };
 struct Color { int r, g, b; };
 struct Size { float radius; };
