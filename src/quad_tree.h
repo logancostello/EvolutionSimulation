@@ -3,8 +3,11 @@
 #include <cmath>
 
 const int BUCKET_SIZE = 4;
+const int OVERFLOW_SIZE = 16;
+
 const int MAX_DEPTH = 8;
 const int MAX_NODES = 65536; // 2 ^ (2 * MAX_NODES)
+const int MAX_OVERFLOW = 100;
 
 struct QuadEntity {
     entt::entity entity;
@@ -15,12 +18,20 @@ struct QuadEntity {
     QuadEntity(entt::entity entity, float x, float y) : entity(entity), x(x), y(y) {};
 };
 
+struct QuadOverflow {
+    QuadEntity entities[16];
+    int count;
+
+    bool is_full();
+};
+
 struct QuadNode {
     float xmin, xmax, ymin, ymax;
     int children[4];
     QuadEntity entities[BUCKET_SIZE];
     int count;
     int depth;
+    int overflow;
 
     bool is_leaf();
     bool is_full();
@@ -36,16 +47,21 @@ class QuadTree {
 
     private:
         int root;
+
         QuadNode node_pool[MAX_NODES];
         int node_pool_size;
+
+        QuadOverflow overflow_pool[MAX_OVERFLOW];
+        int overflow_pool_size;
 
         float global_xmin;
         float global_xmax;
         float global_ymin;
         float global_ymax;
 
-        
+        void insert_overflow(int node_idx, entt::entity entity, float x, float y);
         int alloc_node(float xmin, float xmax, float ymin, float ymax, int depth);
+        int alloc_overflow();
         void divide_node(int node_idx);
         int get_child(QuadNode&, float x, float y);
 };

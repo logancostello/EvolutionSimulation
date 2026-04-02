@@ -1,5 +1,7 @@
 #include "quad_tree.h"
 
+bool QuadOverflow::is_full() { return count == OVERFLOW_SIZE; }; 
+
 bool QuadNode::is_leaf() { return children[0] == -1; };
 bool QuadNode::is_full() { return count == BUCKET_SIZE; };
 
@@ -9,6 +11,7 @@ bool QuadNode::contains(float x, float y) {
 
 QuadTree::QuadTree(float world_size_x, float world_size_y) {
     node_pool_size = 0;
+    overflow_pool_size = 0;
 
     // Add extra space to quad tree to gracefully handle entities that exit the world bounding box
     global_xmin = -(world_size_x / 2) * 1.1;
@@ -21,6 +24,7 @@ QuadTree::QuadTree(float world_size_x, float world_size_y) {
 
 void QuadTree::reset() {
     node_pool_size = 0;
+    overflow_pool_size = 0;
     root = alloc_node(global_xmin, global_xmax, global_ymin, global_ymax, 0);
 }
 
@@ -48,25 +52,50 @@ int QuadTree::alloc_node(float xmin, float xmax, float ymin, float ymax, int dep
     n.children[1] = -1;
     n.children[2] = -1;
     n.children[3] = -1;
+    n.overflow = -1;
 
     return index;
 };
+
+int QuadTree::alloc_overflow() {
+    int index = overflow_pool_size++;
+    QuadOverflow& o = overflow_pool[index];
+    o.count = 0;
+    return index;
+}
 
 void QuadTree::insert(int node_idx, entt::entity entity, float x, float y) {
 
     QuadNode& node = node_pool[node_idx];
 
-    if (!node.contains(x, y)) return;
+    if (!node.contains(x, y)) return; // Skip entities that leave world space + buffer room
 
     if (node.is_leaf() && !node.is_full()) {
         node.entities[node.count++] = QuadEntity(entity, x, y);
         return;
     } else if (node.is_leaf()) {
-        if (node.depth < MAX_DEPTH) divide_node(node_idx);
+        if (node.depth <= MAX_DEPTH) divide_node(node_idx);
     } 
     // Insert into correct child
     int correct_child_idx = get_child(node, x, y);
-    insert(correct_child_idx, entity, x, y);
+    if (correct_child_idx >= 0) {
+        insert(correct_child_idx, entity, x, y);
+    } else {
+        insert_overflow(node_idx, entity, x, y);
+    }   
+}
+
+void QuadTree::insert_overflow(int node_idx, entt::entity entity, float x, float y) {
+    QuadNode& node = node_pool[node_idx];
+
+    if (node.overflow == -1) {
+        node.overflow = alloc_overflow();
+    }
+
+    QuadOverflow& overflow = overflow_pool[node.overflow];
+
+    if (overflow.is_full()) return; // Branch and overflow are full, dont add this entry
+    overflow.entities[overflow.count++] = QuadEntity(entity, x, y);
 }
 
 void QuadTree::divide_node(int node_idx) {
