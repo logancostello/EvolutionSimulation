@@ -11,6 +11,7 @@
 #include "systems/sensor_system.h"
 #include "mutators/brain_mutator.h"
 #include "systems/plant_system.h"
+#include "quad_tree.h"
 
 class Simulation {
     public:
@@ -22,6 +23,8 @@ class Simulation {
         float time;
         int world_size_x;
         int world_size_y;
+        entt::registry& registry;
+        QuadTree entity_lookup_tree;
         CreatureFactory creature_factory;
         PlantFactory plant_factory;
         BrainMutator brain_mutator;
@@ -33,4 +36,6 @@ class Simulation {
         ThinkingSystem thinking_system;
         SensorSystem sensor_system;
         PlantSystem plant_system;
+
+        void build_entity_lookup_tree();
 };

@@ -34,6 +34,7 @@ add_executable(main
     src/random.cpp
     src/mutators/brain_mutator.cpp
     src/systems/plant_system.cpp
+    src/quad_tree.cpp
 )
 
 target_include_directories(main PRIVATE src/)
