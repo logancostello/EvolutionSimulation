@@ -121,3 +121,40 @@ void QuadTree::divide_node(int node_idx) {
 
     node.count = 0;
 }
+
+void QuadTree::query(float x, float y, float radius, std::vector<entt::entity>& out) {
+    query_node(root, x, y, radius, out);
+}
+
+void QuadTree::query_node(int node_idx, float x, float y, float radius, std::vector<entt::entity>& out) {
+    QuadNode& node = node_pool[node_idx];
+
+    float closest_x = std::clamp(x, node.xmin, node.xmax);
+    float closest_y = std::clamp(y, node.ymin, node.ymax);
+    float dx = x - closest_x;
+    float dy = y - closest_y;
+    if (dx * dx + dy * dy > radius * radius) return;
+
+    if (node.is_leaf()) {
+        collect_leaf(node_idx, out);
+    } else {
+        for (int i = 0; i < 4; i++) {
+            query_node(node.children[i], x, y, radius, out);
+        }
+    }
+}
+
+void QuadTree::collect_leaf(int node_idx, std::vector<entt::entity>& out) {
+    QuadNode& node = node_pool[node_idx];
+
+    for (int i = 0; i < node.count; i++) {
+        out.push_back(node.entities[i].entity);
+    }
+
+    if (node.overflow != -1) {
+        QuadOverflow& overflow = overflow_pool[node.overflow];
+        for (int i = 0; i < overflow.count; i++) {
+            out.push_back(overflow.entities[i].entity);
+        }
+    }
+}
