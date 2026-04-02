@@ -52,7 +52,7 @@ void Simulation::update(float dt) {
     sensor_system.update();
     thinking_system.update(dt);
     movement_system.update(dt);
-    eating_system.update();
+    eating_system.update(entity_lookup_tree);
     metabolism_system.update(dt);
     reproduction_system.update(time);
     cleanup_system.update();

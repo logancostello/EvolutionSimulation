@@ -11,7 +11,7 @@ int main() {
         sf::VideoMode({1600, 1000}),
         "Evolution Simulation"
     );
-    window.setFramerateLimit(60);
+    // window.setFramerateLimit(60);
 
     sf::Vector2f window_size((float)window.getSize().x, (float)window.getSize().y);
     sf::View view(sf::FloatRect(-window_size / 2.f, window_size));
