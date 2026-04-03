@@ -2,28 +2,86 @@
 #include "components/components.h"
 #include <cmath>
 
-// For now just tanh. Many possible activation functions in future
+const std::vector<ActivationFunc> all_activation_funcs = {
+    ActivationFunc::Tanh,
+    ActivationFunc::Sigmoid,
+    ActivationFunc::Sign,
+    ActivationFunc::Step,
+    ActivationFunc::ReLU,
+    ActivationFunc::Sine,
+    ActivationFunc::Identity,
+    ActivationFunc::Absolute,
+    ActivationFunc::Softsign,
+    ActivationFunc::SineMult,
+    ActivationFunc::SineSquared,
+    ActivationFunc::Quantize
+};
+
+const std::unordered_map<ActivationRange, std::vector<ActivationFunc>> funcs_by_range = {
+    { ActivationRange::NegOneToOne, { ActivationFunc::Tanh, ActivationFunc::Sign, ActivationFunc::Sine, ActivationFunc::Softsign } },
+    { ActivationRange::ZeroToOne,   { ActivationFunc::Sigmoid, ActivationFunc::Step } },
+    { ActivationRange::NonNegative, { ActivationFunc::ReLU, ActivationFunc::Absolute } },
+    { ActivationRange::Unbounded,   { ActivationFunc::Identity, ActivationFunc::SineMult, ActivationFunc::SineSquared, ActivationFunc::Quantize } },
+};
+
 float Node::activate() {
-    return std::tanh(next_value);
+    switch(activation_func) {
+        case ActivationFunc::Tanh:
+            return std::tanh(next_value);
+        case ActivationFunc::Sigmoid:
+            return 1.0f / (1.0f + std::exp(-next_value));
+        case ActivationFunc::Sign:
+            return (next_value > 0) - (next_value < 0);
+        case ActivationFunc::Step:
+            return next_value >= 0 ? 1.0f : 0.0f;
+        case ActivationFunc::ReLU:
+            return std::max(0.0f, next_value);
+        case ActivationFunc::Sine:
+            return std::sin(next_value);
+        case ActivationFunc::Identity:
+            return next_value;
+        case ActivationFunc::Absolute:
+            return std::abs(next_value);
+        case ActivationFunc::Softsign:
+            return next_value / (1.0f + std::abs(next_value));
+        case ActivationFunc::SineMult:
+            return next_value * std::sin(next_value);
+        case ActivationFunc::SineSquared:
+            return std::sin(next_value * next_value);
+        case ActivationFunc::Quantize:
+            return std::floor(next_value);
+    }
+}
+
+ActivationFunc pick_random_activation_func(ActivationRange range) {
+    if (range == ActivationRange::Any) {
+        int index = Random::int_range(0, all_activation_funcs.size() - 1);
+        return all_activation_funcs[index];
+    }
+
+    const auto& options = funcs_by_range.at(range);
+    int index = Random::int_range(0, options.size() - 1);
+    return options[index];
 }
 
 void Node::update(float dt) {
+    next_value += bias;
     float target = activate();
     float tau = (target > value) ? tau_rise : tau_fall;
     float d_value = (-value + target) / tau;
-    next_value = value + d_value * dt;
+    value = value + d_value * dt;
 }
 
 void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
     switch (input_source) {
         case InputSource::Energy:
-            value = registry.get<Energy>(entity).energy;
+            next_value = registry.get<Energy>(entity).energy;
             break;
         case InputSource::DistToFood:
-            value = registry.get<VisionSensors>(entity).dist_to_food;
+            next_value = registry.get<VisionSensors>(entity).dist_to_food;
             break;
         case InputSource::DirToFood:
-            value = registry.get<VisionSensors>(entity).dir_to_food;
+            next_value = registry.get<VisionSensors>(entity).dir_to_food;
             break;
     }
 };

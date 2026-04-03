@@ -1,6 +1,6 @@
+#pragma once
 #include <vector>
 #include "components/brain/node.h"
-#include <unordered_map>
 
 struct Edge {
     int from_node;
@@ -23,9 +23,8 @@ struct Brain {
     {next_node_id = input_nodes.size() + output_nodes.size();};
 
     Brain clone() const;
-    void load_inputs(entt::registry& registry, entt::entity& entity);
     void populate_outputs(entt::registry& registry, entt::entity& entity);
-    void think(float dt);
+    void think(float dt, entt::registry& registry, entt::entity& entity);
 
     void add_random_edge();
     void remove_random_edge();
@@ -35,11 +34,10 @@ struct Brain {
     private:
         int next_node_id;
         Node& get_node(int id);
-        void set_buffer_to_bias();
+        void clear_next_values();
         void apply_weights();
         void update_nodes(float dt);
-        void apply_buffer();
-        int get_random_non_output_node();
-        int get_random_non_input_node();
+        int get_random_node();
+        void load_inputs(entt::registry& registry, entt::entity& entity);
 };
 

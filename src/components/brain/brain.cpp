@@ -36,21 +36,17 @@ Node& Brain::get_node(int id) {
     throw std::runtime_error("Node not found: " + std::to_string(id));
 }
 
-void Brain::think(float dt) {
-    set_buffer_to_bias();
+void Brain::think(float dt, entt::registry& registry, entt::entity& entity) {
+    clear_next_values();
+    load_inputs(registry, entity);
     apply_weights();
     update_nodes(dt);
-    apply_buffer();
 }
 
-void Brain::set_buffer_to_bias() {
-    for (OutputNode& node : output_nodes) {
-        node.next_value = node.bias;
-    }
-
-    for (Node& node : hidden_nodes) {
-        node.next_value = node.bias;
-    }
+void Brain::clear_next_values() {
+    for (Node& n : input_nodes) n.next_value = 0;
+    for (Node& n : output_nodes) n.next_value = 0;
+    for (Node& n : hidden_nodes) n.next_value = 0;
 }
 
 void Brain::apply_weights() {
@@ -60,30 +56,18 @@ void Brain::apply_weights() {
 }
 
 void Brain::update_nodes(float dt) {
-    for (OutputNode& node : output_nodes) {
-        node.update(dt);
-    }
-
-    for (Node& node : hidden_nodes) {
-        node.update(dt);
-    }
-}
-
-void Brain::apply_buffer() {
-    for (OutputNode& node : output_nodes) {
-        node.value = node.next_value;
-    }
-
-    for (Node& node : hidden_nodes) {
-        node.value = node.next_value;
-    }
+    for (Node& n : input_nodes) n.update(dt);
+    for (Node& n : output_nodes) n.update(dt);
+    for (Node& n : hidden_nodes) n.update(dt);
 }
 
 void Brain::add_random_edge() {
     for (int i = 0; i < 10; i++) {
-        int from_node = get_random_non_output_node();
-        int to_node = get_random_non_input_node();
+        int from_node = get_random_node();
+        int to_node = get_random_node();
         float weight = Random::float_range(-3, 3);
+
+        if (from_node == to_node) break;
 
         // Check edge doesn't already exist
         bool exists = false;
@@ -101,30 +85,22 @@ void Brain::add_random_edge() {
     }
 }
 
-int Brain::get_random_non_output_node() {
+int Brain::get_random_node() {
+    float num_nodes = input_nodes.size() + hidden_nodes.size() + output_nodes.size();
+    float input_weight = float(input_nodes.size()) / num_nodes;
+    float output_weight = float(output_nodes.size()) / num_nodes;
 
-    float input_prob = input_nodes.size() / (input_nodes.size() + hidden_nodes.size());
-
-    if (Random::float_range() < input_prob) {
-        int index = Random::int_range(0, input_nodes.size() - 1);
-        return input_nodes[index].id;
+    float rand = Random::float_range();
+    if (rand < input_weight) {
+        float idx = Random::int_range(0, input_nodes.size() - 1);
+        return input_nodes[idx].id;
+    } else if (rand < input_weight + output_weight) {
+        float idx = Random::int_range(0, output_nodes.size() - 1);
+        return output_nodes[idx].id;    
     } else {
-        int index = Random::int_range(0, hidden_nodes.size() - 1);
-        return hidden_nodes[index].id;
-    }
-}
-
-int Brain::get_random_non_input_node() {
-
-    float output_prob = float(output_nodes.size()) / float(output_nodes.size() + hidden_nodes.size());
-
-    if (Random::float_range() < output_prob) {
-        int index = Random::int_range(0, output_nodes.size() - 1);
-        return output_nodes[index].id;
-    } else {
-        int index = Random::int_range(0, hidden_nodes.size() - 1);
-        return hidden_nodes[index].id;
-    }
+        float idx = Random::int_range(0, hidden_nodes.size() - 1);
+        return hidden_nodes[idx].id;     
+    } 
 }
 
 void Brain::remove_random_edge() {
@@ -138,7 +114,7 @@ void Brain::add_random_node() {
     int index = Random::int_range(0, edges.size() - 1);
     Edge& edge = edges[index];
 
-    Node node = Node(next_node_id++, 0);
+    Node node = Node(next_node_id++);
     hidden_nodes.push_back(node);
 
     if (Random::float_range() < 0.5) {
