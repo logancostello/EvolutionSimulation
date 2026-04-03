@@ -1,6 +1,6 @@
+#pragma once
 #include <vector>
 #include "components/brain/node.h"
-#include <unordered_map>
 
 struct Edge {
     int from_node;

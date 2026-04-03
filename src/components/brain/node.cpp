@@ -9,15 +9,16 @@ const std::vector<ActivationFunc> all_activation_funcs = {
 
 const std::unordered_map<ActivationRange, std::vector<ActivationFunc>> funcs_by_range = {
     { ActivationRange::NegOneToOne, { ActivationFunc::Tanh } },
-    { ActivationRange::ZeroToOne,   { ActivationFunc::Sigmoid } },
+    { ActivationRange::ZeroToOne, { ActivationFunc::Sigmoid } },
 };
 
-ActivationFunc pick_random_activation_func() {
-    int index = Random::int_range(0, all_activation_funcs.size() - 1);
-    return all_activation_funcs[index];
-}
-
 ActivationFunc pick_random_activation_func(ActivationRange range) {
+
+    if (range == ActivationRange::Any) {
+        int index = Random::int_range(0, all_activation_funcs.size() - 1);
+        return all_activation_funcs[index];
+    }
+
     const auto& options = funcs_by_range.at(range);
     int index = Random::int_range(0, options.size() - 1);
     return options[index];
