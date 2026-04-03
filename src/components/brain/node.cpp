@@ -11,7 +11,7 @@ void Node::update(float dt) {
     float target = activate();
     float tau = (target > value) ? tau_rise : tau_fall;
     float d_value = (-value + target) / tau;
-    next_value = value + d_value * dt;
+    value = value + d_value * dt;
 }
 
 void InputNode::load_input(entt::registry& registry, entt::entity& entity) {

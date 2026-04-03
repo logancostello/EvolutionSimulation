@@ -38,7 +38,6 @@ struct Brain {
         void set_buffer_to_bias();
         void apply_weights();
         void update_nodes(float dt);
-        void apply_buffer();
         int get_random_non_output_node();
         int get_random_non_input_node();
 };

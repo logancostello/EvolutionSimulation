@@ -40,7 +40,6 @@ void Brain::think(float dt) {
     set_buffer_to_bias();
     apply_weights();
     update_nodes(dt);
-    apply_buffer();
 }
 
 void Brain::set_buffer_to_bias() {
@@ -66,16 +65,6 @@ void Brain::update_nodes(float dt) {
 
     for (Node& node : hidden_nodes) {
         node.update(dt);
-    }
-}
-
-void Brain::apply_buffer() {
-    for (OutputNode& node : output_nodes) {
-        node.value = node.next_value;
-    }
-
-    for (Node& node : hidden_nodes) {
-        node.value = node.next_value;
     }
 }
 
