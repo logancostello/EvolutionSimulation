@@ -15,13 +15,25 @@ enum class OutputSource {
 
 enum class ActivationFunc {
     Tanh,
-    Sigmoid
+    Sigmoid,
+    Sign,
+    Step,
+    ReLU,
+    Sine,
+    Identity,
+    Absolute,
+    Softsign,
+    SineMult,
+    SineSquared,
+    Quantize
 };
 
 enum class ActivationRange {
     Any,
     NegOneToOne,
-    ZeroToOne
+    ZeroToOne,
+    NonNegative,
+    Unbounded
 };
 
 ActivationFunc pick_random_activation_func(ActivationRange range);
