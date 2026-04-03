@@ -37,6 +37,8 @@ struct QuadNode {
     bool is_leaf();
     bool is_full();
     bool contains(float x, float y); 
+    bool intersects_circle(float x, float y, float r);
+    bool intersects_circle_sqr(float x, float y, float r_sqr);
     
 };
 
@@ -46,6 +48,7 @@ class QuadTree {
         void insert(int node_idx, entt::entity entity, float x, float y);
         void reset();
         void query(float x, float y, float radius, std::vector<entt::entity>& out);
+        entt::entity query_closest(float x, float y, float max_dist);
 
     private:
         int root;

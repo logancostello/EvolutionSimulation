@@ -1,4 +1,5 @@
 #include "quad_tree.h"
+#include <stack>
 
 bool QuadOverflow::is_full() { return count == OVERFLOW_SIZE; }; 
 
@@ -8,6 +9,22 @@ bool QuadNode::is_full() { return count == BUCKET_SIZE; };
 bool QuadNode::contains(float x, float y) {
     return xmin <= x && x < xmax && ymin <= y && y < ymax;
 };
+
+bool QuadNode::intersects_circle(float x, float y, float r) {
+    float closest_x = std::clamp(x, xmin, xmax);
+    float closest_y = std::clamp(y, ymin, ymax);
+    float dx = x - closest_x;
+    float dy = y - closest_y;
+    return dx * dx + dy * dy <= r * r;
+}
+
+bool QuadNode::intersects_circle_sqr(float x, float y, float r_sqr) {
+    float closest_x = std::clamp(x, xmin, xmax);
+    float closest_y = std::clamp(y, ymin, ymax);
+    float dx = x - closest_x;
+    float dy = y - closest_y;
+    return dx * dx + dy * dy <= r_sqr;
+}
 
 QuadTree::QuadTree(float world_size_x, float world_size_y) {
     node_pool_size = 0;
@@ -129,11 +146,7 @@ void QuadTree::query(float x, float y, float radius, std::vector<entt::entity>& 
 void QuadTree::query_node(int node_idx, float x, float y, float radius, std::vector<entt::entity>& out) {
     QuadNode& node = node_pool[node_idx];
 
-    float closest_x = std::clamp(x, node.xmin, node.xmax);
-    float closest_y = std::clamp(y, node.ymin, node.ymax);
-    float dx = x - closest_x;
-    float dy = y - closest_y;
-    if (dx * dx + dy * dy > radius * radius) return;
+    if (!node.intersects_circle(x, y, radius)) return;
 
     if (node.is_leaf()) {
         collect_leaf(node_idx, out);
@@ -158,3 +171,39 @@ void QuadTree::collect_leaf(int node_idx, std::vector<entt::entity>& out) {
         }
     }
 }
+
+entt::entity QuadTree::query_closest(float x, float y, float max_dist) {
+    entt::entity closest_entity = entt::null;
+    float closest_sqr_dist = max_dist * max_dist;
+    std::stack<int> stack;
+    stack.push(root);
+
+    while (!stack.empty()) {
+        int node_idx = stack.top();
+        stack.pop();
+
+        QuadNode& node = node_pool[node_idx];
+
+        if (node.is_leaf()) {
+            for (int i = 0; i < node.count; i++) {
+                QuadEntity& e = node.entities[i];
+                float dx = x - e.x;
+                float dy = y - e.y;
+                float sqr_dist = dx * dx + dy * dy;
+                if (sqr_dist < closest_sqr_dist) {
+                    closest_sqr_dist = sqr_dist;
+                    closest_entity = e.entity;
+                }
+            }
+        } else {
+            for (int child_idx : node.children) {
+                QuadNode& child_node = node_pool[child_idx];
+                if (child_node.intersects_circle_sqr(x, y, closest_sqr_dist)) {
+                    stack.push(child_idx);
+                }
+            }
+        }
+
+    }
+    return closest_entity;
+};
