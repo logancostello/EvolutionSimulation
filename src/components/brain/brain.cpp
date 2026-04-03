@@ -70,9 +70,11 @@ void Brain::update_nodes(float dt) {
 
 void Brain::add_random_edge() {
     for (int i = 0; i < 10; i++) {
-        int from_node = get_random_non_output_node();
-        int to_node = get_random_non_input_node();
+        int from_node = get_random_node();
+        int to_node = get_random_node();
         float weight = Random::float_range(-3, 3);
+
+        if (from_node == to_node) break;
 
         // Check edge doesn't already exist
         bool exists = false;
@@ -90,30 +92,22 @@ void Brain::add_random_edge() {
     }
 }
 
-int Brain::get_random_non_output_node() {
+int Brain::get_random_node() {
+    float num_nodes = input_nodes.size() + hidden_nodes.size() + output_nodes.size();
+    float input_weight = float(input_nodes.size()) / num_nodes;
+    float output_weight = float(output_nodes.size()) / num_nodes;
 
-    float input_prob = float(input_nodes.size()) / float(input_nodes.size() + hidden_nodes.size());
-
-    if (Random::float_range() < input_prob) {
-        int index = Random::int_range(0, input_nodes.size() - 1);
-        return input_nodes[index].id;
+    float rand = Random::float_range();
+    if (rand < input_weight) {
+        float idx = Random::int_range(0, input_nodes.size() - 1);
+        return input_nodes[idx].id;
+    } else if (rand < input_weight + output_weight) {
+        float idx = Random::int_range(0, output_nodes.size() - 1);
+        return output_nodes[idx].id;    
     } else {
-        int index = Random::int_range(0, hidden_nodes.size() - 1);
-        return hidden_nodes[index].id;
-    }
-}
-
-int Brain::get_random_non_input_node() {
-
-    float output_prob = float(output_nodes.size()) / float(output_nodes.size() + hidden_nodes.size());
-
-    if (Random::float_range() < output_prob) {
-        int index = Random::int_range(0, output_nodes.size() - 1);
-        return output_nodes[index].id;
-    } else {
-        int index = Random::int_range(0, hidden_nodes.size() - 1);
-        return hidden_nodes[index].id;
-    }
+        float idx = Random::int_range(0, hidden_nodes.size() - 1);
+        return hidden_nodes[idx].id;     
+    } 
 }
 
 void Brain::remove_random_edge() {
