@@ -11,7 +11,8 @@ int main() {
         sf::VideoMode({1600, 1000}),
         "Evolution Simulation"
     );
-    // window.setFramerateLimit(60);
+
+    window.setFramerateLimit(60);
 
     sf::Vector2f window_size((float)window.getSize().x, (float)window.getSize().y);
     sf::View view(sf::FloatRect(-window_size / 2.f, window_size));
@@ -29,6 +30,7 @@ int main() {
     sf::Vector2i last_mouse_pos;
 
     bool paused = false;
+    bool uncapped_frames = false;
 
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
@@ -39,6 +41,13 @@ int main() {
                     window.close();
                 } else if (key->code == sf::Keyboard::Key::Space) {
                     paused = !paused;
+                } else if (key->code == sf::Keyboard::Key::F) {
+                    uncapped_frames = !uncapped_frames;
+                    if (uncapped_frames) {
+                        window.setFramerateLimit(0);
+                    } else {
+                        window.setFramerateLimit(60);
+                    }
                 }
             }
             
