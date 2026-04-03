@@ -31,7 +31,7 @@ void BrainMutator::mutate(entt::entity entity) {
         }
 
         if (Random::float_range() < PROB_WEIGHT_FLIP) {
-            edge.weight *= 1;
+            edge.weight *= -1;
         }
     }
 
