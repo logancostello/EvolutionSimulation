@@ -103,7 +103,7 @@ void Brain::add_random_edge() {
 
 int Brain::get_random_non_output_node() {
 
-    float input_prob = input_nodes.size() / (input_nodes.size() + hidden_nodes.size());
+    float input_prob = float(input_nodes.size()) / float(input_nodes.size() + hidden_nodes.size());
 
     if (Random::float_range() < input_prob) {
         int index = Random::int_range(0, input_nodes.size() - 1);
