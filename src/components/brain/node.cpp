@@ -2,9 +2,11 @@
 #include "components/components.h"
 #include <cmath>
 
-// For now just tanh. Many possible activation functions in future
 float Node::activate() {
-    return std::tanh(next_value);
+    switch(activation_func) {
+        case ActivationFunc::Tanh:
+            return std::tanh(next_value);
+    }
 }
 
 void Node::update(float dt) {

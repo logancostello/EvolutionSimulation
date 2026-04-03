@@ -2,6 +2,25 @@
 #include <entt/entt.hpp>
 #include "random.h"
 
+enum class InputSource {
+    Energy,
+    DistToFood,
+    DirToFood
+};
+
+enum class OutputSource {
+    VelocityMag,
+    VelocityTurnRate
+};
+
+enum class ActivationFunc {
+    Tanh
+};
+
+enum class ActivationRange {
+    NegOneToOne
+};
+
 struct Node {
     int id;
     float value;
@@ -9,17 +28,20 @@ struct Node {
     float bias;
     float tau_rise;
     float tau_fall;
+    ActivationFunc activation_func;
 
-    Node(int id, float bias) : id(id), value(0), next_value(0), bias(bias), tau_rise(0.05), tau_fall(0.05) {};
+    Node(int id, float bias) 
+        : id(id)
+        , value(0)
+        , next_value(0)
+        , bias(bias)
+        , tau_rise(0.05)
+        , tau_fall(0.05)
+        , activation_func(ActivationFunc::Tanh)
+    {};
 
     void update(float dt);
     float activate();    
-};
-
-enum class InputSource {
-    Energy,
-    DistToFood,
-    DirToFood
 };
 
 struct InputNode : Node {
@@ -31,16 +53,12 @@ struct InputNode : Node {
     void load_input(entt::registry& registry, entt::entity& entity);
 };
 
-enum class OutputSource {
-    VelocityMag,
-    VelocityTurnRate
-};
-
 struct OutputNode: Node {
     OutputSource output_source;
+    ActivationRange output_range;
 
     OutputNode(int id, float bias, OutputSource output_source)
-        : Node(id, bias), output_source(output_source) {}
+        : Node(id, bias), output_source(output_source), output_range(ActivationRange::NegOneToOne) {}
 
     void populate_output(entt::registry& registry, entt::entity& entity);
 };
