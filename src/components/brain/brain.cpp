@@ -36,20 +36,17 @@ Node& Brain::get_node(int id) {
     throw std::runtime_error("Node not found: " + std::to_string(id));
 }
 
-void Brain::think(float dt) {
-    set_buffer_to_bias();
+void Brain::think(float dt, entt::registry& registry, entt::entity& entity) {
+    clear_next_values();
+    load_inputs(registry, entity);
     apply_weights();
     update_nodes(dt);
 }
 
-void Brain::set_buffer_to_bias() {
-    for (OutputNode& node : output_nodes) {
-        node.next_value = node.bias;
-    }
-
-    for (Node& node : hidden_nodes) {
-        node.next_value = node.bias;
-    }
+void Brain::clear_next_values() {
+    for (Node& n : input_nodes) n.next_value = 0;
+    for (Node& n : output_nodes) n.next_value = 0;
+    for (Node& n : hidden_nodes) n.next_value = 0;
 }
 
 void Brain::apply_weights() {
@@ -59,13 +56,9 @@ void Brain::apply_weights() {
 }
 
 void Brain::update_nodes(float dt) {
-    for (OutputNode& node : output_nodes) {
-        node.update(dt);
-    }
-
-    for (Node& node : hidden_nodes) {
-        node.update(dt);
-    }
+    for (Node& n : input_nodes) n.update(dt);
+    for (Node& n : output_nodes) n.update(dt);
+    for (Node& n : hidden_nodes) n.update(dt);
 }
 
 void Brain::add_random_edge() {

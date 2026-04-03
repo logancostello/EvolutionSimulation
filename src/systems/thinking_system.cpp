@@ -7,8 +7,7 @@ void ThinkingSystem::update(float dt) {
     auto view = registry.view<Brain>();
 
     for (auto [entity, brain] : view.each()) {
-        brain.load_inputs(registry, entity);
-        brain.think(dt);
+        brain.think(dt, registry, entity);
         brain.populate_outputs(registry, entity);
     }
 }
