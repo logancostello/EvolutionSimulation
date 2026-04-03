@@ -21,18 +21,27 @@ int main() {
     Simulation sim = Simulation(registry);
     Renderer renderer = Renderer();
 
+    float dt = 1 / 60.0f;
+
     sim.initialize();
 
     bool panning = false;
     sf::Vector2i last_mouse_pos;
 
+    bool paused = false;
+
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>())
                 window.close();
-            if (const auto* key = event->getIf<sf::Event::KeyPressed>())
-                if (key->code == sf::Keyboard::Key::Escape)
+            if (const auto* key = event->getIf<sf::Event::KeyPressed>()) {
+                if (key->code == sf::Keyboard::Key::Escape) {
                     window.close();
+                } else if (key->code == sf::Keyboard::Key::Space) {
+                    paused = !paused;
+                }
+            }
+            
             if (const auto* resized = event->getIf<sf::Event::Resized>()) {
                 sf::Vector2f new_size(resized->size);
                 view.setSize(new_size);
@@ -82,8 +91,7 @@ int main() {
 
         window.clear(sf::Color(15, 15, 20));
 
-        float dt = 1 / 60.0f;
-        sim.update(dt);
+        if (!paused) sim.update(dt);
 
         renderer.draw(window, registry);
 
