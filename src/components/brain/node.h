@@ -35,21 +35,21 @@ struct Node {
     float tau_fall;
     ActivationFunc activation_func;
 
-    Node(int id, float bias) 
+    Node(int id) 
         : id(id)
         , value(0)
         , next_value(0)
-        , bias(bias)
+        , bias(Random::normal(0, 0.5))
         , tau_rise(0.05)
         , tau_fall(0.05)
         , activation_func(pick_random_activation_func())
     {};
 
-    Node(int id, float bias, ActivationFunc activation_func) 
+    Node(int id, ActivationFunc activation_func) 
         : id(id)
         , value(0)
         , next_value(0)
-        , bias(bias)
+        , bias(Random::normal(0, 0.5))
         , tau_rise(0.05)
         , tau_fall(0.05)
         , activation_func(activation_func)
@@ -62,8 +62,8 @@ struct Node {
 struct InputNode : Node {
     InputSource input_source;
 
-    InputNode(int id, float bias, InputSource input_source)
-        : Node(id, bias), input_source(input_source) {}
+    InputNode(int id, InputSource input_source)
+        : Node(id), input_source(input_source) {}
 
     void load_input(entt::registry& registry, entt::entity& entity);
 };
@@ -72,8 +72,8 @@ struct OutputNode: Node {
     OutputSource output_source;
     ActivationRange output_range;
 
-    OutputNode(int id, float bias, OutputSource output_source, ActivationRange output_range)
-        : Node(id, bias, pick_random_activation_func(output_range)), output_source(output_source), output_range(output_range) {}
+    OutputNode(int id, OutputSource output_source, ActivationRange output_range)
+        : Node(id, pick_random_activation_func(output_range)), output_source(output_source), output_range(output_range) {}
 
     void populate_output(entt::registry& registry, entt::entity& entity);
 };

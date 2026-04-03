@@ -5,16 +5,16 @@ BrainFactory::BrainFactory(entt::registry& registry) : registry(registry) {};
 
 std::vector<InputNode> BrainFactory::get_basic_inputs() {
     return {
-        InputNode(0, 0, InputSource::Energy),
-        InputNode(1, 0, InputSource::DistToFood),
-        InputNode(2, 0, InputSource::DirToFood)
+        InputNode(0, InputSource::Energy),
+        InputNode(1, InputSource::DistToFood),
+        InputNode(2, InputSource::DirToFood)
     };
 };
 
 std::vector<OutputNode> BrainFactory::get_basic_outputs() {
     return {
-        OutputNode(3, 0, OutputSource::VelocityMag, ActivationRange::ZeroToOne),
-        OutputNode(4, 0, OutputSource::VelocityTurnRate, ActivationRange::NegOneToOne)
+        OutputNode(3, OutputSource::VelocityMag, ActivationRange::ZeroToOne),
+        OutputNode(4, OutputSource::VelocityTurnRate, ActivationRange::NegOneToOne)
     };
 };
 

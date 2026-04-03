@@ -114,7 +114,7 @@ void Brain::add_random_node() {
     int index = Random::int_range(0, edges.size() - 1);
     Edge& edge = edges[index];
 
-    Node node = Node(next_node_id++, 0);
+    Node node = Node(next_node_id++);
     hidden_nodes.push_back(node);
 
     if (Random::float_range() < 0.5) {
