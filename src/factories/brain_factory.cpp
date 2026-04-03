@@ -13,8 +13,8 @@ std::vector<InputNode> BrainFactory::get_basic_inputs() {
 
 std::vector<OutputNode> BrainFactory::get_basic_outputs() {
     return {
-        OutputNode(3, 0, OutputSource::VelocityMag),
-        OutputNode(4, 0, OutputSource::VelocityTurnRate)
+        OutputNode(3, 0, OutputSource::VelocityMag, ActivationRange::ZeroToOne),
+        OutputNode(4, 0, OutputSource::VelocityTurnRate, ActivationRange::NegOneToOne)
     };
 };
 

@@ -14,12 +14,17 @@ enum class OutputSource {
 };
 
 enum class ActivationFunc {
-    Tanh
+    Tanh,
+    Sigmoid
 };
 
 enum class ActivationRange {
-    NegOneToOne
+    NegOneToOne,
+    ZeroToOne
 };
+
+ActivationFunc pick_random_activation_func();
+ActivationFunc pick_random_activation_func(ActivationRange range);
 
 struct Node {
     int id;
@@ -37,11 +42,21 @@ struct Node {
         , bias(bias)
         , tau_rise(0.05)
         , tau_fall(0.05)
-        , activation_func(ActivationFunc::Tanh)
+        , activation_func(pick_random_activation_func())
+    {};
+
+    Node(int id, float bias, ActivationFunc activation_func) 
+        : id(id)
+        , value(0)
+        , next_value(0)
+        , bias(bias)
+        , tau_rise(0.05)
+        , tau_fall(0.05)
+        , activation_func(activation_func)
     {};
 
     void update(float dt);
-    float activate();    
+    float activate();   
 };
 
 struct InputNode : Node {
@@ -57,8 +72,8 @@ struct OutputNode: Node {
     OutputSource output_source;
     ActivationRange output_range;
 
-    OutputNode(int id, float bias, OutputSource output_source)
-        : Node(id, bias), output_source(output_source), output_range(ActivationRange::NegOneToOne) {}
+    OutputNode(int id, float bias, OutputSource output_source, ActivationRange output_range)
+        : Node(id, bias, pick_random_activation_func(output_range)), output_source(output_source), output_range(output_range) {}
 
     void populate_output(entt::registry& registry, entt::entity& entity);
 };

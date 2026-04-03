@@ -2,10 +2,33 @@
 #include "components/components.h"
 #include <cmath>
 
+const std::vector<ActivationFunc> all_activation_funcs = {
+    ActivationFunc::Tanh,
+    ActivationFunc::Sigmoid
+};
+
+const std::unordered_map<ActivationRange, std::vector<ActivationFunc>> funcs_by_range = {
+    { ActivationRange::NegOneToOne, { ActivationFunc::Tanh } },
+    { ActivationRange::ZeroToOne,   { ActivationFunc::Sigmoid } },
+};
+
+ActivationFunc pick_random_activation_func() {
+    int index = Random::int_range(0, all_activation_funcs.size() - 1);
+    return all_activation_funcs[index];
+}
+
+ActivationFunc pick_random_activation_func(ActivationRange range) {
+    const auto& options = funcs_by_range.at(range);
+    int index = Random::int_range(0, options.size() - 1);
+    return options[index];
+}
+
 float Node::activate() {
     switch(activation_func) {
         case ActivationFunc::Tanh:
             return std::tanh(next_value);
+        case ActivationFunc::Sigmoid:
+            return 1.0 / (1.0 + std::exp(-next_value));
     }
 }
 
