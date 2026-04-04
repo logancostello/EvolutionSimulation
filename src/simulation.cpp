@@ -19,7 +19,7 @@ Simulation::Simulation(entt::registry& registry)
     , movement_system(registry)
     , metabolism_system(registry)
     , cleanup_system(registry)
-    , eating_system(registry)
+    , collision_system(registry)
     , reproduction_system(registry, creature_factory, brain_mutator)
     , thinking_system(registry)
     , sensor_system(registry)
@@ -52,7 +52,7 @@ void Simulation::update(float dt) {
     sensor_system.update(entity_lookup_tree);
     thinking_system.update(dt);
     movement_system.update(dt);
-    eating_system.update(entity_lookup_tree);
+    collision_system.update(entity_lookup_tree);
     metabolism_system.update(dt);
     reproduction_system.update(time);
     cleanup_system.update();

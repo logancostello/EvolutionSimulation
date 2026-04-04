@@ -1,10 +1,10 @@
-#include "eating_system.h"
+#include "collision_system.h"
 #include "components/components.h"
 #include <cmath>
 
-EatingSystem::EatingSystem(entt::registry& registry) : registry(registry) {};
+CollisionSystem::CollisionSystem(entt::registry& registry) : registry(registry) {};
 
-void EatingSystem::update(QuadTree& lookup_tree) {
+void CollisionSystem::update(QuadTree& lookup_tree) {
 
     auto view = registry.view<Position, Size, Energy, Creature>();
     for (auto [creature, c_pos, c_size, c_energy] : view.each()) {
