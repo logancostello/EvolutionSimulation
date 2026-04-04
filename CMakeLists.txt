@@ -24,7 +24,7 @@ add_executable(main
     src/systems/movement_system.cpp
     src/systems/metabolism_system.cpp
     src/systems/cleanup_system.cpp
-    src/systems/eating_system.cpp
+    src/systems/collision_system.cpp
     src/systems/reproduction_system.cpp
     src/components/brain/brain.cpp
     src/components/brain/node.cpp

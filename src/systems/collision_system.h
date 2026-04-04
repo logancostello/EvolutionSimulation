@@ -2,11 +2,12 @@
 #include <entt/entt.hpp>
 #include "quad_tree.h"
 
-class EatingSystem {
+class CollisionSystem {
     public:
-        EatingSystem(entt::registry& registry);
+        CollisionSystem(entt::registry& registry);
         void update(QuadTree& lookup_tree);
     
     private:
         entt::registry& registry;
+        void handle_eating(entt::entity creature, entt::entity plant);
 };

@@ -81,14 +81,14 @@ int QuadTree::alloc_overflow() {
     return index;
 }
 
-void QuadTree::insert(int node_idx, entt::entity entity, float x, float y) {
+void QuadTree::insert(int node_idx, entt::entity entity, float x, float y, EntityTag tag) {
 
     QuadNode& node = node_pool[node_idx];
 
     if (!node.contains(x, y)) return; // Skip entities that leave world space + buffer room
 
     if (node.is_leaf() && !node.is_full()) {
-        node.entities[node.count++] = QuadEntity(entity, x, y);
+        node.entities[node.count++] = QuadEntity(entity, x, y, tag);
         return;
     } else if (node.is_leaf()) {
         if (node.depth <= MAX_DEPTH) divide_node(node_idx);
@@ -96,13 +96,13 @@ void QuadTree::insert(int node_idx, entt::entity entity, float x, float y) {
     // Insert into correct child
     int correct_child_idx = get_child(node, x, y);
     if (correct_child_idx >= 0) {
-        insert(correct_child_idx, entity, x, y);
+        insert(correct_child_idx, entity, x, y, tag);
     } else {
-        insert_overflow(node_idx, entity, x, y);
+        insert_overflow(node_idx, entity, x, y, tag);
     }   
 }
 
-void QuadTree::insert_overflow(int node_idx, entt::entity entity, float x, float y) {
+void QuadTree::insert_overflow(int node_idx, entt::entity entity, float x, float y, EntityTag tag) {
     QuadNode& node = node_pool[node_idx];
 
     if (node.overflow == -1) {
@@ -112,7 +112,7 @@ void QuadTree::insert_overflow(int node_idx, entt::entity entity, float x, float
     QuadOverflow& overflow = overflow_pool[node.overflow];
 
     if (overflow.is_full()) return; // Branch and overflow are full, dont add this entry
-    overflow.entities[overflow.count++] = QuadEntity(entity, x, y);
+    overflow.entities[overflow.count++] = QuadEntity(entity, x, y, tag);
 }
 
 void QuadTree::divide_node(int node_idx) {
@@ -172,7 +172,7 @@ void QuadTree::collect_leaf(int node_idx, std::vector<entt::entity>& out) {
     }
 }
 
-entt::entity QuadTree::query_closest(float x, float y, float max_dist) {
+entt::entity QuadTree::query_closest(entt::entity self, float x, float y, float max_dist, EntityTag tag) {
     entt::entity closest_entity = entt::null;
     float closest_sqr_dist = max_dist * max_dist;
     std::stack<int> stack;
@@ -187,6 +187,10 @@ entt::entity QuadTree::query_closest(float x, float y, float max_dist) {
         if (node.is_leaf()) {
             for (int i = 0; i < node.count; i++) {
                 QuadEntity& e = node.entities[i];
+
+                if (e.entity == self) continue;
+                if (tag != EntityTag::Any && tag != e.tag) continue;
+
                 float dx = x - e.x;
                 float dy = y - e.y;
                 float sqr_dist = dx * dx + dy * dy;

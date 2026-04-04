@@ -19,7 +19,7 @@ Simulation::Simulation(entt::registry& registry)
     , movement_system(registry)
     , metabolism_system(registry)
     , cleanup_system(registry)
-    , eating_system(registry)
+    , collision_system(registry)
     , reproduction_system(registry, creature_factory, brain_mutator)
     , thinking_system(registry)
     , sensor_system(registry)
@@ -39,9 +39,14 @@ void Simulation::initialize() {
 void Simulation::build_entity_lookup_tree() {
     entity_lookup_tree.reset();
 
-    auto view = registry.view<Position, Plant>();
-    for (auto [entity, pos] : view.each()) {
-        entity_lookup_tree.insert(0, entity, pos.x, pos.y);
+    auto plant_view = registry.view<Position, Plant>();
+    for (auto [entity, pos] : plant_view.each()) {
+        entity_lookup_tree.insert(0, entity, pos.x, pos.y, EntityTag::Plant);
+    }
+
+    auto creature_view = registry.view<Position, Creature>();
+    for (auto [entity, pos] : creature_view.each()) {
+        entity_lookup_tree.insert(0, entity, pos.x, pos.y, EntityTag::Creature);
     }
 }
 
@@ -52,7 +57,7 @@ void Simulation::update(float dt) {
     sensor_system.update(entity_lookup_tree);
     thinking_system.update(dt);
     movement_system.update(dt);
-    eating_system.update(entity_lookup_tree);
+    collision_system.update(entity_lookup_tree);
     metabolism_system.update(dt);
     reproduction_system.update(time);
     cleanup_system.update();

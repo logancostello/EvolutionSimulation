@@ -5,7 +5,7 @@
 #include "systems/movement_system.h"
 #include "systems/metabolism_system.h"
 #include "systems/cleanup_system.h"
-#include "systems/eating_system.h"
+#include "systems/collision_system.h"
 #include "systems/reproduction_system.h"
 #include "systems/thinking_system.h"
 #include "systems/sensor_system.h"
@@ -31,7 +31,7 @@ class Simulation {
         MovementSystem movement_system;
         MetabolismSystem metabolism_system;
         CleanupSystem cleanup_system;
-        EatingSystem eating_system;
+        CollisionSystem collision_system;
         ReproductionSystem reproduction_system;
         ThinkingSystem thinking_system;
         SensorSystem sensor_system;

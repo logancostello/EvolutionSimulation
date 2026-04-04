@@ -1,20 +1,24 @@
 #include "factories/brain_factory.h"
 #include "components/components.h"
 
+int id = 0;
+
 BrainFactory::BrainFactory(entt::registry& registry) : registry(registry) {};
 
 std::vector<InputNode> BrainFactory::get_basic_inputs() {
     return {
-        InputNode(0, InputSource::Energy),
-        InputNode(1, InputSource::DistToFood),
-        InputNode(2, InputSource::DirToFood)
+        InputNode(id++, InputSource::Energy),
+        InputNode(id++, InputSource::DistToFood),
+        InputNode(id++, InputSource::DirToFood),
+        InputNode(id++, InputSource::DistToCreature),
+        InputNode(id++, InputSource::DirToCreature)
     };
 };
 
 std::vector<OutputNode> BrainFactory::get_basic_outputs() {
     return {
-        OutputNode(3, OutputSource::VelocityMag, ActivationRange::ZeroToOne),
-        OutputNode(4, OutputSource::VelocityTurnRate, ActivationRange::NegOneToOne)
+        OutputNode(id++, OutputSource::VelocityMag, ActivationRange::ZeroToOne),
+        OutputNode(id++, OutputSource::VelocityTurnRate, ActivationRange::NegOneToOne)
     };
 };
 
@@ -29,7 +33,7 @@ void BrainFactory::create_basic_brain(entt::entity& entity) {
 
     Brain& brain = registry.get<Brain>(entity);
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < Random::int_range(3, 6); i++) {
         brain.add_random_edge();
     }
 };
