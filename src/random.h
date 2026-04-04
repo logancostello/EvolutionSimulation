@@ -2,6 +2,8 @@
 #include <random>
 
 namespace Random {
+    void seed(uint32_t s);
+    void seed();                  
     int int_range(int min, int max);
     float float_range(float min = 0, float max = 1);
     float normal(float mean = 0, float std = 1);

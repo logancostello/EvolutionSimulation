@@ -1,11 +1,25 @@
 #include <SFML/Graphics.hpp>
 #include <entt/entt.hpp>
-
+#include <iostream>
+#include "random.h"
 #include "simulation.h"
 #include "components/components.h"
 #include "systems/renderer.h"
 
-int main() {
+int main(int argc, char* argv[]) {
+
+    if (argc > 1) {
+        try {
+            uint32_t seed = std::stoul(argv[1]);
+            Random::seed(seed);
+        } catch (const std::exception&) {
+            std::cerr << "Invalid seed: " << argv[1] << "\n";
+            return 1;
+        }
+    } else {
+        Random::seed();
+    }
+
 
     sf::RenderWindow window(
         sf::VideoMode({1600, 1000}),
