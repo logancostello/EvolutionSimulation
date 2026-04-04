@@ -7,6 +7,15 @@ namespace Random {
         return gen;
     }
 
+    void seed(uint32_t s) {
+        rng().seed(s);
+    }
+
+    void seed() {
+        std::random_device rd;
+        rng().seed(rd());
+    }
+
     int int_range(int min, int max) {
         return std::uniform_int_distribution<int>(min, max)(rng());
     }
@@ -16,7 +25,7 @@ namespace Random {
         return dist(rng());
     }
 
-    float Random::normal(float mean, float std) {
+    float normal(float mean, float std) {
         std::normal_distribution<float> dist(mean, std);
         return dist(rng());
     }
