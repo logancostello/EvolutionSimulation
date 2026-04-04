@@ -39,9 +39,14 @@ void Simulation::initialize() {
 void Simulation::build_entity_lookup_tree() {
     entity_lookup_tree.reset();
 
-    auto view = registry.view<Position, Plant>();
-    for (auto [entity, pos] : view.each()) {
+    auto plant_view = registry.view<Position, Plant>();
+    for (auto [entity, pos] : plant_view.each()) {
         entity_lookup_tree.insert(0, entity, pos.x, pos.y, EntityTag::Plant);
+    }
+
+    auto creature_view = registry.view<Position, Creature>();
+    for (auto [entity, pos] : creature_view.each()) {
+        entity_lookup_tree.insert(0, entity, pos.x, pos.y, EntityTag::Creature);
     }
 }
 
