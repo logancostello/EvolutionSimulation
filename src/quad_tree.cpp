@@ -172,7 +172,7 @@ void QuadTree::collect_leaf(int node_idx, std::vector<entt::entity>& out) {
     }
 }
 
-entt::entity QuadTree::query_closest(float x, float y, float max_dist, EntityTag tag) {
+entt::entity QuadTree::query_closest(entt::entity self, float x, float y, float max_dist, EntityTag tag) {
     entt::entity closest_entity = entt::null;
     float closest_sqr_dist = max_dist * max_dist;
     std::stack<int> stack;
@@ -188,6 +188,7 @@ entt::entity QuadTree::query_closest(float x, float y, float max_dist, EntityTag
             for (int i = 0; i < node.count; i++) {
                 QuadEntity& e = node.entities[i];
 
+                if (e.entity == self) continue;
                 if (tag != EntityTag::Any && tag != e.tag) continue;
 
                 float dx = x - e.x;

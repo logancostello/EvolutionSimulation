@@ -83,6 +83,12 @@ void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
         case InputSource::DirToFood:
             next_value = registry.get<VisionSensors>(entity).dir_to_food;
             break;
+        case InputSource::DistToCreature:
+            next_value = registry.get<VisionSensors>(entity).dist_to_creature;
+            break;
+        case InputSource::DirToCreature:
+            next_value = registry.get<VisionSensors>(entity).dir_to_creature;
+            break;
     }
 };
 

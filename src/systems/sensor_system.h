@@ -9,4 +9,5 @@ class SensorSystem {
 
     private:
         entt::registry& registry;
+        void set_direction(Position& c_pos, Velocity& vel, entt::entity target, entt::registry& registry, float& dist_out, float& dir_out);
 };

@@ -5,7 +5,9 @@
 enum class InputSource {
     Energy,
     DistToFood,
-    DirToFood
+    DirToFood,
+    DistToCreature,
+    DirToCreature
 };
 
 enum class OutputSource {
