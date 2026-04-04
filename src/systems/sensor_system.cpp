@@ -12,9 +12,7 @@ void SensorSystem::update(QuadTree& lookup_tree) {
 
     for (auto [c_entity, c_pos, vision, vel] : creature_view.each()) {
 
-        // We know this is a plant since only plants are in the tree
-        // Eventually this will not be true and query_closest will need to accept a filter
-        entt::entity closest_plant = lookup_tree.query_closest(c_pos.x, c_pos.y, VIEW_DISTANCE);
+        entt::entity closest_plant = lookup_tree.query_closest(c_pos.x, c_pos.y, VIEW_DISTANCE, EntityTag::Plant);
 
         if (closest_plant == entt::null) {
             vision.dist_to_food = VIEW_DISTANCE;
