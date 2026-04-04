@@ -10,13 +10,19 @@ const int MAX_DEPTH = 8;
 const int MAX_NODES = 65536; // 2 ^ (2 * MAX_NODES)
 const int MAX_OVERFLOW = 100;
 
+enum class EntityTag : uint8_t {
+    Plant,
+    Creature
+};
+
 struct QuadEntity {
     entt::entity entity;
     float x;
     float y;
+    EntityTag tag;
 
     QuadEntity() {};
-    QuadEntity(entt::entity entity, float x, float y) : entity(entity), x(x), y(y) {};
+    QuadEntity(entt::entity entity, float x, float y, EntityTag tag) : entity(entity), x(x), y(y), tag(tag) {};
 };
 
 struct QuadOverflow {
@@ -45,10 +51,11 @@ struct QuadNode {
 class QuadTree {
     public:
         QuadTree(float world_size_x, float world_size_y);
-        void insert(int node_idx, entt::entity entity, float x, float y);
+        void insert(int node_idx, entt::entity entity, float x, float y, EntityTag tag);
         void reset();
         void query(float x, float y, float radius, std::vector<entt::entity>& out);
         entt::entity query_closest(float x, float y, float max_dist);
+        // entt::entity query_closest(float x, float y, float max_dist, )
 
     private:
         int root;
@@ -64,7 +71,7 @@ class QuadTree {
         float global_ymin;
         float global_ymax;
 
-        void insert_overflow(int node_idx, entt::entity entity, float x, float y);
+        void insert_overflow(int node_idx, entt::entity entity, float x, float y, EntityTag tag);
         int alloc_node(float xmin, float xmax, float ymin, float ymax, int depth);
         int alloc_overflow();
         void divide_node(int node_idx);

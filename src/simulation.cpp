@@ -41,7 +41,7 @@ void Simulation::build_entity_lookup_tree() {
 
     auto view = registry.view<Position, Plant>();
     for (auto [entity, pos] : view.each()) {
-        entity_lookup_tree.insert(0, entity, pos.x, pos.y);
+        entity_lookup_tree.insert(0, entity, pos.x, pos.y, EntityTag::Plant);
     }
 }
 
