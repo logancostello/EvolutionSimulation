@@ -9,4 +9,5 @@ class CollisionSystem {
     
     private:
         entt::registry& registry;
+        void handle_eating(entt::entity creature, entt::entity plant);
 };
