@@ -14,5 +14,5 @@ struct Creature {};
 struct Plant {};
 struct Carcass {};
 struct TimeOf { float birth, last_reproduction; };
-struct VisionSensors { float dist_to_food, dir_to_food, dist_to_creature, dir_to_creature; };
+struct VisionSensors { float dist_to_food, dir_to_food, dist_to_creature, dir_to_creature, dist_to_carcass, dir_to_carcass; };
 struct FoodEnergy { float energy; };

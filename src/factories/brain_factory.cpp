@@ -11,7 +11,9 @@ std::vector<InputNode> BrainFactory::get_basic_inputs() {
         InputNode(id++, InputSource::DistToFood),
         InputNode(id++, InputSource::DirToFood),
         InputNode(id++, InputSource::DistToCreature),
-        InputNode(id++, InputSource::DirToCreature)
+        InputNode(id++, InputSource::DirToCreature),
+        InputNode(id++, InputSource::DistToCarcass),
+        InputNode(id++, InputSource::DirToCarcass)
     };
 };
 
