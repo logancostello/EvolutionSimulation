@@ -93,7 +93,7 @@ void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
             next_value = registry.get<VisionSensors>(entity).dist_to_carcass;
             break;
         case InputSource::DirToCarcass:
-            next_value = registry.get<VisionSensors>(entity).dir_to_creature;
+            next_value = registry.get<VisionSensors>(entity).dir_to_carcass;
             break;
     }
 };
