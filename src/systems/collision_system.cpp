@@ -21,11 +21,11 @@ void CollisionSystem::update(QuadTree& lookup_tree) {
             auto& b_pos = registry.get<Position>(b);
             auto& b_size = registry.get<Size>(b);
 
-            if (registry.all_of<Creature>(a) && registry.all_of<Plant>(b)) {
+            if (registry.all_of<Creature>(a) && registry.all_of<FoodEnergy>(b)) {
                 handle_eating(a, b);
                 if (registry.all_of<Dead>(b)) continue;
             }
-            if (registry.all_of<Creature>(b) && registry.all_of<Plant>(a)) {
+            if (registry.all_of<Creature>(b) && registry.all_of<FoodEnergy>(a)) {
                 handle_eating(b, a);
                 if (registry.all_of<Dead>(a)) continue;
             }
@@ -57,25 +57,26 @@ void CollisionSystem::update(QuadTree& lookup_tree) {
     }
 }
 
-void CollisionSystem::handle_eating(entt::entity creature, entt::entity plant) {
+void CollisionSystem::handle_eating(entt::entity creature, entt::entity food) {
 
-    if (registry.all_of<Dead>(creature) || registry.all_of<Dead>(plant)) return;
+    if (registry.all_of<Dead>(creature) || registry.all_of<Dead>(food)) return;
 
     auto& c_pos = registry.get<Position>(creature);
     auto& c_size = registry.get<Size>(creature);
-    auto& c_energy = registry.get<Energy>(creature);
+    auto& c_energy = registry.get<CreatureEnergy>(creature);
 
-    auto& p_pos = registry.get<Position>(plant);
-    auto& p_size = registry.get<Size>(plant);
+    auto& f_pos = registry.get<Position>(food);
+    auto& f_size = registry.get<Size>(food);
+    auto& f_energy = registry.get<FoodEnergy>(food);
     
-    float dx = c_pos.x - p_pos.x;
-    float dy = c_pos.y - p_pos.y;
+    float dx = c_pos.x - f_pos.x;
+    float dy = c_pos.y - f_pos.y;
     float sqr_dist = dx * dx + dy * dy;
-    float collision_dist = c_size.radius + p_size.radius;
+    float collision_dist = c_size.radius + f_size.radius;
     float sqr_collision_dist = collision_dist * collision_dist;
     
     if (sqr_dist < sqr_collision_dist) {
-        c_energy.energy += 5;
-        registry.emplace<Dead>(plant);
+        c_energy.energy += f_energy.energy;
+        registry.emplace<Dead>(food);
     }
 }

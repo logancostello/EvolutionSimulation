@@ -23,7 +23,7 @@ add_executable(main
     src/factories/plant_factory.cpp
     src/systems/movement_system.cpp
     src/systems/metabolism_system.cpp
-    src/systems/cleanup_system.cpp
+    src/systems/death_system.cpp
     src/systems/collision_system.cpp
     src/systems/reproduction_system.cpp
     src/components/brain/brain.cpp
@@ -35,6 +35,7 @@ add_executable(main
     src/mutators/brain_mutator.cpp
     src/systems/plant_system.cpp
     src/quad_tree.cpp
+    src/factories/carcass_factory.cpp
 )
 
 target_include_directories(main PRIVATE src/)

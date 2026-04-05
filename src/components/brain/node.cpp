@@ -75,7 +75,7 @@ void Node::update(float dt) {
 void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
     switch (input_source) {
         case InputSource::Energy:
-            next_value = registry.get<Energy>(entity).energy;
+            next_value = registry.get<CreatureEnergy>(entity).energy;
             break;
         case InputSource::DistToFood:
             next_value = registry.get<VisionSensors>(entity).dist_to_food;
@@ -88,6 +88,12 @@ void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
             break;
         case InputSource::DirToCreature:
             next_value = registry.get<VisionSensors>(entity).dir_to_creature;
+            break;
+        case InputSource::DistToCarcass:
+            next_value = registry.get<VisionSensors>(entity).dist_to_carcass;
+            break;
+        case InputSource::DirToCarcass:
+            next_value = registry.get<VisionSensors>(entity).dir_to_carcass;
             break;
     }
 };

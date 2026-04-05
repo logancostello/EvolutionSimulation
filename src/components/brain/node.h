@@ -7,7 +7,9 @@ enum class InputSource {
     DistToFood,
     DirToFood,
     DistToCreature,
-    DirToCreature
+    DirToCreature,
+    DistToCarcass,
+    DirToCarcass
 };
 
 enum class OutputSource {

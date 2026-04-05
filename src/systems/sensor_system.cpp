@@ -33,8 +33,10 @@ void SensorSystem::update(QuadTree& lookup_tree) {
     for (auto [c_entity, c_pos, vision, vel] : creature_view.each()) {
         entt::entity closest_plant = lookup_tree.query_closest(c_entity, c_pos.x, c_pos.y, VIEW_DISTANCE, EntityTag::Plant);
         entt::entity closest_creature = lookup_tree.query_closest(c_entity, c_pos.x, c_pos.y, VIEW_DISTANCE, EntityTag::Creature);
+        entt::entity closest_carcass = lookup_tree.query_closest(c_entity, c_pos.x, c_pos.y, VIEW_DISTANCE, EntityTag::Carcass);
 
         set_direction(c_pos, vel, closest_plant, registry, vision.dist_to_food, vision.dir_to_food);
         set_direction(c_pos, vel, closest_creature, registry, vision.dist_to_creature, vision.dir_to_creature);
+        set_direction(c_pos, vel, closest_carcass, registry, vision.dist_to_carcass, vision.dir_to_carcass);
     }
 }
