@@ -2,6 +2,7 @@
 #include <entt/entt.hpp>
 #include "factories/creature_factory.h"
 #include "factories/plant_factory.h"
+#include "factories/carcass_factory.h"
 #include "systems/movement_system.h"
 #include "systems/metabolism_system.h"
 #include "systems/death_system.h"
@@ -27,6 +28,7 @@ class Simulation {
         QuadTree entity_lookup_tree;
         CreatureFactory creature_factory;
         PlantFactory plant_factory;
+        CarcassFactory carcass_factory;
         BrainMutator brain_mutator;
         MovementSystem movement_system;
         MetabolismSystem metabolism_system;

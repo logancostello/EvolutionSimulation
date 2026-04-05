@@ -35,6 +35,7 @@ add_executable(main
     src/mutators/brain_mutator.cpp
     src/systems/plant_system.cpp
     src/quad_tree.cpp
+    src/factories/carcass_factory.cpp
 )
 
 target_include_directories(main PRIVATE src/)
