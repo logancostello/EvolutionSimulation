@@ -1,10 +1,10 @@
-#include "systems/cleanup_system.h"
+#include "systems/death_system.h"
 #include <entt/entt.hpp>
 #include "components/components.h"
 
-CleanupSystem::CleanupSystem(entt::registry& registry) : registry(registry) {};
+DeathSystem::DeathSystem(entt::registry& registry) : registry(registry) {};
 
-void CleanupSystem::update() {
+void DeathSystem::update() {
     auto view = registry.view<Dead>();
     std::vector<entt::entity> to_destroy(view.begin(), view.end());
 

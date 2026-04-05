@@ -23,7 +23,7 @@ add_executable(main
     src/factories/plant_factory.cpp
     src/systems/movement_system.cpp
     src/systems/metabolism_system.cpp
-    src/systems/cleanup_system.cpp
+    src/systems/death_system.cpp
     src/systems/collision_system.cpp
     src/systems/reproduction_system.cpp
     src/components/brain/brain.cpp

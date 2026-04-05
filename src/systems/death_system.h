@@ -1,8 +1,8 @@
 #include <entt/entt.hpp>
 
-class CleanupSystem {
+class DeathSystem {
     public:
-        CleanupSystem(entt::registry& registry);
+        DeathSystem(entt::registry& registry);
         void update();
 
     private:
