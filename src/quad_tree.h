@@ -13,7 +13,8 @@ const int MAX_OVERFLOW = 100;
 enum class EntityTag : uint8_t {
     Any, // not meant to be assigned, but to be used when querying
     Plant,
-    Creature
+    Creature,
+    Carcass
 };
 
 struct QuadEntity {

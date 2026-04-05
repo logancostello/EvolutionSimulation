@@ -49,6 +49,11 @@ void Simulation::build_entity_lookup_tree() {
     for (auto [entity, pos] : creature_view.each()) {
         entity_lookup_tree.insert(0, entity, pos.x, pos.y, EntityTag::Creature);
     }
+
+    auto carcass_view = registry.view<Position, Carcass>();
+    for (auto [entity, pos] : carcass_view.each()) {
+        entity_lookup_tree.insert(0, entity, pos.x, pos.y, EntityTag::Carcass);
+    }
 }
 
 void Simulation::update(float dt) {
