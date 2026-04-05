@@ -67,6 +67,7 @@ void CollisionSystem::handle_eating(entt::entity creature, entt::entity plant) {
 
     auto& p_pos = registry.get<Position>(plant);
     auto& p_size = registry.get<Size>(plant);
+    auto& p_energy = registry.get<FoodEnergy>(plant);
     
     float dx = c_pos.x - p_pos.x;
     float dy = c_pos.y - p_pos.y;
@@ -75,7 +76,7 @@ void CollisionSystem::handle_eating(entt::entity creature, entt::entity plant) {
     float sqr_collision_dist = collision_dist * collision_dist;
     
     if (sqr_dist < sqr_collision_dist) {
-        c_energy.energy += 5;
+        c_energy.energy += p_energy.energy;
         registry.emplace<Dead>(plant);
     }
 }
