@@ -8,7 +8,7 @@ struct Position {
 struct Velocity { float mag, dir, turn_rate; };
 struct Color { int r, g, b; };
 struct Size { float radius; };
-struct Energy { float energy; };
+struct CreatureEnergy { float energy; };
 struct Dead {};
 struct Creature {};
 struct Plant {};

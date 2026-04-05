@@ -63,7 +63,7 @@ void CollisionSystem::handle_eating(entt::entity creature, entt::entity plant) {
 
     auto& c_pos = registry.get<Position>(creature);
     auto& c_size = registry.get<Size>(creature);
-    auto& c_energy = registry.get<Energy>(creature);
+    auto& c_energy = registry.get<CreatureEnergy>(creature);
 
     auto& p_pos = registry.get<Position>(plant);
     auto& p_size = registry.get<Size>(plant);

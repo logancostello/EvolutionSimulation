@@ -6,7 +6,7 @@ MetabolismSystem::MetabolismSystem(entt::registry& registry) : registry(registry
 void MetabolismSystem::update(float dt) {
 
     // Remove energy each frame (for now fixed amount)
-    auto view = registry.view<Energy>();
+    auto view = registry.view<CreatureEnergy>();
     for (auto [entity, energy] : view.each()) {
         energy.energy -= 1 * dt;
 
