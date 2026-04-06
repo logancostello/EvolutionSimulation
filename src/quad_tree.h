@@ -54,6 +54,7 @@ class QuadTree {
     public:
         QuadTree(float world_size_x, float world_size_y);
         void insert(int node_idx, entt::entity entity, float x, float y, EntityTag tag);
+        void remove(int node_idx, entt::entity entity, float x, float y);
         void reset();
         void update_bounds(float x, float y);
         void query(float x, float y, float radius, std::vector<entt::entity>& out);
@@ -80,4 +81,5 @@ class QuadTree {
         int get_child(QuadNode&, float x, float y);
         void query_node(int node_idx, float x, float y, float radius, std::vector<entt::entity>& out); 
         void collect_leaf(int node_idx, std::vector<entt::entity>& out);
+        void check_closest(QuadEntity& e, entt::entity self, float x, float y, EntityTag tag, float& closest_sqr_dist, entt::entity& closest_entity);
 };
