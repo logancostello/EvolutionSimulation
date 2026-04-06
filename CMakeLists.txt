@@ -36,6 +36,7 @@ add_executable(main
     src/systems/plant_system.cpp
     src/quad_tree.cpp
     src/factories/carcass_factory.cpp
+    src/systems/spatial_index_system.cpp
 )
 
 target_include_directories(main PRIVATE src/)

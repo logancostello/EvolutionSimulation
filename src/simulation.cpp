@@ -11,8 +11,8 @@ Simulation::Simulation(entt::registry& registry)
     : time(0.0f)
     , world_size_x(WORLD_SIZE_X)
     , world_size_y(WORLD_SIZE_Y)
-    , registry(registry)
     , entity_lookup_tree(world_size_x, world_size_y)
+    , spatial_index_system(registry, entity_lookup_tree)
     , creature_factory(registry)
     , plant_factory(registry)
     , carcass_factory(registry)
@@ -37,35 +37,9 @@ void Simulation::initialize() {
     }
 }
 
-void Simulation::build_entity_lookup_tree() {
-
-    auto dirty_view = registry.view<OldPosition, Position>();
-    for (auto [entity, old_pos, pos] : dirty_view.each()) {
-        entity_lookup_tree.update_bounds(pos.x, pos.y);
-        registry.remove<OldPosition>(entity);
-    }
-
-    entity_lookup_tree.reset();
-
-    auto plant_view = registry.view<Position, Plant>();
-    for (auto [entity, pos] : plant_view.each()) {
-        entity_lookup_tree.insert(0, entity, pos.x, pos.y, EntityTag::Plant);
-    }
-
-    auto creature_view = registry.view<Position, Creature>();
-    for (auto [entity, pos] : creature_view.each()) {
-        entity_lookup_tree.insert(0, entity, pos.x, pos.y, EntityTag::Creature);
-    }
-
-    auto carcass_view = registry.view<Position, Carcass>();
-    for (auto [entity, pos] : carcass_view.each()) {
-        entity_lookup_tree.insert(0, entity, pos.x, pos.y, EntityTag::Carcass);
-    }
-}
-
 void Simulation::update(float dt) {
-    build_entity_lookup_tree();
 
+    spatial_index_system.update();
     plant_system.update(dt, world_size_x, world_size_y);
     sensor_system.update(entity_lookup_tree);
     thinking_system.update(dt);

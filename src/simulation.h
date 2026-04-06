@@ -13,6 +13,7 @@
 #include "mutators/brain_mutator.h"
 #include "systems/plant_system.h"
 #include "quad_tree.h"
+#include "systems/spatial_index_system.h"
 
 class Simulation {
     public:
@@ -24,8 +25,8 @@ class Simulation {
         float time;
         int world_size_x;
         int world_size_y;
-        entt::registry& registry;
         QuadTree entity_lookup_tree;
+        SpatialIndexSystem spatial_index_system;
         CreatureFactory creature_factory;
         PlantFactory plant_factory;
         CarcassFactory carcass_factory;
@@ -38,6 +39,4 @@ class Simulation {
         ThinkingSystem thinking_system;
         SensorSystem sensor_system;
         PlantSystem plant_system;
-
-        void build_entity_lookup_tree();
 };
