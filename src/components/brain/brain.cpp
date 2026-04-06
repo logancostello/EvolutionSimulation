@@ -109,7 +109,12 @@ void Brain::remove_random_edge() {
     edges.erase(edges.begin() + index);
 }
 
-void Brain::add_random_node() {
+void Brain::add_random_unconnected_node() {
+    Node node = Node(next_node_id++);
+    hidden_nodes.push_back(node);
+}
+
+void Brain::add_random_connected_node() {
     if (edges.empty()) return;
     int index = Random::int_range(0, edges.size() - 1);
     Edge& edge = edges[index];

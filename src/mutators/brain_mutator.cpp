@@ -9,10 +9,11 @@ const float PROB_BIAS_CHANGE = 0.3;
 const float PROB_TAU_CHANGE = 0.2;        
 const float PROB_NEW_EDGE = 0.2;          
 const float PROB_REMOVE_EDGE = 0.05;      
-const float PROB_NEW_NODE = 0.1;          
+const float PROB_NEW_NODE_UNCONNECTED = 0.08;
+const float PROB_NEW_NODE_CONNECTED = 0.02;          
 const float PROB_REMOVE_NODE = 0.02;      
 const float PROB_MUTATE_ACT = 0.05;  
-     
+
 const float WEIGHT_OFFSET_MEAN = 0;       
 const float WEIGHT_OFFSET_STD = 0.3;      
 const float BIAS_OFFSET_MEAN = 0;         
@@ -48,8 +49,12 @@ void BrainMutator::mutate(entt::entity entity) {
         brain.remove_random_edge();
     }
 
-    if (Random::float_range() < PROB_NEW_NODE) {
-        brain.add_random_node();
+    if (Random::float_range() < PROB_NEW_NODE_UNCONNECTED) {
+        brain.add_random_unconnected_node();
+    }
+
+    if (Random::float_range() < PROB_NEW_NODE_CONNECTED) {
+        brain.add_random_connected_node();
     }
 
     if (Random::float_range() < PROB_REMOVE_NODE) {
