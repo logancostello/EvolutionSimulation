@@ -28,7 +28,8 @@ struct Brain {
 
     void add_random_edge();
     void remove_random_edge();
-    void add_random_node();
+    void add_random_unconnected_node();
+    void add_random_connected_node();
     void remove_random_node();
 
     private:
