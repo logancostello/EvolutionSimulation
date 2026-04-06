@@ -45,6 +45,13 @@ void QuadTree::reset() {
     root = alloc_node(global_xmin, global_xmax, global_ymin, global_ymax, 0);
 }
 
+void QuadTree::update_bounds(float x, float y) {
+    if (x < global_xmin) global_xmin = x;
+    if (x > global_xmax) global_xmax = x;
+    if (y < global_ymin) global_ymin = y;
+    if (y > global_ymax) global_ymax = y;
+}
+
 int QuadTree::get_child(QuadNode& parent, float x, float y) {
     for (int i = 0; i < 4; i++) {
         int child_idx = parent.children[i];

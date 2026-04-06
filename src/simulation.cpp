@@ -38,6 +38,13 @@ void Simulation::initialize() {
 }
 
 void Simulation::build_entity_lookup_tree() {
+
+    auto dirty_view = registry.view<DirtyPosition, Position>();
+    for (auto [entity, pos] : dirty_view.each()) {
+        entity_lookup_tree.update_bounds(pos.x, pos.y);
+        registry.remove<DirtyPosition>(entity);
+    }
+
     entity_lookup_tree.reset();
 
     auto plant_view = registry.view<Position, Plant>();
