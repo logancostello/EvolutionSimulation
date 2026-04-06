@@ -16,7 +16,7 @@ void CreatureFactory::spawn_random(int world_size_x, int world_size_y, float tim
         Random::float_range(world_size_x / -2.0f, world_size_x / 2.0f),
         Random::float_range(world_size_y / -2.0f, world_size_y / 2.0f)
     );
-    registry.emplace<DirtyPosition>(creature);
+    registry.emplace<OldPosition>(creature);
     registry.emplace<Velocity>(creature, 0, 0);
     registry.emplace<Color>(creature, 255, 255, 255);
     registry.emplace<Size>(creature, 5.0f);
@@ -42,7 +42,7 @@ entt::entity CreatureFactory::spawn_child(entt::entity parent, float time) {
     float spawn_y = parent_pos.y + std::sin(behind_angle) * 20.0f;
 
     registry.emplace<Position>(child, spawn_x, spawn_y);
-    registry.emplace<DirtyPosition>(child);
+    registry.emplace<OldPosition>(child);
     registry.emplace<Velocity>(child, parent_vel.mag, parent_vel.dir);
     registry.emplace<Color>(child, 255, 255, 255);
     registry.emplace<Size>(child, 5.0f);

@@ -36,6 +36,10 @@ void CollisionSystem::update(QuadTree& lookup_tree) {
             float collision_dist = a_size.radius + b_size.radius;
 
             if (sqr_dist >= collision_dist * collision_dist) continue;
+
+            registry.emplace_or_replace<OldPosition>(a, a_pos.x, a_pos.y);
+            registry.emplace_or_replace<OldPosition>(b, b_pos.x, b_pos.y);
+
             if (sqr_dist == 0.f) {
                 a_pos.x += 0.1f;
                 b_pos.x -= 0.1f;
@@ -53,9 +57,6 @@ void CollisionSystem::update(QuadTree& lookup_tree) {
             a_pos.y += ny * overlap * 0.5f;
             b_pos.x -= nx * overlap * 0.5f;
             b_pos.y -= ny * overlap * 0.5f;
-
-            registry.emplace_or_replace<DirtyPosition>(a);
-            registry.emplace_or_replace<DirtyPosition>(b);
         }
     }
 }

@@ -5,12 +5,12 @@ struct Position {
     float x, y; 
     Position(float x, float y) : x(x), y(y) {};
 };
+struct OldPosition { float x, y; };
 struct Velocity { float mag, dir, turn_rate; };
 struct Color { int r, g, b; };
 struct Size { float radius; };
 struct CreatureEnergy { float energy; };
 struct Dead {};
-struct DirtyPosition {};
 struct Creature {};
 struct Plant {};
 struct Carcass {};
