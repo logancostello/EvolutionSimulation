@@ -10,5 +10,6 @@ void MovementSystem::update(float dt) {
         vel.dir += vel.turn_rate * dt;
         pos.x += std::cos(vel.dir) * vel.mag * dt;
         pos.y += std::sin(vel.dir) * vel.mag * dt;
+        registry.emplace_or_replace<DirtyPosition>(entity);
     }
 }

@@ -10,6 +10,7 @@ struct Color { int r, g, b; };
 struct Size { float radius; };
 struct CreatureEnergy { float energy; };
 struct Dead {};
+struct DirtyPosition {};
 struct Creature {};
 struct Plant {};
 struct Carcass {};

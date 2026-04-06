@@ -53,6 +53,9 @@ void CollisionSystem::update(QuadTree& lookup_tree) {
             a_pos.y += ny * overlap * 0.5f;
             b_pos.x -= nx * overlap * 0.5f;
             b_pos.y -= ny * overlap * 0.5f;
+
+            registry.emplace_or_replace<DirtyPosition>(a);
+            registry.emplace_or_replace<DirtyPosition>(b);
         }
     }
 }
