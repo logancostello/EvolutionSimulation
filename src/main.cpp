@@ -5,6 +5,7 @@
 #include "simulation.h"
 #include "components/components.h"
 #include "systems/renderer.h"
+#include <iostream>
 
 int main(int argc, char* argv[]) {
 
@@ -19,6 +20,7 @@ int main(int argc, char* argv[]) {
     } else {
         Random::seed();
     }
+    std::cout << "Seed: " << Random::get_seed() << std::endl;
 
 
     sf::RenderWindow window(

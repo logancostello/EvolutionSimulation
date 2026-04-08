@@ -1,6 +1,7 @@
 #include "random.h"
 
 namespace Random {
+
     std::mt19937& rng() {
         static std::random_device rd;
         static std::mt19937 gen(rd());
@@ -9,11 +10,17 @@ namespace Random {
 
     void seed(uint32_t s) {
         rng().seed(s);
+        current_seed = s;
     }
 
     void seed() {
         std::random_device rd;
-        rng().seed(rd());
+        current_seed = rd();           
+        rng().seed(current_seed);
+    }
+
+    uint32_t get_seed() {
+        return current_seed;
     }
 
     int int_range(int min, int max) {
