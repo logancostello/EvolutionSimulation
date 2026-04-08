@@ -53,13 +53,11 @@ void QuadTree::update_bounds(float x, float y) {
 }
 
 int QuadTree::get_child(QuadNode& parent, float x, float y) {
-    for (int i = 0; i < 4; i++) {
-        int child_idx = parent.children[i];
-        if (node_pool[child_idx].contains(x, y)) {
-            return child_idx;
-        }
-    }
-    return -1;
+    float xmid = (parent.xmin + parent.xmax) * 0.5f;
+    float ymid = (parent.ymin + parent.ymax) * 0.5f;
+    int xi = x >= xmid ? 1 : 0;
+    int yi = y >= ymid ? 1 : 0;
+    return parent.children[yi * 2 + xi];
 }
 
 int QuadTree::alloc_node(float xmin, float xmax, float ymin, float ymax, int depth) {
@@ -148,6 +146,8 @@ void QuadTree::divide_node(int node_idx) {
 
 void QuadTree::remove(int node_idx, entt::entity entity, float x, float y) {
     QuadNode& node = node_pool[node_idx];
+
+    if (!node.contains(x, y)) return;
 
     if (node.is_leaf()) {
         for (int i = 0; i < node.count; i++) {
