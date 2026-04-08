@@ -33,12 +33,13 @@ int main(int argc, char* argv[]) {
     window.setView(view);
 
     entt::registry registry;
-    Simulation sim = Simulation(registry);
-    Renderer renderer = Renderer();
+    auto sim = std::make_unique<Simulation>(registry);
+    auto renderer = Renderer();
+
 
     float dt = 1 / 60.0f;
 
-    sim.initialize();
+    sim->initialize();
 
     bool panning = false;
     sf::Vector2i last_mouse_pos;
@@ -114,7 +115,7 @@ int main(int argc, char* argv[]) {
 
         window.clear(sf::Color(15, 15, 20));
 
-        if (!paused) sim.update(dt);
+        if (!paused) sim->update(dt);
 
         renderer.draw(window, registry);
 

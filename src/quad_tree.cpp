@@ -45,14 +45,19 @@ void QuadTree::reset() {
     root = alloc_node(global_xmin, global_xmax, global_ymin, global_ymax, 0);
 }
 
+void QuadTree::update_bounds(float x, float y) {
+    if (x < global_xmin) global_xmin = x;
+    if (x > global_xmax) global_xmax = x;
+    if (y < global_ymin) global_ymin = y;
+    if (y > global_ymax) global_ymax = y;
+}
+
 int QuadTree::get_child(QuadNode& parent, float x, float y) {
-    for (int i = 0; i < 4; i++) {
-        int child_idx = parent.children[i];
-        if (node_pool[child_idx].contains(x, y)) {
-            return child_idx;
-        }
-    }
-    return -1;
+    float xmid = (parent.xmin + parent.xmax) * 0.5f;
+    float ymid = (parent.ymin + parent.ymax) * 0.5f;
+    int xi = x >= xmid ? 1 : 0;
+    int yi = y >= ymid ? 1 : 0;
+    return parent.children[yi * 2 + xi];
 }
 
 int QuadTree::alloc_node(float xmin, float xmax, float ymin, float ymax, int depth) {
@@ -139,6 +144,35 @@ void QuadTree::divide_node(int node_idx) {
     node.count = 0;
 }
 
+void QuadTree::remove(int node_idx, entt::entity entity, float x, float y) {
+    QuadNode& node = node_pool[node_idx];
+
+    if (!node.contains(x, y)) return;
+
+    if (node.is_leaf()) {
+        for (int i = 0; i < node.count; i++) {
+            if (node.entities[i].entity == entity) {
+                node.entities[i].entity = entt::null;
+                return;
+            }
+        }
+
+        if (node.overflow != -1) {
+            QuadOverflow& overflow = overflow_pool[node.overflow];
+            for (int i = 0; i < overflow.count; i++) {
+                if (overflow.entities[i].entity == entity) {
+                    overflow.entities[i].entity = entt::null;
+                    return;
+                }
+            }
+        }
+
+    } else {
+        int correct_child_idx = get_child(node, x, y);
+        remove(correct_child_idx, entity, x, y);
+    }
+}
+
 void QuadTree::query(float x, float y, float radius, std::vector<entt::entity>& out) {
     query_node(root, x, y, radius, out);
 }
@@ -161,14 +195,28 @@ void QuadTree::collect_leaf(int node_idx, std::vector<entt::entity>& out) {
     QuadNode& node = node_pool[node_idx];
 
     for (int i = 0; i < node.count; i++) {
+        if (node.entities[i].entity == entt::null) continue;
         out.push_back(node.entities[i].entity);
     }
 
     if (node.overflow != -1) {
         QuadOverflow& overflow = overflow_pool[node.overflow];
         for (int i = 0; i < overflow.count; i++) {
+            if (overflow.entities[i].entity == entt::null) continue;
             out.push_back(overflow.entities[i].entity);
         }
+    }
+}
+
+void QuadTree::check_closest(QuadEntity& e, entt::entity self, float x, float y, EntityTag tag, float& closest_sqr_dist, entt::entity& closest_entity) {
+    if (e.entity == self || e.entity == entt::null) return;
+    if (tag != EntityTag::Any && tag != e.tag) return;
+    float dx = x - e.x;
+    float dy = y - e.y;
+    float sqr_dist = dx * dx + dy * dy;
+    if (sqr_dist < closest_sqr_dist) {
+        closest_sqr_dist = sqr_dist;
+        closest_entity = e.entity;
     }
 }
 
@@ -185,29 +233,22 @@ entt::entity QuadTree::query_closest(entt::entity self, float x, float y, float 
         QuadNode& node = node_pool[node_idx];
 
         if (node.is_leaf()) {
-            for (int i = 0; i < node.count; i++) {
-                QuadEntity& e = node.entities[i];
+            for (int i = 0; i < node.count; i++)
+                check_closest(node.entities[i], self, x, y, tag, closest_sqr_dist, closest_entity);
 
-                if (e.entity == self) continue;
-                if (tag != EntityTag::Any && tag != e.tag) continue;
-
-                float dx = x - e.x;
-                float dy = y - e.y;
-                float sqr_dist = dx * dx + dy * dy;
-                if (sqr_dist < closest_sqr_dist) {
-                    closest_sqr_dist = sqr_dist;
-                    closest_entity = e.entity;
-                }
+            if (node.overflow != -1) {
+                QuadOverflow& overflow = overflow_pool[node.overflow];
+                for (int i = 0; i < overflow.count; i++)
+                    check_closest(overflow.entities[i], self, x, y, tag, closest_sqr_dist, closest_entity);
             }
+
         } else {
             for (int child_idx : node.children) {
                 QuadNode& child_node = node_pool[child_idx];
-                if (child_node.intersects_circle_sqr(x, y, closest_sqr_dist)) {
+                if (child_node.intersects_circle_sqr(x, y, closest_sqr_dist))
                     stack.push(child_idx);
-                }
             }
         }
-
     }
     return closest_entity;
-};
+}

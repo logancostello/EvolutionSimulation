@@ -10,6 +10,7 @@ void CarcassFactory::spawn_carcass(entt::entity creature) {
 
     entt::entity carcass = registry.create();
     registry.emplace<Position>(carcass, creature_pos);
+    registry.emplace<OldPosition>(carcass);
     registry.emplace<Size>(carcass, creature_size);
     registry.emplace<Color>(carcass, 160, 0, 0);
     registry.emplace<FoodEnergy>(carcass, 5);
