@@ -7,7 +7,7 @@ const int BUCKET_SIZE = 4;
 const int OVERFLOW_SIZE = 16;
 
 const int MAX_DEPTH = 8;
-const int MAX_NODES = 65536; // 2 ^ (2 * MAX_NODES)
+const int MAX_NODES = 87382; // max for depth 8
 const int MAX_OVERFLOW = 100;
 
 enum class EntityTag : uint8_t {
