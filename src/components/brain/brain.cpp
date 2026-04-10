@@ -51,7 +51,9 @@ void Brain::clear_next_values() {
 
 void Brain::apply_weights() {
     for (Edge& edge : edges) {
-        get_node(edge.to_node).next_value += get_node(edge.from_node).value * edge.weight;
+        Node& from_node = get_node(edge.from_node);
+        Node& to_node = get_node(edge.to_node);
+        to_node.accept_input(from_node.value * edge.weight);
     }
 }
 

@@ -72,6 +72,13 @@ void Node::update(float dt) {
     value = value + d_value * dt;
 }
 
+void Node::accept_input(float value) {
+    switch(aggregator) {
+        case Aggregator::Sum:
+            next_value += value;
+    }
+}
+
 void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
     switch (input_source) {
         case InputSource::Energy:
