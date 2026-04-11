@@ -1,26 +1,24 @@
 #include "factories/brain_factory.h"
 #include "components/components.h"
 
-int id = 0;
-
 BrainFactory::BrainFactory(entt::registry& registry) : registry(registry) {};
 
 std::vector<InputNode> BrainFactory::get_basic_inputs() {
     return {
-        InputNode(id++, InputSource::Energy),
-        InputNode(id++, InputSource::DistToFood),
-        InputNode(id++, InputSource::DirToFood),
-        InputNode(id++, InputSource::DistToCreature),
-        InputNode(id++, InputSource::DirToCreature),
-        InputNode(id++, InputSource::DistToCarcass),
-        InputNode(id++, InputSource::DirToCarcass)
+        InputNode(0, InputSource::Energy),
+        InputNode(1, InputSource::DistToFood),
+        InputNode(2, InputSource::DirToFood),
+        InputNode(3, InputSource::DistToCreature),
+        InputNode(4, InputSource::DirToCreature),
+        InputNode(5, InputSource::DistToCarcass),
+        InputNode(6, InputSource::DirToCarcass)
     };
 };
 
 std::vector<OutputNode> BrainFactory::get_basic_outputs() {
     return {
-        OutputNode(id++, OutputSource::VelocityMag, ActivationRange::ZeroToOne),
-        OutputNode(id++, OutputSource::VelocityTurnRate, ActivationRange::NegOneToOne)
+        OutputNode(7, OutputSource::VelocityMag, ActivationRange::ZeroToOne),
+        OutputNode(8, OutputSource::VelocityTurnRate, ActivationRange::NegOneToOne)
     };
 };
 

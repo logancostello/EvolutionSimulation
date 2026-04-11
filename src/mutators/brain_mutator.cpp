@@ -13,6 +13,7 @@ const float PROB_NEW_NODE_UNCONNECTED = 0.08;
 const float PROB_NEW_NODE_CONNECTED = 0.02;          
 const float PROB_REMOVE_NODE = 0.02;      
 const float PROB_MUTATE_ACT = 0.05;  
+const float PROB_MUTATUE_AGG = 0.05;
 
 const float WEIGHT_OFFSET_MEAN = 0;       
 const float WEIGHT_OFFSET_STD = 0.3;      
@@ -81,6 +82,10 @@ void BrainMutator::mutate_nodes(std::vector<T>& nodes) {
 
         if (Random::float_range() < PROB_MUTATE_ACT) {
             node.activation_func = pick_random_activation_func(node.activation_range);
+        }
+
+        if (Random::float_range() < PROB_MUTATUE_AGG) {
+            node.aggregator = pick_random_aggregator();
         }
     }
 }

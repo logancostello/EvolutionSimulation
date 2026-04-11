@@ -40,7 +40,17 @@ enum class ActivationRange {
     Unbounded
 };
 
+enum class Aggregator {
+    Sum,
+    Product,
+    Min,
+    Max,
+    NumPos,
+    NumNeg
+};
+
 ActivationFunc pick_random_activation_func(ActivationRange range);
+Aggregator pick_random_aggregator();
 
 struct Node {
     int id;
@@ -51,6 +61,7 @@ struct Node {
     float tau_fall;
     ActivationRange activation_range;
     ActivationFunc activation_func;
+    Aggregator aggregator;
 
     Node(int id) 
         : id(id)
@@ -61,6 +72,7 @@ struct Node {
         , tau_fall(0.05)
         , activation_range(ActivationRange::Any)
         , activation_func(pick_random_activation_func(ActivationRange::Any))
+        , aggregator(Aggregator::Sum)
     {};
 
     Node(int id, ActivationRange activation_range) 
@@ -72,10 +84,13 @@ struct Node {
         , tau_fall(0.05)
         , activation_range(activation_range)
         , activation_func(pick_random_activation_func(activation_range))
+        , aggregator(Aggregator::Sum)
     {};
 
     void update(float dt);
-    float activate();   
+    float activate();
+    void reset_next_value();
+    void accept_input(float input);   
 };
 
 struct InputNode : Node {

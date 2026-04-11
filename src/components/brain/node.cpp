@@ -17,6 +17,15 @@ const std::vector<ActivationFunc> all_activation_funcs = {
     ActivationFunc::Quantize
 };
 
+const std::vector<Aggregator> all_aggregators = {
+    Aggregator::Sum,
+    Aggregator::Product,
+    Aggregator::Min,
+    Aggregator::Max,
+    Aggregator::NumPos,
+    Aggregator::NumNeg
+};
+
 const std::unordered_map<ActivationRange, std::vector<ActivationFunc>> funcs_by_range = {
     { ActivationRange::NegOneToOne, { ActivationFunc::Tanh, ActivationFunc::Sign, ActivationFunc::Sine, ActivationFunc::Softsign } },
     { ActivationRange::ZeroToOne,   { ActivationFunc::Sigmoid, ActivationFunc::Step } },
@@ -64,12 +73,63 @@ ActivationFunc pick_random_activation_func(ActivationRange range) {
     return options[index];
 }
 
+Aggregator pick_random_aggregator() {
+    int index = Random::int_range(0, all_aggregators.size() - 1);
+    return all_aggregators[index];
+}
+
 void Node::update(float dt) {
     next_value += bias;
     float target = activate();
     float tau = (target > value) ? tau_rise : tau_fall;
     float d_value = (-value + target) / tau;
     value = value + d_value * dt;
+}
+
+void Node::reset_next_value() {
+    switch(aggregator) {
+        case Aggregator::Sum:
+            next_value = 0;
+            break;
+        case Aggregator::Product:
+            next_value = 1;
+            break;
+        case Aggregator::Min:
+            next_value = std::numeric_limits<float>::max();
+            break;
+        case Aggregator::Max:
+            next_value = std::numeric_limits<float>::min();
+            break;
+        case Aggregator::NumPos:
+            next_value = 0;
+            break;
+        case Aggregator::NumNeg:
+            next_value = 0;
+            break;
+    } 
+}
+
+void Node::accept_input(float input) {
+    switch(aggregator) {
+        case Aggregator::Sum:
+            next_value += input;
+            break;
+        case Aggregator::Product:
+            next_value *= input;
+            break;
+        case Aggregator::Min:
+            next_value = std::min(next_value, input);
+            break;
+        case Aggregator::Max:
+            next_value = std::max(next_value, input);
+            break;
+        case Aggregator::NumPos:
+            if (input > 0) next_value += 1;
+            break;
+        case Aggregator::NumNeg:
+            if (input < 0) next_value += 1;
+            break;
+    }
 }
 
 void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
