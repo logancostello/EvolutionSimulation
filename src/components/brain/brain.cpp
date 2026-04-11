@@ -192,5 +192,6 @@ Brain Brain::clone() const {
     copy.output_nodes = output_nodes; 
     copy.hidden_nodes = hidden_nodes;
     copy.edges = edges;
+    copy.next_node_id = next_node_id;
     return copy;
 }
