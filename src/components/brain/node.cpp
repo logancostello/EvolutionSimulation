@@ -17,6 +17,15 @@ const std::vector<ActivationFunc> all_activation_funcs = {
     ActivationFunc::Quantize
 };
 
+const std::vector<Aggregator> all_aggregators = {
+    Aggregator::Sum,
+    Aggregator::Product,
+    Aggregator::Min,
+    Aggregator::Max,
+    Aggregator::NumPos,
+    Aggregator::NumNeg
+};
+
 const std::unordered_map<ActivationRange, std::vector<ActivationFunc>> funcs_by_range = {
     { ActivationRange::NegOneToOne, { ActivationFunc::Tanh, ActivationFunc::Sign, ActivationFunc::Sine, ActivationFunc::Softsign } },
     { ActivationRange::ZeroToOne,   { ActivationFunc::Sigmoid, ActivationFunc::Step } },
@@ -62,6 +71,11 @@ ActivationFunc pick_random_activation_func(ActivationRange range) {
     const auto& options = funcs_by_range.at(range);
     int index = Random::int_range(0, options.size() - 1);
     return options[index];
+}
+
+Aggregator pick_random_aggregator() {
+    int index = Random::int_range(0, all_aggregators.size() - 1);
+    return all_aggregators[index];
 }
 
 void Node::update(float dt) {

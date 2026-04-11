@@ -50,6 +50,7 @@ enum class Aggregator {
 };
 
 ActivationFunc pick_random_activation_func(ActivationRange range);
+Aggregator pick_random_aggregator();
 
 struct Node {
     int id;
