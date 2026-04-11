@@ -14,6 +14,7 @@
 #include "systems/plant_system.h"
 #include "quad_tree.h"
 #include "systems/spatial_index_system.h"
+#include "systems/environment_system.h"
 
 class Simulation {
     public:
@@ -39,4 +40,5 @@ class Simulation {
         ThinkingSystem thinking_system;
         SensorSystem sensor_system;
         PlantSystem plant_system;
+        EnvironmentSystem environment_system;
 };
