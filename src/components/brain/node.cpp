@@ -72,10 +72,49 @@ void Node::update(float dt) {
     value = value + d_value * dt;
 }
 
-void Node::accept_input(float value) {
+void Node::reset_next_value() {
     switch(aggregator) {
         case Aggregator::Sum:
-            next_value += value;
+            next_value = 0;
+            break;
+        case Aggregator::Product:
+            next_value = 1;
+            break;
+        case Aggregator::Min:
+            next_value = std::numeric_limits<float>::max();
+            break;
+        case Aggregator::Max:
+            next_value = std::numeric_limits<float>::min();
+            break;
+        case Aggregator::NumPos:
+            next_value = 0;
+            break;
+        case Aggregator::NumNeg:
+            next_value = 0;
+            break;
+    } 
+}
+
+void Node::accept_input(float input) {
+    switch(aggregator) {
+        case Aggregator::Sum:
+            next_value += input;
+            break;
+        case Aggregator::Product:
+            next_value *= input;
+            break;
+        case Aggregator::Min:
+            next_value = std::min(next_value, input);
+            break;
+        case Aggregator::Max:
+            next_value = std::max(next_value, input);
+            break;
+        case Aggregator::NumPos:
+            if (input > 0) next_value += 1;
+            break;
+        case Aggregator::NumNeg:
+            if (input < 0) next_value += 1;
+            break;
     }
 }
 

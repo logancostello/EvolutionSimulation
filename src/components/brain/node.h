@@ -41,7 +41,12 @@ enum class ActivationRange {
 };
 
 enum class Aggregator {
-    Sum
+    Sum,
+    Product,
+    Min,
+    Max,
+    NumPos,
+    NumNeg
 };
 
 ActivationFunc pick_random_activation_func(ActivationRange range);
@@ -83,7 +88,8 @@ struct Node {
 
     void update(float dt);
     float activate();
-    void accept_input(float value);   
+    void reset_next_value();
+    void accept_input(float input);   
 };
 
 struct InputNode : Node {

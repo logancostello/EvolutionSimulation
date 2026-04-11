@@ -37,16 +37,16 @@ Node& Brain::get_node(int id) {
 }
 
 void Brain::think(float dt, entt::registry& registry, entt::entity& entity) {
-    clear_next_values();
+    reset_next_values();
     load_inputs(registry, entity);
     apply_weights();
     update_nodes(dt);
 }
 
-void Brain::clear_next_values() {
-    for (Node& n : input_nodes) n.next_value = 0;
-    for (Node& n : output_nodes) n.next_value = 0;
-    for (Node& n : hidden_nodes) n.next_value = 0;
+void Brain::reset_next_values() {
+    for (Node& n : input_nodes) n.reset_next_value();
+    for (Node& n : output_nodes) n.reset_next_value();
+    for (Node& n : hidden_nodes) n.reset_next_value();
 }
 
 void Brain::apply_weights() {

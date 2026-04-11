@@ -35,7 +35,7 @@ struct Brain {
     private:
         int next_node_id;
         Node& get_node(int id);
-        void clear_next_values();
+        void reset_next_values();
         void apply_weights();
         void update_nodes(float dt);
         int get_random_node();
