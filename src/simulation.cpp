@@ -25,6 +25,7 @@ Simulation::Simulation(entt::registry& registry)
     , thinking_system(registry)
     , sensor_system(registry)
     , plant_system(plant_factory)
+    , environment_system(registry)
 {}
 
 void Simulation::initialize() {
@@ -40,6 +41,7 @@ void Simulation::initialize() {
 void Simulation::update(float dt) {
 
     spatial_index_system.update();
+    environment_system.update(dt);
     plant_system.update(dt, world_size_x, world_size_y);
     sensor_system.update(entity_lookup_tree);
     thinking_system.update(dt);
