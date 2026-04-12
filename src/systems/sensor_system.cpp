@@ -3,7 +3,7 @@
 #include <cmath>
 #include <limits>
 
-const int VIEW_DISTANCE = 200;
+const int VIEW_DISTANCE = 500;
 
 SensorSystem::SensorSystem(entt::registry& registry) : registry(registry) {};
 

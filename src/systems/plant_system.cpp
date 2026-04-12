@@ -1,6 +1,6 @@
 #include "systems/plant_system.h"
 
-const float TIME_PER_SPAWN = 0.25;
+const float TIME_PER_SPAWN = 0.15;
 
 void PlantSystem::update(float dt, int world_size_x, int world_size_y) {
     accumulated_time += dt;

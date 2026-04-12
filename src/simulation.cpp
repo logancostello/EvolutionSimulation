@@ -2,10 +2,10 @@
 #include "components/components.h"
 #include "limits"
 
-const int WORLD_SIZE_X = 2400;
-const int WORLD_SIZE_Y = 1800;
-const int NUM_INIT_CREATURES = 100;
-const int NUM_INIT_PLANTS = 500;
+const int WORLD_SIZE_X = 7500;
+const int WORLD_SIZE_Y = 7500;
+const int NUM_INIT_CREATURES = 2000;
+const int NUM_INIT_PLANTS = 2000;
 
 Simulation::Simulation(entt::registry& registry) 
     : time(0.0f)
