@@ -4,7 +4,7 @@
 
 const int WORLD_SIZE_X = 7500;
 const int WORLD_SIZE_Y = 7500;
-const int NUM_INIT_CREATURES = 2000;
+const int NUM_INIT_CREATURES = 150;
 const int NUM_INIT_PLANTS = 2000;
 
 Simulation::Simulation(entt::registry& registry) 
@@ -25,7 +25,7 @@ Simulation::Simulation(entt::registry& registry)
     , thinking_system(registry)
     , sensor_system(registry)
     , plant_system(plant_factory)
-    , environment_system(registry)
+    , environment_system(registry, creature_factory)
 {}
 
 void Simulation::initialize() {
@@ -41,7 +41,7 @@ void Simulation::initialize() {
 void Simulation::update(float dt) {
 
     spatial_index_system.update();
-    environment_system.update(dt);
+    environment_system.update(dt, world_size_x, world_size_y, time);
     plant_system.update(dt, world_size_x, world_size_y);
     sensor_system.update(entity_lookup_tree);
     thinking_system.update(dt);
