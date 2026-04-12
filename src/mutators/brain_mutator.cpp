@@ -8,7 +8,8 @@ const float PROB_WEIGHT_CHANGE = 0.4;
 const float PROB_BIAS_CHANGE = 0.3;       
 const float PROB_TAU_CHANGE = 0.2;        
 const float PROB_NEW_EDGE = 0.2;          
-const float PROB_REMOVE_EDGE = 0.05;      
+const float PROB_REMOVE_EDGE = 0.05; 
+const float PROB_SWAP_EDGE = 0.1f;    
 const float PROB_NEW_NODE_UNCONNECTED = 0.08;
 const float PROB_NEW_NODE_CONNECTED = 0.02;          
 const float PROB_REMOVE_NODE = 0.02;      
@@ -48,6 +49,10 @@ void BrainMutator::mutate(entt::entity entity) {
 
     if (Random::float_range() < PROB_REMOVE_EDGE) {
         brain.remove_random_edge();
+    }
+
+    if (Random::float_range() < PROB_SWAP_EDGE) {
+        brain.swap_random_edge();
     }
 
     if (Random::float_range() < PROB_NEW_NODE_UNCONNECTED) {

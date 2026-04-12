@@ -69,7 +69,7 @@ void Brain::add_random_edge() {
         int to_node = get_random_node();
         float weight = Random::float_range(-3, 3);
 
-        if (from_node == to_node) break;
+        if (from_node == to_node) continue;;
 
         // Check edge doesn't already exist
         bool exists = false;
@@ -109,6 +109,24 @@ void Brain::remove_random_edge() {
     if (edges.empty()) return;
     int index = Random::int_range(0, edges.size() - 1);
     edges.erase(edges.begin() + index);
+}
+
+void Brain::swap_random_edge() {
+    for (int i = 0; i < 10; i++) {
+        if (edges.empty()) return;
+        int edge_idx = Random::int_range(0, edges.size() - 1);
+        Edge edge = edges[edge_idx];
+        int id = get_random_node();
+
+        if (id == edge.to_node || id == edge.from_node) continue;
+
+        edges.erase(edges.begin() + edge_idx);
+        if (Random::float_range() < 0.5) {
+            edges.push_back(Edge(id, edge.to_node, edge.weight));
+        } else {
+            edges.push_back(Edge(edge.from_node, id, edge.weight));
+        }
+    }
 }
 
 void Brain::add_random_unconnected_node() {
