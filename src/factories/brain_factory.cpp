@@ -5,7 +5,7 @@ BrainFactory::BrainFactory(entt::registry& registry) : registry(registry) {};
 
 std::vector<InputNode> BrainFactory::get_basic_inputs() {
     return {
-        InputNode(0, InputSource::Energy),
+        InputNode(0, InputSource::EnergyRatio),
         InputNode(1, InputSource::DistToFood),
         InputNode(2, InputSource::DirToFood),
         InputNode(3, InputSource::DistToCreature),

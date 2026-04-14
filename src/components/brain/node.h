@@ -3,7 +3,7 @@
 #include "random.h"
 
 enum class InputSource {
-    Energy,
+    EnergyRatio,
     DistToFood,
     DirToFood,
     DistToCreature,
