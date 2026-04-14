@@ -46,7 +46,7 @@ void Simulation::update(float dt) {
     sensor_system.update(entity_lookup_tree);
     thinking_system.update(dt);
     movement_system.update(dt);
-    collision_system.update(entity_lookup_tree);
+    collision_system.update(entity_lookup_tree, dt);
     metabolism_system.update(dt);
     reproduction_system.update(time);
     death_system.update();
