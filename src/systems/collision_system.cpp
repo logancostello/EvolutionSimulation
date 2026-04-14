@@ -80,7 +80,14 @@ void CollisionSystem::handle_eating(entt::entity creature, entt::entity food) {
     float sqr_collision_dist = collision_dist * collision_dist;
     
     if (sqr_dist < sqr_collision_dist) {
-        c_energy.energy += f_energy.energy;
-        registry.emplace<Dead>(food);
+
+        if (c_energy.energy + f_energy.energy <= c_energy.max) {
+            c_energy.energy += f_energy.energy;
+            registry.emplace<Dead>(food);
+        } else {
+            float energy_consumed = c_energy.max - c_energy.energy;
+            c_energy.energy += energy_consumed;
+            f_energy.energy -= energy_consumed;
+        }
     }
 }
