@@ -4,7 +4,7 @@
 
 const int WORLD_SIZE_X = 7500;
 const int WORLD_SIZE_Y = 7500;
-const int NUM_INIT_CREATURES = 150;
+const int NUM_INIT_CREATURES = 500;
 const int NUM_INIT_PLANTS = 2000;
 
 Simulation::Simulation(entt::registry& registry) 
@@ -24,7 +24,7 @@ Simulation::Simulation(entt::registry& registry)
     , reproduction_system(registry, creature_factory, brain_mutator)
     , thinking_system(registry)
     , sensor_system(registry)
-    , plant_system(plant_factory)
+    , plant_system(plant_factory, registry)
     , environment_system(registry, creature_factory)
 {}
 
