@@ -1,7 +1,7 @@
 #include "reproduction_system.h"
 #include "components/components.h"
 
-const float TIME_FOR_REPRODUCTION = 12.5;
+const float ENERGY_FOR_REPRODUCTION = 20.0f;
 
 ReproductionSystem::ReproductionSystem(entt::registry& registry, CreatureFactory& creature_factory, BrainMutator& brain_mutator) 
     : registry(registry) 
@@ -9,19 +9,19 @@ ReproductionSystem::ReproductionSystem(entt::registry& registry, CreatureFactory
     , brain_mutator(brain_mutator)
 {};
 
-void ReproductionSystem::update(float time) {
-    auto view = registry.view<Creature, TimeOf>();
+void ReproductionSystem::update() {
+    auto view = registry.view<ChildEnergy>();
 
     std::vector<entt::entity> to_reproduce;
-    for (auto [entity, time_of] : view.each()) {
-        if (time - time_of.last_reproduction > TIME_FOR_REPRODUCTION) {
-            time_of.last_reproduction = time;
+    for (auto [entity, child_energy] : view.each()) {
+        if (child_energy.energy >= ENERGY_FOR_REPRODUCTION) {
+            child_energy.energy -= ENERGY_FOR_REPRODUCTION;
             to_reproduce.push_back(entity);
         }
     }
 
     for (auto entity : to_reproduce) {
-        entt::entity child = creature_factory.spawn_child(entity, time);
+        entt::entity child = creature_factory.spawn_child(entity);
         brain_mutator.mutate(child);
     }
 }
