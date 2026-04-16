@@ -1,7 +1,7 @@
 #include "systems/environment_system.h"
 #include "components/components.h"
 
-const float CARCASS_DECAY_RATE = 0.01;
+const float CARCASS_DECAY_RATE = 0.0025;
 const float IMMIGRATION_TIME = 20.0f;
 const int MIN_CREATURES = 25;
 
@@ -10,7 +10,7 @@ EnvironmentSystem::EnvironmentSystem(entt::registry& registry, CreatureFactory& 
     , creature_factory(creature_factory) 
 {};
 
-void EnvironmentSystem::update(float dt, float x, float y, float time) {
+void EnvironmentSystem::update(float dt, float x, float y) {
 
     // Decay all carcasses
     auto view = registry.view<FoodEnergy, Size, Carcass>();
@@ -25,7 +25,7 @@ void EnvironmentSystem::update(float dt, float x, float y, float time) {
     time_since_immigration += dt;
     if (time_since_immigration > IMMIGRATION_TIME) {
         time_since_immigration -= IMMIGRATION_TIME;
-        creature_factory.spawn_random(x, y, time);
+        creature_factory.spawn_random(x, y);
     }
 
     // Ensure always some creatures
@@ -33,6 +33,6 @@ void EnvironmentSystem::update(float dt, float x, float y, float time) {
     int num_creatures = creature_view.size();
     while (num_creatures < MIN_CREATURES) {
         num_creatures++;
-        creature_factory.spawn_random(x, y, time);
+        creature_factory.spawn_random(x, y);
     }
 }

@@ -31,7 +31,7 @@ Simulation::Simulation(entt::registry& registry)
 
 void Simulation::initialize() {
     for (int i = 0; i < NUM_INIT_CREATURES; i++) {
-        creature_factory.spawn_random(this->world_size_x, this->world_size_y, time);
+        creature_factory.spawn_random(this->world_size_x, this->world_size_y);
     }
 
     for (int i = 0; i < NUM_INIT_PLANTS; i++) {
@@ -42,7 +42,7 @@ void Simulation::initialize() {
 void Simulation::update(float dt) {
 
     spatial_index_system.update();
-    environment_system.update(dt, world_size_x, world_size_y, time);
+    environment_system.update(dt, world_size_x, world_size_y);
     plant_system.update(dt, world_size_x, world_size_y);
     sensor_system.update(entity_lookup_tree);
     thinking_system.update(dt);
@@ -50,7 +50,7 @@ void Simulation::update(float dt) {
     collision_system.update(entity_lookup_tree, dt);
     digestion_system.update(dt);
     metabolism_system.update(dt);
-    reproduction_system.update(time);
+    reproduction_system.update();
     death_system.update();
 
     time += dt;

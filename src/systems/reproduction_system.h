@@ -6,7 +6,7 @@
 class ReproductionSystem {
     public:
         ReproductionSystem(entt::registry& registry, CreatureFactory& creature_factory, BrainMutator& brain_mutator);
-        void update(float time);
+        void update();
     private:
         entt::registry& registry;
         CreatureFactory& creature_factory;
