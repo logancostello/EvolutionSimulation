@@ -18,3 +18,4 @@ struct TimeOf { float birth, last_reproduction; };
 struct VisionSensors { float dist_to_food, dir_to_food, dist_to_creature, dir_to_creature, dist_to_carcass, dir_to_carcass; };
 struct FoodEnergy { float energy; };
 struct Bite { float energy_per_sec; };
+struct Stomach { float potential_energy, max; };

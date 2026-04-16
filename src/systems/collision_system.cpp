@@ -67,7 +67,7 @@ void CollisionSystem::handle_eating(entt::entity creature, entt::entity food, fl
 
     auto& c_pos = registry.get<Position>(creature);
     auto& c_size = registry.get<Size>(creature);
-    auto& c_energy = registry.get<CreatureEnergy>(creature);
+    auto& c_stomach = registry.get<Stomach>(creature);
     auto& c_bite = registry.get<Bite>(creature);
 
     auto& f_pos = registry.get<Position>(food);
@@ -83,9 +83,9 @@ void CollisionSystem::handle_eating(entt::entity creature, entt::entity food, fl
     if (sqr_dist < sqr_collision_dist) {
 
         float possible_consumable_energy = std::min(f_energy.energy, c_bite.energy_per_sec * dt);
-        possible_consumable_energy = std::min(possible_consumable_energy, c_energy.max - c_energy.energy);
+        possible_consumable_energy = std::min(possible_consumable_energy, c_stomach.max - c_stomach.potential_energy);
 
-        c_energy.energy += possible_consumable_energy;
+        c_stomach.potential_energy += possible_consumable_energy;
         f_energy.energy -= possible_consumable_energy;
 
         if (f_energy.energy <= 0) registry.emplace<Dead>(food);

@@ -41,6 +41,7 @@ add_executable(main
     src/factories/carcass_factory.cpp
     src/systems/spatial_index_system.cpp
     src/systems/environment_system.cpp
+    src/systems/digestion_system.cpp
 )
 
 target_include_directories(main PRIVATE src/)

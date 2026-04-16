@@ -26,6 +26,7 @@ Simulation::Simulation(entt::registry& registry)
     , sensor_system(registry)
     , plant_system(plant_factory, registry)
     , environment_system(registry, creature_factory)
+    , digestion_system(registry)
 {}
 
 void Simulation::initialize() {
@@ -47,6 +48,7 @@ void Simulation::update(float dt) {
     thinking_system.update(dt);
     movement_system.update(dt);
     collision_system.update(entity_lookup_tree, dt);
+    digestion_system.update(dt);
     metabolism_system.update(dt);
     reproduction_system.update(time);
     death_system.update();
