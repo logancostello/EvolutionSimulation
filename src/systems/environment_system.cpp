@@ -1,7 +1,7 @@
 #include "systems/environment_system.h"
 #include "components/components.h"
 
-const float CARCASS_DECAY_RATE = 0.01;
+const float CARCASS_DECAY_RATE = 0.0025;
 const float IMMIGRATION_TIME = 20.0f;
 const int MIN_CREATURES = 25;
 
