@@ -134,9 +134,11 @@ void Node::accept_input(float input) {
 
 void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
     switch (input_source) {
-        case InputSource::Energy:
-            next_value = registry.get<CreatureEnergy>(entity).energy;
+        case InputSource::EnergyRatio: {
+            CreatureEnergy& e = registry.get<CreatureEnergy>(entity);
+            next_value = e.energy / e.max;
             break;
+        }
         case InputSource::DistToFood:
             next_value = registry.get<VisionSensors>(entity).dist_to_food;
             break;

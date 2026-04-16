@@ -4,7 +4,7 @@
 
 CollisionSystem::CollisionSystem(entt::registry& registry) : registry(registry) {};
 
-void CollisionSystem::update(QuadTree& lookup_tree) {
+void CollisionSystem::update(QuadTree& lookup_tree, float dt) {
 
 
     auto movables = registry.view<Position, Size>();
@@ -22,11 +22,11 @@ void CollisionSystem::update(QuadTree& lookup_tree) {
             auto& b_size = registry.get<Size>(b);
 
             if (registry.all_of<Creature>(a) && registry.all_of<FoodEnergy>(b)) {
-                handle_eating(a, b);
+                handle_eating(a, b, dt);
                 if (registry.all_of<Dead>(b)) continue;
             }
             if (registry.all_of<Creature>(b) && registry.all_of<FoodEnergy>(a)) {
-                handle_eating(b, a);
+                handle_eating(b, a, dt);
                 if (registry.all_of<Dead>(a)) continue;
             }
 
@@ -61,13 +61,14 @@ void CollisionSystem::update(QuadTree& lookup_tree) {
     }
 }
 
-void CollisionSystem::handle_eating(entt::entity creature, entt::entity food) {
+void CollisionSystem::handle_eating(entt::entity creature, entt::entity food, float dt) {
 
     if (registry.all_of<Dead>(creature) || registry.all_of<Dead>(food)) return;
 
     auto& c_pos = registry.get<Position>(creature);
     auto& c_size = registry.get<Size>(creature);
-    auto& c_energy = registry.get<CreatureEnergy>(creature);
+    auto& c_stomach = registry.get<Stomach>(creature);
+    auto& c_bite = registry.get<Bite>(creature);
 
     auto& f_pos = registry.get<Position>(food);
     auto& f_size = registry.get<Size>(food);
@@ -80,7 +81,13 @@ void CollisionSystem::handle_eating(entt::entity creature, entt::entity food) {
     float sqr_collision_dist = collision_dist * collision_dist;
     
     if (sqr_dist < sqr_collision_dist) {
-        c_energy.energy += f_energy.energy;
-        registry.emplace<Dead>(food);
+
+        float possible_consumable_energy = std::min(f_energy.energy, c_bite.energy_per_sec * dt);
+        possible_consumable_energy = std::min(possible_consumable_energy, c_stomach.max - c_stomach.potential_energy);
+
+        c_stomach.potential_energy += possible_consumable_energy;
+        f_energy.energy -= possible_consumable_energy;
+
+        if (f_energy.energy <= 0) registry.emplace<Dead>(food);
     }
 }

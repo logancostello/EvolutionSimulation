@@ -20,10 +20,12 @@ void CreatureFactory::spawn_random(int world_size_x, int world_size_y, float tim
     registry.emplace<Velocity>(creature, 0, 0);
     registry.emplace<Color>(creature, 255, 255, 255);
     registry.emplace<Size>(creature, 8.0f);
-    registry.emplace<CreatureEnergy>(creature, 10);
+    registry.emplace<CreatureEnergy>(creature, 10, 20.0f);
     registry.emplace<Creature>(creature);
     registry.emplace<TimeOf>(creature, time, time);
     registry.emplace<VisionSensors>(creature, 0, 0);
+    registry.emplace<Bite>(creature, 5);
+    registry.emplace<Stomach>(creature, 0, 20);
     
     brain_factory.create_basic_brain(creature);
 }
@@ -46,10 +48,12 @@ entt::entity CreatureFactory::spawn_child(entt::entity parent, float time) {
     registry.emplace<Velocity>(child, parent_vel.mag, parent_vel.dir);
     registry.emplace<Color>(child, 255, 255, 255);
     registry.emplace<Size>(child, 8.0f);
-    registry.emplace<CreatureEnergy>(child, 10.0f);
+    registry.emplace<CreatureEnergy>(child, 10.0f, 20.0f);
     registry.emplace<Creature>(child);
     registry.emplace<TimeOf>(child, time, time); 
     registry.emplace<VisionSensors>(child, 0.0f, 0.0f);
+    registry.emplace<Bite>(child, 5);
+    registry.emplace<Stomach>(child, 0, 20);
     registry.emplace<Brain>(child, parent_brain.clone());
     return child;
 }
