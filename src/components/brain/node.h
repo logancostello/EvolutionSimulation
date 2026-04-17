@@ -4,6 +4,7 @@
 
 enum class InputSource {
     EnergyRatio,
+    Fullness,
     DistToFood,
     DirToFood,
     DistToCreature,

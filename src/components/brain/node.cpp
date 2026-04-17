@@ -139,6 +139,11 @@ void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
             next_value = e.energy / e.max;
             break;
         }
+        case InputSource::Fullness: {
+            Stomach& stomach = registry.get<Stomach>(entity);
+            next_value = stomach.potential_energy / stomach.max;
+            break;
+        }
         case InputSource::DistToFood:
             next_value = registry.get<VisionSensors>(entity).dist_to_food;
             break;
