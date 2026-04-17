@@ -163,10 +163,10 @@ void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
 void OutputNode::populate_output(entt::registry& registry, entt::entity& entity) {
     switch (output_source) {
         case OutputSource::VelocityMag:
-            registry.get<Velocity>(entity).mag = value * 100; 
+            registry.get<Velocity>(entity).mag = value; 
             break;
         case OutputSource::VelocityTurnRate:
-            registry.get<Velocity>(entity).turn_rate = value * 3.14; 
+            registry.get<Velocity>(entity).turn_rate = value; 
             break;
     }
 };
