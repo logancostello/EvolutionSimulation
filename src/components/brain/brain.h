@@ -40,6 +40,6 @@ struct Brain {
         void apply_weights();
         void update_nodes(float dt);
         int get_random_node();
-        void load_inputs(entt::registry& registry, entt::entity& entity);
+        void load_inputs(entt::registry& registry, entt::entity& entity, float dt);
 };
 

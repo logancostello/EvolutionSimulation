@@ -1,9 +1,9 @@
 #include "components/brain/brain.h"
 #include "random.h"
 
-void Brain::load_inputs(entt::registry& registry, entt::entity& entity) {
+void Brain::load_inputs(entt::registry& registry, entt::entity& entity, float dt) {
     for (InputNode& input : input_nodes) {
-        input.load_input(registry, entity);
+        input.load_input(registry, entity, dt);
     }
 }
 
@@ -38,7 +38,7 @@ Node& Brain::get_node(int id) {
 
 void Brain::think(float dt, entt::registry& registry, entt::entity& entity) {
     reset_next_values();
-    load_inputs(registry, entity);
+    load_inputs(registry, entity, dt);
     apply_weights();
     update_nodes(dt);
 }
