@@ -1,10 +1,18 @@
 #include "reproduction_system.h"
 #include "components/components.h"
 
-ReproductionSystem::ReproductionSystem(entt::registry& registry, CreatureFactory& creature_factory, BrainMutator& brain_mutator) 
+const float ENERGY_FOR_REPRODUCTION = 20.0f;
+
+ReproductionSystem::ReproductionSystem(
+    entt::registry& registry, 
+    CreatureFactory& creature_factory, 
+    BrainMutator& brain_mutator,
+    GenomeMutator& genome_mutator
+) 
     : registry(registry) 
     , creature_factory(creature_factory)
     , brain_mutator(brain_mutator)
+    , genome_mutator(genome_mutator)
 {};
 
 void ReproductionSystem::update() {
@@ -21,5 +29,6 @@ void ReproductionSystem::update() {
     for (auto entity : to_reproduce) {
         entt::entity child = creature_factory.spawn_child(entity);
         brain_mutator.mutate(child);
+        genome_mutator.mutate(child);
     }
 }

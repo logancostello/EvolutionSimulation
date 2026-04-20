@@ -16,6 +16,7 @@
 #include "systems/spatial_index_system.h"
 #include "systems/environment_system.h"
 #include "systems/digestion_system.h"
+#include "mutators/genome_mutator.h"
 
 class Simulation {
     public:
@@ -33,6 +34,7 @@ class Simulation {
         PlantFactory plant_factory;
         CarcassFactory carcass_factory;
         BrainMutator brain_mutator;
+        GenomeMutator genome_mutator;
         MovementSystem movement_system;
         MetabolismSystem metabolism_system;
         DeathSystem death_system;
