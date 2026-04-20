@@ -144,6 +144,11 @@ void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
             next_value = stomach.potential_energy / stomach.max;
             break;
         }
+        case InputSource::ReproductionRatio: {
+            ChildEnergy& child_energy = registry.get<ChildEnergy>(entity);
+            next_value = child_energy.energy;
+            break;
+        }
         case InputSource::DistToFood:
             next_value = registry.get<VisionSensors>(entity).dist_to_food;
             break;

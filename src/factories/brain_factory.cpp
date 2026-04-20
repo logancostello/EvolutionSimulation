@@ -7,19 +7,20 @@ std::vector<InputNode> BrainFactory::get_basic_inputs() {
     return {
         InputNode(0, InputSource::EnergyRatio),
         InputNode(1, InputSource::Fullness),
-        InputNode(2, InputSource::DistToFood),
-        InputNode(3, InputSource::DirToFood),
-        InputNode(4, InputSource::DistToCreature),
-        InputNode(5, InputSource::DirToCreature),
-        InputNode(6, InputSource::DistToCarcass),
-        InputNode(7, InputSource::DirToCarcass)
+        InputNode(2, InputSource::ReproductionRatio),
+        InputNode(3, InputSource::DistToFood),
+        InputNode(4, InputSource::DirToFood),
+        InputNode(5, InputSource::DistToCreature),
+        InputNode(6, InputSource::DirToCreature),
+        InputNode(7, InputSource::DistToCarcass),
+        InputNode(8, InputSource::DirToCarcass)
     };
 };
 
 std::vector<OutputNode> BrainFactory::get_basic_outputs() {
     return {
-        OutputNode(8, OutputSource::VelocityMag, ActivationRange::ZeroToOne),
-        OutputNode(9, OutputSource::VelocityTurnRate, ActivationRange::NegOneToOne)
+        OutputNode(9, OutputSource::VelocityMag, ActivationRange::ZeroToOne),
+        OutputNode(10, OutputSource::VelocityTurnRate, ActivationRange::NegOneToOne)
     };
 };
 
