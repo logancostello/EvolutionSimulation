@@ -15,14 +15,16 @@ std::vector<InputNode> BrainFactory::get_basic_inputs() {
         InputNode(7, InputSource::DistToCarcass),
         InputNode(8, InputSource::DirToCarcass),
         InputNode(9, InputSource::TimerCycleShort),
-        InputNode(10, InputSource::TimerCycleLong)
+        InputNode(10, InputSource::TimerCycleLong),
+        InputNode(11, InputSource::TimerManual)
     };
 };
 
 std::vector<OutputNode> BrainFactory::get_basic_outputs() {
     return {
-        OutputNode(11, OutputSource::VelocityMag, ActivationRange::ZeroToOne),
-        OutputNode(12, OutputSource::VelocityTurnRate, ActivationRange::NegOneToOne)
+        OutputNode(12, OutputSource::VelocityMag, ActivationRange::ZeroToOne),
+        OutputNode(13, OutputSource::VelocityTurnRate, ActivationRange::NegOneToOne),
+        OutputNode(14, OutputSource::TimerReset, ActivationRange::ZeroToOne)
     };
 };
 

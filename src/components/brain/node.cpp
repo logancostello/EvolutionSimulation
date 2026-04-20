@@ -132,7 +132,7 @@ void Node::accept_input(float input) {
     }
 }
 
-void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
+void InputNode::load_input(entt::registry& registry, entt::entity& entity, float dt) {
     switch (input_source) {
         case InputSource::EnergyRatio: {
             CreatureEnergy& e = registry.get<CreatureEnergy>(entity);
@@ -169,15 +169,20 @@ void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
             break;
         case InputSource::TimerCycleShort: {
             float age = registry.get<Age>(entity).age;
-            float freq = registry.get<TimerFreq>(entity).short_freq;
+            float freq = registry.get<BrainTimer>(entity).short_freq;
             next_value = std::sin(age * freq);
             break;
         }
         case InputSource::TimerCycleLong: {
             float age = registry.get<Age>(entity).age;
-            float freq = registry.get<TimerFreq>(entity).long_freq;
+            float freq = registry.get<BrainTimer>(entity).long_freq;
             next_value = std::sin(age * freq);
             break;
+        }
+        case InputSource::TimerManual: {
+            BrainTimer& timer = registry.get<BrainTimer>(entity);
+            timer.manual_time += dt;
+            next_value = timer.manual_time;
         }
     }
 };
@@ -189,6 +194,9 @@ void OutputNode::populate_output(entt::registry& registry, entt::entity& entity)
             break;
         case OutputSource::VelocityTurnRate:
             registry.get<Velocity>(entity).turn_rate = value; 
+            break;
+        case OutputSource::TimerReset: 
+            if (value > 0.5) registry.get<BrainTimer>(entity).manual_time = 0;
             break;
     }
 };

@@ -20,4 +20,4 @@ struct Bite { float energy_per_sec; };
 struct Stomach { float potential_energy, max; };
 struct ChildEnergy { float energy, max; };
 struct Age { float age; };
-struct TimerFreq { float short_freq, long_freq; };
+struct BrainTimer { float short_freq, long_freq, manual_time; };

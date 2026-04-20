@@ -13,12 +13,14 @@ enum class InputSource {
     DistToCarcass,
     DirToCarcass,
     TimerCycleShort,
-    TimerCycleLong
+    TimerCycleLong,
+    TimerManual
 };
 
 enum class OutputSource {
     VelocityMag,
-    VelocityTurnRate
+    VelocityTurnRate,
+    TimerReset
 };
 
 enum class ActivationFunc {
@@ -103,7 +105,7 @@ struct InputNode : Node {
     InputNode(int id, InputSource input_source)
         : Node(id), input_source(input_source) {}
 
-    void load_input(entt::registry& registry, entt::entity& entity);
+    void load_input(entt::registry& registry, entt::entity& entity, float dt);
 };
 
 struct OutputNode: Node {
