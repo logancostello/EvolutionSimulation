@@ -29,5 +29,6 @@ void ReproductionSystem::update() {
     for (auto entity : to_reproduce) {
         entt::entity child = creature_factory.spawn_child(entity);
         brain_mutator.mutate(child);
+        genome_mutator.mutate(child);
     }
 }
