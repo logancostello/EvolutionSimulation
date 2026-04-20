@@ -1,8 +1,6 @@
 #include "reproduction_system.h"
 #include "components/components.h"
 
-const float ENERGY_FOR_REPRODUCTION = 20.0f;
-
 ReproductionSystem::ReproductionSystem(
     entt::registry& registry, 
     CreatureFactory& creature_factory, 
