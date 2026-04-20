@@ -167,6 +167,18 @@ void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
         case InputSource::DirToCarcass:
             next_value = registry.get<VisionSensors>(entity).dir_to_carcass;
             break;
+        case InputSource::TimerCycleShort: {
+            float age = registry.get<Age>(entity).age;
+            float freq = registry.get<TimerFreq>(entity).short_freq;
+            next_value = std::sin(age * freq);
+            break;
+        }
+        case InputSource::TimerCycleLong: {
+            float age = registry.get<Age>(entity).age;
+            float freq = registry.get<TimerFreq>(entity).long_freq;
+            next_value = std::sin(age * freq);
+            break;
+        }
     }
 };
 

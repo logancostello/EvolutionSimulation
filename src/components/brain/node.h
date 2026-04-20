@@ -11,7 +11,9 @@ enum class InputSource {
     DistToCreature,
     DirToCreature,
     DistToCarcass,
-    DirToCarcass
+    DirToCarcass,
+    TimerCycleShort,
+    TimerCycleLong
 };
 
 enum class OutputSource {
