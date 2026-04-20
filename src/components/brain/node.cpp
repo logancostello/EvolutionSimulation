@@ -183,7 +183,16 @@ void InputNode::load_input(entt::registry& registry, entt::entity& entity, float
             BrainTimer& timer = registry.get<BrainTimer>(entity);
             timer.manual_time += dt;
             next_value = timer.manual_time;
+            break;
         }
+        case InputSource::StateA:
+            if (registry.get<CreatureState>(entity).stateA) next_value = 1;
+            else next_value = 0;
+            break;
+        case InputSource::StateB:
+            if (registry.get<CreatureState>(entity).stateB) next_value = 1;
+            else next_value = 0;
+            break;
     }
 };
 
@@ -198,5 +207,15 @@ void OutputNode::populate_output(entt::registry& registry, entt::entity& entity)
         case OutputSource::TimerReset: 
             if (value > 0.5) registry.get<BrainTimer>(entity).manual_time = 0;
             break;
+        case OutputSource::StateAToggle: {
+            CreatureState& state = registry.get<CreatureState>(entity);
+            if (value > 0.5) state.stateA = !state.stateA;
+            break;
+        }
+        case OutputSource::StateBToggle: {
+            CreatureState& state = registry.get<CreatureState>(entity);
+            if (value > 0.5) state.stateB = !state.stateB;
+            break;
+        }
     }
 };

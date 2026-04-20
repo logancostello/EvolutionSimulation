@@ -14,13 +14,17 @@ enum class InputSource {
     DirToCarcass,
     TimerCycleShort,
     TimerCycleLong,
-    TimerManual
+    TimerManual,
+    StateA,
+    StateB
 };
 
 enum class OutputSource {
     VelocityMag,
     VelocityTurnRate,
-    TimerReset
+    TimerReset,
+    StateAToggle,
+    StateBToggle
 };
 
 enum class ActivationFunc {
