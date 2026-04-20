@@ -26,6 +26,7 @@ void CreatureFactory::spawn_random(int world_size_x, int world_size_y) {
     registry.emplace<Bite>(creature, 5);
     registry.emplace<Stomach>(creature, 0, 20);
     registry.emplace<ChildEnergy>(creature, 0, 20.0f);
+    registry.emplace<Age>(creature, 0);
     
     brain_factory.create_basic_brain(creature);
 }
@@ -55,5 +56,6 @@ entt::entity CreatureFactory::spawn_child(entt::entity parent) {
     registry.emplace<Stomach>(child, 0, 20);
     registry.emplace<ChildEnergy>(child, 0, 20.0f);
     registry.emplace<Brain>(child, parent_brain.clone());
+    registry.emplace<Age>(child, 0);
     return child;
 }

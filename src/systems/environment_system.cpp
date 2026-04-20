@@ -21,6 +21,12 @@ void EnvironmentSystem::update(float dt, float x, float y) {
         if (food_energy.energy < 0.01f) registry.emplace_or_replace<Dead>(entity);
     }
 
+    // Age all entities
+    auto age_view = registry.view<Age>();
+    for (auto [entity, age] : age_view.each()) {
+        age.age += dt;
+    }
+
     // Check Immigration
     time_since_immigration += dt;
     if (time_since_immigration > IMMIGRATION_TIME) {
