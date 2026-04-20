@@ -132,11 +132,21 @@ void Node::accept_input(float input) {
     }
 }
 
-void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
+void InputNode::load_input(entt::registry& registry, entt::entity& entity, float dt) {
     switch (input_source) {
         case InputSource::EnergyRatio: {
             CreatureEnergy& e = registry.get<CreatureEnergy>(entity);
             next_value = e.energy / e.max;
+            break;
+        }
+        case InputSource::Fullness: {
+            Stomach& stomach = registry.get<Stomach>(entity);
+            next_value = stomach.potential_energy / stomach.max;
+            break;
+        }
+        case InputSource::ReproductionRatio: {
+            ChildEnergy& child_energy = registry.get<ChildEnergy>(entity);
+            next_value = child_energy.energy;
             break;
         }
         case InputSource::DistToFood:
@@ -157,16 +167,55 @@ void InputNode::load_input(entt::registry& registry, entt::entity& entity) {
         case InputSource::DirToCarcass:
             next_value = registry.get<VisionSensors>(entity).dir_to_carcass;
             break;
+        case InputSource::TimerCycleShort: {
+            float age = registry.get<Age>(entity).age;
+            float freq = registry.get<BrainTimer>(entity).short_freq;
+            next_value = std::sin(age * freq);
+            break;
+        }
+        case InputSource::TimerCycleLong: {
+            float age = registry.get<Age>(entity).age;
+            float freq = registry.get<BrainTimer>(entity).long_freq;
+            next_value = std::sin(age * freq);
+            break;
+        }
+        case InputSource::TimerManual: {
+            BrainTimer& timer = registry.get<BrainTimer>(entity);
+            timer.manual_time += dt;
+            next_value = timer.manual_time;
+            break;
+        }
+        case InputSource::StateA:
+            if (registry.get<CreatureState>(entity).stateA) next_value = 1;
+            else next_value = 0;
+            break;
+        case InputSource::StateB:
+            if (registry.get<CreatureState>(entity).stateB) next_value = 1;
+            else next_value = 0;
+            break;
     }
 };
 
 void OutputNode::populate_output(entt::registry& registry, entt::entity& entity) {
     switch (output_source) {
         case OutputSource::VelocityMag:
-            registry.get<Velocity>(entity).mag = value * 100; 
+            registry.get<Velocity>(entity).mag = value; 
             break;
         case OutputSource::VelocityTurnRate:
-            registry.get<Velocity>(entity).turn_rate = value * 3.14; 
+            registry.get<Velocity>(entity).turn_rate = value; 
             break;
+        case OutputSource::TimerReset: 
+            if (value > 0.5) registry.get<BrainTimer>(entity).manual_time = 0;
+            break;
+        case OutputSource::StateAToggle: {
+            CreatureState& state = registry.get<CreatureState>(entity);
+            if (value > 0.5) state.stateA = !state.stateA;
+            break;
+        }
+        case OutputSource::StateBToggle: {
+            CreatureState& state = registry.get<CreatureState>(entity);
+            if (value > 0.5) state.stateB = !state.stateB;
+            break;
+        }
     }
 };

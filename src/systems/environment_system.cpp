@@ -1,7 +1,7 @@
 #include "systems/environment_system.h"
 #include "components/components.h"
 
-const float CARCASS_DECAY_RATE = 0.0025;
+const float CARCASS_DECAY_RATE = 0.0005;
 const float IMMIGRATION_TIME = 20.0f;
 const int MIN_CREATURES = 25;
 
@@ -19,6 +19,12 @@ void EnvironmentSystem::update(float dt, float x, float y) {
         size.radius /= (1.0f + CARCASS_DECAY_RATE * dt);
 
         if (food_energy.energy < 0.01f) registry.emplace_or_replace<Dead>(entity);
+    }
+
+    // Age all entities
+    auto age_view = registry.view<Age>();
+    for (auto [entity, age] : age_view.each()) {
+        age.age += dt;
     }
 
     // Check Immigration

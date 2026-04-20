@@ -6,19 +6,29 @@ BrainFactory::BrainFactory(entt::registry& registry) : registry(registry) {};
 std::vector<InputNode> BrainFactory::get_basic_inputs() {
     return {
         InputNode(0, InputSource::EnergyRatio),
-        InputNode(1, InputSource::DistToFood),
-        InputNode(2, InputSource::DirToFood),
-        InputNode(3, InputSource::DistToCreature),
-        InputNode(4, InputSource::DirToCreature),
-        InputNode(5, InputSource::DistToCarcass),
-        InputNode(6, InputSource::DirToCarcass)
+        InputNode(1, InputSource::Fullness),
+        InputNode(2, InputSource::ReproductionRatio),
+        InputNode(3, InputSource::DistToFood),
+        InputNode(4, InputSource::DirToFood),
+        InputNode(5, InputSource::DistToCreature),
+        InputNode(6, InputSource::DirToCreature),
+        InputNode(7, InputSource::DistToCarcass),
+        InputNode(8, InputSource::DirToCarcass),
+        InputNode(9, InputSource::TimerCycleShort),
+        InputNode(10, InputSource::TimerCycleLong),
+        InputNode(11, InputSource::TimerManual),
+        InputNode(12, InputSource::StateA),
+        InputNode(13, InputSource::StateB)
     };
 };
 
 std::vector<OutputNode> BrainFactory::get_basic_outputs() {
     return {
-        OutputNode(7, OutputSource::VelocityMag, ActivationRange::ZeroToOne),
-        OutputNode(8, OutputSource::VelocityTurnRate, ActivationRange::NegOneToOne)
+        OutputNode(14, OutputSource::VelocityMag, ActivationRange::ZeroToOne),
+        OutputNode(15, OutputSource::VelocityTurnRate, ActivationRange::NegOneToOne),
+        OutputNode(16, OutputSource::TimerReset, ActivationRange::ZeroToOne),
+        OutputNode(17, OutputSource::StateAToggle, ActivationRange::ZeroToOne),
+        OutputNode(18, OutputSource::StateBToggle, ActivationRange::ZeroToOne)
     };
 };
 

@@ -5,11 +5,15 @@ MetabolismSystem::MetabolismSystem(entt::registry& registry) : registry(registry
 
 void MetabolismSystem::update(float dt) {
 
-    // Remove energy each frame (for now fixed amount)
-    auto view = registry.view<CreatureEnergy>();
-    for (auto [entity, energy] : view.each()) {
-        energy.energy -= 1 * dt;
+    auto view = registry.view<CreatureEnergy, Velocity>();
+    for (auto [entity, energy, vel] : view.each()) {
 
+        // Basic living cost
+        energy.energy -= 0.5 * dt;
+
+        // Speed Cost
+        energy.energy -= 0.75 * vel.mag * vel.mag * dt;
+        
         // Mark creature dead if no energy
         if (energy.energy <= 0) {
             registry.emplace<Dead>(entity);

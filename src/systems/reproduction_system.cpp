@@ -20,8 +20,8 @@ void ReproductionSystem::update() {
 
     std::vector<entt::entity> to_reproduce;
     for (auto [entity, child_energy] : view.each()) {
-        if (child_energy.energy >= ENERGY_FOR_REPRODUCTION) {
-            child_energy.energy -= ENERGY_FOR_REPRODUCTION;
+        if (child_energy.energy >= child_energy.max) {
+            child_energy.energy -= child_energy.max;
             to_reproduce.push_back(entity);
         }
     }

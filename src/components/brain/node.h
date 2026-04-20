@@ -4,17 +4,27 @@
 
 enum class InputSource {
     EnergyRatio,
+    Fullness,
+    ReproductionRatio,
     DistToFood,
     DirToFood,
     DistToCreature,
     DirToCreature,
     DistToCarcass,
-    DirToCarcass
+    DirToCarcass,
+    TimerCycleShort,
+    TimerCycleLong,
+    TimerManual,
+    StateA,
+    StateB
 };
 
 enum class OutputSource {
     VelocityMag,
-    VelocityTurnRate
+    VelocityTurnRate,
+    TimerReset,
+    StateAToggle,
+    StateBToggle
 };
 
 enum class ActivationFunc {
@@ -99,7 +109,7 @@ struct InputNode : Node {
     InputNode(int id, InputSource input_source)
         : Node(id), input_source(input_source) {}
 
-    void load_input(entt::registry& registry, entt::entity& entity);
+    void load_input(entt::registry& registry, entt::entity& entity, float dt);
 };
 
 struct OutputNode: Node {
