@@ -3,10 +3,16 @@
 
 const float ENERGY_FOR_REPRODUCTION = 20.0f;
 
-ReproductionSystem::ReproductionSystem(entt::registry& registry, CreatureFactory& creature_factory, BrainMutator& brain_mutator) 
+ReproductionSystem::ReproductionSystem(
+    entt::registry& registry, 
+    CreatureFactory& creature_factory, 
+    BrainMutator& brain_mutator,
+    GenomeMutator& genome_mutator
+) 
     : registry(registry) 
     , creature_factory(creature_factory)
     , brain_mutator(brain_mutator)
+    , genome_mutator(genome_mutator)
 {};
 
 void ReproductionSystem::update() {

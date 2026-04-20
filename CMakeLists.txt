@@ -36,6 +36,7 @@ add_executable(main
     src/systems/sensor_system.cpp
     src/random.cpp
     src/mutators/brain_mutator.cpp
+    src/mutators/genome_mutator.cpp
     src/systems/plant_system.cpp
     src/quad_tree.cpp
     src/factories/carcass_factory.cpp
