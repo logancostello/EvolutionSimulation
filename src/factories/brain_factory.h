@@ -4,7 +4,8 @@
 class BrainFactory {
     public:
         BrainFactory(entt::registry& registry);
-        void create_basic_brain(entt::entity& entity);
+        void create_random_brain(entt::entity& entity);
+        void create_herbivore_brain(entt::entity& entity);
 
 
     private:

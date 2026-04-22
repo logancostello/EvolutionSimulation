@@ -30,7 +30,8 @@ void CreatureFactory::spawn_random(int world_size_x, int world_size_y) {
     registry.emplace<BrainTimer>(creature, 5, 60);
     registry.emplace<CreatureState>(creature, false, false);
     
-    brain_factory.create_basic_brain(creature);
+    // brain_factory.create_random_brain(creature);
+    brain_factory.create_herbivore_brain(creature);
 }
 
 
