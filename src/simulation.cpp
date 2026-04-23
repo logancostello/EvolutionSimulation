@@ -3,15 +3,18 @@
 #include "limits"
 #include "fertility.h"
 
-const int WORLD_SIZE_X = 7500;
-const int WORLD_SIZE_Y = 7500;
+const int WORLD_SIZE_X = 5000;
+const int WORLD_SIZE_Y = 5000;
+const int WORLD_TOLERANCE = 2500;
+
 const int NUM_INIT_CREATURES = 200;
-const int NUM_INIT_PLANTS = 10000;
+const int NUM_INIT_PLANTS = 2000;
 
 Simulation::Simulation(entt::registry& registry) 
     : time(0.0f)
     , world_size_x(WORLD_SIZE_X)
     , world_size_y(WORLD_SIZE_Y)
+    , tolerance(WORLD_TOLERANCE)
     , entity_lookup_tree(world_size_x, world_size_y)
     , spatial_index_system(registry, entity_lookup_tree)
     , creature_factory(registry)
@@ -33,7 +36,7 @@ Simulation::Simulation(entt::registry& registry)
 
 void Simulation::initialize() {
 
-    Fertility::set_world_bounds(this->world_size_x, this->world_size_y);
+    Fertility::set_world_bounds(this->world_size_x, this->world_size_y, this->tolerance);
 
     for (int i = 0; i < NUM_INIT_CREATURES; i++) {
         creature_factory.spawn_random(this->world_size_x, this->world_size_y);

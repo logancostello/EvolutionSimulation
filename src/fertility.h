@@ -6,8 +6,9 @@ namespace Fertility {
 
     static float world_size_x;
     static float world_size_y;
+    static float tolerance;
 
-    void set_world_bounds(float x, float y);
+    void set_world_bounds(float x, float y, float t);
 
     std::pair<float, float> random_location();
 };
