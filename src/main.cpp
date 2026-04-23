@@ -1,11 +1,12 @@
 #include <SFML/Graphics.hpp>
 #include <entt/entt.hpp>
 #include <iostream>
+#include <iomanip>
+#include <chrono>
 #include "random.h"
 #include "simulation.h"
 #include "components/components.h"
 #include "systems/renderer.h"
-#include <iostream>
 
 int main(int argc, char* argv[]) {
 
@@ -22,7 +23,56 @@ int main(int argc, char* argv[]) {
     }
     std::cout << "Seed: " << Random::get_seed() << std::endl;
 
+    // -------------------------------------------------------------------------
+    // Headless mode: ./main <seed> <ticks>
+    //
+    // Runs the simulation for exactly <ticks> updates with no window or
+    // renderer, then prints timing and a determinism checksum.
+    // -------------------------------------------------------------------------
+    if (argc > 2) {
+        int max_ticks = 0;
+        try {
+            max_ticks = std::stoi(argv[2]);
+        } catch (const std::exception&) {
+            std::cerr << "Invalid tick count: " << argv[2] << "\n";
+            return 1;
+        }
 
+        entt::registry registry;
+        auto sim = std::make_unique<Simulation>(registry);
+        sim->initialize();
+
+        const float dt = 1.0f / 60.0f;
+
+        auto t_start = std::chrono::steady_clock::now();
+
+        for (int tick = 0; tick < max_ticks; tick++) {
+            sim->update(dt);
+        }
+
+        auto t_end = std::chrono::steady_clock::now();
+        double elapsed = std::chrono::duration<double>(t_end - t_start).count();
+
+        // Determinism checksum — sum of all entity positions.
+        // Run twice with the same seed/ticks: checksums must match.
+        // If they don't after a refactor, you broke determinism.
+        double checksum = 0.0;
+        auto view = registry.view<Position>();
+        for (auto [entity, pos] : view.each()) {
+            checksum += static_cast<double>(pos.x) + static_cast<double>(pos.y);
+        }
+
+        std::cout << "Ticks:    " << max_ticks << "\n";
+        std::cout << "Elapsed:  " << std::fixed << std::setprecision(3) << elapsed << "s\n";
+        std::cout << "Avg/tick: " << std::fixed << std::setprecision(3) << (elapsed / max_ticks * 1000.0) << "ms\n";
+        std::cout << "CHECKSUM  " << std::fixed << std::setprecision(4) << checksum << "\n";
+
+        return 0;
+    }
+
+    // -------------------------------------------------------------------------
+    // Normal windowed mode (unchanged)
+    // -------------------------------------------------------------------------
     sf::RenderWindow window(
         sf::VideoMode({1600, 1000}),
         "Evolution Simulation"
@@ -38,8 +88,7 @@ int main(int argc, char* argv[]) {
     auto sim = std::make_unique<Simulation>(registry);
     auto renderer = Renderer();
 
-
-    float dt = 1 / 60.0f;
+    const float dt = 1.0f / 60.0f;
 
     sim->initialize();
 
@@ -67,7 +116,7 @@ int main(int argc, char* argv[]) {
                     }
                 }
             }
-            
+
             if (const auto* resized = event->getIf<sf::Event::Resized>()) {
                 sf::Vector2f new_size(resized->size);
                 view.setSize(new_size);
@@ -77,16 +126,13 @@ int main(int argc, char* argv[]) {
                 float zoom_factor = 1.0f - (scroll->delta * 0.1f);
                 zoom_factor = std::clamp(zoom_factor, 0.5f, 2.0f);
 
-                // Get mouse position in world space before zooming
                 sf::Vector2f mouse_world_before = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
                 view.zoom(zoom_factor);
                 window.setView(view);
 
-                // Get mouse position in world space after zooming
                 sf::Vector2f mouse_world_after = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
-                // Shift view by the difference so mouse stays fixed
                 view.move(mouse_world_before - mouse_world_after);
                 window.setView(view);
             }

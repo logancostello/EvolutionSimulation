@@ -44,6 +44,7 @@ add_executable(main
     src/systems/environment_system.cpp
     src/systems/digestion_system.cpp
     src/fertility.cpp
+    profile.sh
 )
 
 target_include_directories(main PRIVATE src/ ${CMAKE_SOURCE_DIR}/include)
