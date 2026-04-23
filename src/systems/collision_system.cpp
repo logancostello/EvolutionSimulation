@@ -11,7 +11,7 @@ void CollisionSystem::update(QuadTree& lookup_tree, float dt) {
     for (auto [a, a_pos, a_size] : movables.each()) {
         if (registry.all_of<Dead>(a)) continue;
 
-        auto nearby = std::vector<entt::entity>{};
+        nearby.clear();
         lookup_tree.query(a_pos.x, a_pos.y, 2 * a_size.radius, nearby);
 
         for (entt::entity b : nearby) {
