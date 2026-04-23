@@ -9,6 +9,6 @@ class CollisionSystem {
     
     private:
         entt::registry& registry;
-        std::vector<entt::entity> nearby;
+        std::vector<entt::entity> touching;
         void handle_eating(entt::entity creature, entt::entity plant, float dt);
 };

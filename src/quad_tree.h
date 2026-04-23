@@ -21,10 +21,12 @@ struct QuadEntity {
     entt::entity entity;
     float x;
     float y;
+    float r;
     EntityTag tag;
 
     QuadEntity() {};
-    QuadEntity(entt::entity entity, float x, float y, EntityTag tag) : entity(entity), x(x), y(y), tag(tag) {};
+    QuadEntity(entt::entity entity, float x, float y, float r, EntityTag tag) : entity(entity), x(x), y(y), r(r), tag(tag) {};
+    bool touches_circle(float cirlce_x, float cirlce_y, float circle_radius);
 };
 
 struct QuadOverflow {
@@ -53,7 +55,7 @@ struct QuadNode {
 class QuadTree {
     public:
         QuadTree(float world_size_x, float world_size_y);
-        void insert(int node_idx, entt::entity entity, float x, float y, EntityTag tag);
+        void insert(int node_idx, entt::entity entity, float x, float y, float r, EntityTag tag);
         void remove(int node_idx, entt::entity entity, float x, float y);
         void reset();
         void update_bounds(float x, float y);
@@ -74,12 +76,12 @@ class QuadTree {
         float global_ymin;
         float global_ymax;
 
-        void insert_overflow(int node_idx, entt::entity entity, float x, float y, EntityTag tag);
+        void insert_overflow(int node_idx, entt::entity entity, float x, float y, float r, EntityTag tag);
         int alloc_node(float xmin, float xmax, float ymin, float ymax, int depth);
         int alloc_overflow();
         void divide_node(int node_idx);
         int get_child(QuadNode&, float x, float y);
         void query_node(int node_idx, float x, float y, float radius, std::vector<entt::entity>& out); 
-        void collect_leaf(int node_idx, std::vector<entt::entity>& out);
+        void collect_leaf(int node_idx, float x, float y, float r, std::vector<entt::entity>& out);
         void check_closest(QuadEntity& e, entt::entity self, float x, float y, EntityTag tag, float& closest_sqr_dist, entt::entity& closest_entity);
 };

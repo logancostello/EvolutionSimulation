@@ -15,18 +15,18 @@ void SpatialIndexSystem::update() {
 
     lookup_tree.reset();
 
-    auto plant_view = registry.view<Position, Plant>();
-    for (auto [entity, pos] : plant_view.each()) {
-        lookup_tree.insert(0, entity, pos.x, pos.y, EntityTag::Plant);
+    auto plant_view = registry.view<Position, Size, Plant>();
+    for (auto [entity, pos, size] : plant_view.each()) {
+        lookup_tree.insert(0, entity, pos.x, pos.y, size.radius, EntityTag::Plant);
     }
 
-    auto creature_view = registry.view<Position, Creature>();
-    for (auto [entity, pos] : creature_view.each()) {
-        lookup_tree.insert(0, entity, pos.x, pos.y, EntityTag::Creature);
+    auto creature_view = registry.view<Position, Size, Creature>();
+    for (auto [entity, pos, size] : creature_view.each()) {
+        lookup_tree.insert(0, entity, pos.x, pos.y, size.radius, EntityTag::Creature);
     }
 
-    auto carcass_view = registry.view<Position, Carcass>();
-    for (auto [entity, pos] : carcass_view.each()) {
-        lookup_tree.insert(0, entity, pos.x, pos.y, EntityTag::Carcass);
+    auto carcass_view = registry.view<Position, Size, Carcass>();
+    for (auto [entity, pos, size] : carcass_view.each()) {
+        lookup_tree.insert(0, entity, pos.x, pos.y, size.radius, EntityTag::Carcass);
     }
 };

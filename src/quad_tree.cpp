@@ -3,6 +3,14 @@
 
 bool QuadOverflow::is_full() { return count == OVERFLOW_SIZE; }; 
 
+bool QuadEntity::touches_circle(float cirlce_x, float cirlce_y, float circle_radius) {
+    float dx = x - cirlce_x;
+    float dy = y - cirlce_y;
+    float touch_dist = r + circle_radius;
+    return dx*dx + dy*dy <= touch_dist * touch_dist;
+}
+
+
 bool QuadNode::is_leaf() { return children[0] == -1; };
 bool QuadNode::is_full() { return count == BUCKET_SIZE; };
 
@@ -86,14 +94,14 @@ int QuadTree::alloc_overflow() {
     return index;
 }
 
-void QuadTree::insert(int node_idx, entt::entity entity, float x, float y, EntityTag tag) {
+void QuadTree::insert(int node_idx, entt::entity entity, float x, float y, float r, EntityTag tag) {
 
     QuadNode& node = node_pool[node_idx];
 
     if (!node.contains(x, y)) return; // Skip entities that leave world space + buffer room
 
     if (node.is_leaf() && !node.is_full()) {
-        node.entities[node.count++] = QuadEntity(entity, x, y, tag);
+        node.entities[node.count++] = QuadEntity(entity, x, y, r, tag);
         return;
     } else if (node.is_leaf()) {
         if (node.depth <= MAX_DEPTH) divide_node(node_idx);
@@ -101,13 +109,13 @@ void QuadTree::insert(int node_idx, entt::entity entity, float x, float y, Entit
     // Insert into correct child
     int correct_child_idx = get_child(node, x, y);
     if (correct_child_idx >= 0) {
-        insert(correct_child_idx, entity, x, y, tag);
+        insert(correct_child_idx, entity, x, y, r, tag);
     } else {
-        insert_overflow(node_idx, entity, x, y, tag);
+        insert_overflow(node_idx, entity, x, y, r, tag);
     }   
 }
 
-void QuadTree::insert_overflow(int node_idx, entt::entity entity, float x, float y, EntityTag tag) {
+void QuadTree::insert_overflow(int node_idx, entt::entity entity, float x, float y, float r, EntityTag tag) {
     QuadNode& node = node_pool[node_idx];
 
     if (node.overflow == -1) {
@@ -117,7 +125,7 @@ void QuadTree::insert_overflow(int node_idx, entt::entity entity, float x, float
     QuadOverflow& overflow = overflow_pool[node.overflow];
 
     if (overflow.is_full()) return; // Branch and overflow are full, dont add this entry
-    overflow.entities[overflow.count++] = QuadEntity(entity, x, y, tag);
+    overflow.entities[overflow.count++] = QuadEntity(entity, x, y, r, tag);
 }
 
 void QuadTree::divide_node(int node_idx) {
@@ -183,7 +191,7 @@ void QuadTree::query_node(int node_idx, float x, float y, float radius, std::vec
     if (!node.intersects_circle(x, y, radius)) return;
 
     if (node.is_leaf()) {
-        collect_leaf(node_idx, out);
+        collect_leaf(node_idx, x, y, radius, out);
     } else {
         for (int i = 0; i < 4; i++) {
             query_node(node.children[i], x, y, radius, out);
@@ -191,19 +199,19 @@ void QuadTree::query_node(int node_idx, float x, float y, float radius, std::vec
     }
 }
 
-void QuadTree::collect_leaf(int node_idx, std::vector<entt::entity>& out) {
+void QuadTree::collect_leaf(int node_idx, float x, float y, float r, std::vector<entt::entity>& out) {
     QuadNode& node = node_pool[node_idx];
 
     for (int i = 0; i < node.count; i++) {
         if (node.entities[i].entity == entt::null) continue;
-        out.push_back(node.entities[i].entity);
+        if (node.entities[i].touches_circle(x, y, r)) out.push_back(node.entities[i].entity);
     }
 
     if (node.overflow != -1) {
         QuadOverflow& overflow = overflow_pool[node.overflow];
         for (int i = 0; i < overflow.count; i++) {
             if (overflow.entities[i].entity == entt::null) continue;
-            out.push_back(overflow.entities[i].entity);
+            if (overflow.entities[i].touches_circle(x, y, r)) out.push_back(overflow.entities[i].entity);
         }
     }
 }
