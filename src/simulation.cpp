@@ -1,11 +1,12 @@
 #include "simulation.h"
 #include "components/components.h"
 #include "limits"
+#include "fertility.h"
 
 const int WORLD_SIZE_X = 7500;
 const int WORLD_SIZE_Y = 7500;
 const int NUM_INIT_CREATURES = 200;
-const int NUM_INIT_PLANTS = 2000;
+const int NUM_INIT_PLANTS = 10000;
 
 Simulation::Simulation(entt::registry& registry) 
     : time(0.0f)
@@ -31,6 +32,9 @@ Simulation::Simulation(entt::registry& registry)
 {}
 
 void Simulation::initialize() {
+
+    Fertility::set_world_bounds(this->world_size_x, this->world_size_y);
+
     for (int i = 0; i < NUM_INIT_CREATURES; i++) {
         creature_factory.spawn_random(this->world_size_x, this->world_size_y);
     }
