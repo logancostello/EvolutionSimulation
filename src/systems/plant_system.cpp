@@ -4,7 +4,7 @@
 const float TIME_PER_SPAWN = 0.15;
 const int MAX_PLANTS = 2000;
 
-void PlantSystem::update(float dt, int world_size_x, int world_size_y) {
+void PlantSystem::update(float dt) {
 
     auto plants = registry.view<Plant>();
     if (plants.size() > MAX_PLANTS) return;
@@ -13,6 +13,6 @@ void PlantSystem::update(float dt, int world_size_x, int world_size_y) {
 
     while (accumulated_time > TIME_PER_SPAWN) {
         accumulated_time -= TIME_PER_SPAWN;
-        plant_factory.spawn_random(world_size_x, world_size_y);
+        plant_factory.spawn_random();
     }
 }

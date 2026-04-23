@@ -10,7 +10,7 @@ EnvironmentSystem::EnvironmentSystem(entt::registry& registry, CreatureFactory& 
     , creature_factory(creature_factory) 
 {};
 
-void EnvironmentSystem::update(float dt, float x, float y) {
+void EnvironmentSystem::update(float dt) {
 
     // Decay all carcasses
     auto view = registry.view<FoodEnergy, Size, Carcass>();
@@ -31,7 +31,7 @@ void EnvironmentSystem::update(float dt, float x, float y) {
     time_since_immigration += dt;
     if (time_since_immigration > IMMIGRATION_TIME) {
         time_since_immigration -= IMMIGRATION_TIME;
-        creature_factory.spawn_random(x, y);
+        creature_factory.spawn_random();
     }
 
     // Ensure always some creatures
@@ -39,6 +39,6 @@ void EnvironmentSystem::update(float dt, float x, float y) {
     int num_creatures = creature_view.size();
     while (num_creatures < MIN_CREATURES) {
         num_creatures++;
-        creature_factory.spawn_random(x, y);
+        creature_factory.spawn_random();
     }
 }

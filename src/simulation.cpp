@@ -39,19 +39,19 @@ void Simulation::initialize() {
     Fertility::set_world_bounds(this->world_size_x, this->world_size_y, this->tolerance);
 
     for (int i = 0; i < NUM_INIT_CREATURES; i++) {
-        creature_factory.spawn_random(this->world_size_x, this->world_size_y);
+        creature_factory.spawn_random();
     }
 
     for (int i = 0; i < NUM_INIT_PLANTS; i++) {
-        plant_factory.spawn_random(this->world_size_x, this->world_size_y);
+        plant_factory.spawn_random();
     }
 }
 
 void Simulation::update(float dt) {
 
     spatial_index_system.update();
-    environment_system.update(dt, world_size_x, world_size_y);
-    plant_system.update(dt, world_size_x, world_size_y);
+    environment_system.update(dt);
+    plant_system.update(dt);
     sensor_system.update(entity_lookup_tree);
     thinking_system.update(dt);
     movement_system.update(dt);

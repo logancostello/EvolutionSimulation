@@ -6,7 +6,7 @@ class PlantSystem {
 
     public:
         PlantSystem(PlantFactory& plant_factory, entt::registry& registry) : plant_factory(plant_factory), registry(registry) {};
-        void update(float dt, int world_size_x, int world_size_y);
+        void update(float dt);
 
     private:
         float accumulated_time = 0;

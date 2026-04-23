@@ -9,7 +9,7 @@ CreatureFactory::CreatureFactory(entt::registry& registry)
     , brain_factory(registry)
 {};
 
-void CreatureFactory::spawn_random(int world_size_x, int world_size_y) {
+void CreatureFactory::spawn_random() {
 
     entt::entity creature = registry.create();
     auto [x, y] = Fertility::random_location();

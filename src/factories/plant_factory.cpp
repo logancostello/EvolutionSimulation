@@ -5,7 +5,7 @@
 
 PlantFactory::PlantFactory(entt::registry& registry) : registry(registry) {};
 
-void PlantFactory::spawn_random(int world_size_x, int world_size_y) {
+void PlantFactory::spawn_random() {
 
     entt::entity plant = registry.create();
     auto [x, y] = Fertility::random_location();
