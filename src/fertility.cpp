@@ -15,7 +15,7 @@ namespace Fertility {
 
     std::pair<float, float> random_location() {
         constexpr float scale = 0.0006f;
-        constexpr float threshold = 0.5f;
+        constexpr float threshold = 0.55f;
 
         while (true) {
             float half_x = world_size_x / 2.0f + tolerance;

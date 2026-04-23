@@ -3,12 +3,12 @@
 #include "limits"
 #include "fertility.h"
 
-const int WORLD_SIZE_X = 5000;
-const int WORLD_SIZE_Y = 5000;
+const int WORLD_SIZE_X = 7500;
+const int WORLD_SIZE_Y = 7500;
 const int WORLD_TOLERANCE = 2500;
 
 const int NUM_INIT_CREATURES = 200;
-const int NUM_INIT_PLANTS = 2000;
+const int NUM_INIT_PLANTS = 3000;
 
 Simulation::Simulation(entt::registry& registry) 
     : time(0.0f)

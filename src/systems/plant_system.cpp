@@ -2,7 +2,7 @@
 #include "components/components.h"
 
 const float TIME_PER_SPAWN = 0.15;
-const int MAX_PLANTS = 2000;
+const int MAX_PLANTS = 3000;
 
 void PlantSystem::update(float dt) {
 
