@@ -4,6 +4,7 @@
 
 namespace Fertility {
 
+    static siv::PerlinNoise noise;
     static float world_size_x;
     static float world_size_y;
     static float tolerance;

@@ -3,12 +3,13 @@
 
 namespace Fertility {
 
-    static siv::PerlinNoise noise{ (uint32_t)Random::int_range(0, INT_MAX) };
+    
 
     void set_world_bounds(float x, float y, float t) {
         world_size_x = x;
         world_size_y = y;
         tolerance = t;
+        noise.reseed(Random::get_seed());  
     }
 
         std::pair<float, float> random_location() {
