@@ -1,9 +1,10 @@
 #include "fertility.h"
 #include "random.h"
 
-namespace Fertility {
+const bool ALLOW_SPARSE = true;
+const float SPARSE_FERTILITY = 0.02;
 
-    
+namespace Fertility {
 
     void set_world_bounds(float x, float y, float t) {
         world_size_x = x;
@@ -12,7 +13,7 @@ namespace Fertility {
         noise.reseed(Random::get_seed());  
     }
 
-        std::pair<float, float> random_location() {
+    std::pair<float, float> random_location() {
         constexpr float scale = 0.0006f;
         constexpr float threshold = 0.5f;
 
@@ -29,7 +30,12 @@ namespace Fertility {
 
             float fertility = noise.normalizedOctave2D_01(x * scale, y * scale, 4, 0.5f) * falloff;
 
-            if (fertility > threshold && Random::float_range() < fertility) {
+            if (fertility <= threshold) {
+                if (ALLOW_SPARSE && falloff == 1) fertility = SPARSE_FERTILITY;
+                else continue;
+            }
+
+            if (Random::float_range() < fertility) {
                 return { x, y };
             }
         }
