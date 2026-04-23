@@ -4,7 +4,7 @@
 class EnvironmentSystem {
     public:
         EnvironmentSystem(entt::registry& registry, CreatureFactory& creature_factory);
-        void update(float dt, float x, float y);
+        void update(float dt);
 
     private:
         entt::registry& registry;

@@ -43,9 +43,10 @@ add_executable(main
     src/systems/spatial_index_system.cpp
     src/systems/environment_system.cpp
     src/systems/digestion_system.cpp
+    src/fertility.cpp
 )
 
-target_include_directories(main PRIVATE src/)
+target_include_directories(main PRIVATE src/ ${CMAKE_SOURCE_DIR}/include)
 target_compile_features(main PRIVATE cxx_std_17)
 target_compile_options(main PRIVATE -Wall -Wextra)
 target_link_libraries(main PRIVATE SFML::Graphics EnTT::EnTT)

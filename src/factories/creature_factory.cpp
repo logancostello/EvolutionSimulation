@@ -1,6 +1,7 @@
 #include "factories/creature_factory.h"
 #include "components/components.h"
 #include "random.h"
+#include "fertility.h"
 #include <cmath>
 
 CreatureFactory::CreatureFactory(entt::registry& registry) 
@@ -8,14 +9,11 @@ CreatureFactory::CreatureFactory(entt::registry& registry)
     , brain_factory(registry)
 {};
 
-void CreatureFactory::spawn_random(int world_size_x, int world_size_y) {
+void CreatureFactory::spawn_random() {
 
     entt::entity creature = registry.create();
-    registry.emplace<Position>(
-        creature, 
-        Random::float_range(world_size_x / -2.0f, world_size_x / 2.0f),
-        Random::float_range(world_size_y / -2.0f, world_size_y / 2.0f)
-    );
+    auto [x, y] = Fertility::random_location();
+    registry.emplace<Position>(creature, x, y);
     registry.emplace<OldPosition>(creature);
     registry.emplace<Velocity>(creature, 0, 0);
     registry.emplace<Color>(creature, 255, 255, 255);

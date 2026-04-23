@@ -28,6 +28,7 @@ class Simulation {
         float time;
         int world_size_x;
         int world_size_y;
+        int tolerance;
         QuadTree entity_lookup_tree;
         SpatialIndexSystem spatial_index_system;
         CreatureFactory creature_factory;
