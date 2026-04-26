@@ -15,17 +15,17 @@ void CreatureFactory::spawn_random() {
     auto [x, y] = Fertility::random_location();
     registry.emplace<Position>(creature, x, y);
     registry.emplace<OldPosition>(creature);
-    registry.emplace<Velocity>(creature, 0, 0);
+    registry.emplace<Velocity>(creature, 0.0f, 0.0f);
     registry.emplace<Color>(creature, 255, 255, 255);
     registry.emplace<Size>(creature, 8.0f);
-    registry.emplace<CreatureEnergy>(creature, 20, 20.0f);
+    registry.emplace<CreatureEnergy>(creature, 20.0f, 20.0f);
     registry.emplace<Creature>(creature);
-    registry.emplace<VisionSensors>(creature, 0, 0);
-    registry.emplace<Bite>(creature, 5);
-    registry.emplace<Stomach>(creature, 0, 20);
-    registry.emplace<ChildEnergy>(creature, 0, 20.0f);
-    registry.emplace<Age>(creature, 0);
-    registry.emplace<BrainTimer>(creature, 5, 60);
+    registry.emplace<VisionSensors>(creature, 0.0f, 0.0f);
+    registry.emplace<Bite>(creature, 5.0f);
+    registry.emplace<Stomach>(creature, 0.0f, 20.0f);
+    registry.emplace<ChildEnergy>(creature, 0.0f, 20.0f);
+    registry.emplace<Age>(creature, 0.0f);
+    registry.emplace<BrainTimer>(creature, 5.0f, 60.0f);
     registry.emplace<CreatureState>(creature, false, false);
     
     // brain_factory.create_random_brain(creature);
@@ -53,12 +53,12 @@ entt::entity CreatureFactory::spawn_child(entt::entity parent) {
     registry.emplace<CreatureEnergy>(child, 20.0f, 20.0f);
     registry.emplace<Creature>(child);
     registry.emplace<VisionSensors>(child, 0.0f, 0.0f);
-    registry.emplace<Bite>(child, 5);
-    registry.emplace<Stomach>(child, 0, 20);
-    registry.emplace<ChildEnergy>(child, 0, 20.0f);
+    registry.emplace<Bite>(child, 5.0f);
+    registry.emplace<Stomach>(child, 0.0f, 20.0f);
+    registry.emplace<ChildEnergy>(child, 0.0f, 20.0f);
     registry.emplace<Brain>(child, parent_brain.clone());
-    registry.emplace<Age>(child, 0);
-    registry.emplace<BrainTimer>(child, 5, 60);
+    registry.emplace<Age>(child, 0.0f);
+    registry.emplace<BrainTimer>(child, 5.0f, 60.0f);
     registry.emplace<CreatureState>(child, false, false);
 
     return child;
