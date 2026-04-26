@@ -9,33 +9,33 @@ import subprocess
 
 from pathlib import Path
 
-RUN_SEED = 9282024
-EVAL_TICKS = 1_000
+from ..util.util import run_process
+from ..util.read_config import BenchmarkConfig
 
-WARMUPS = 2
-
-EVAL_RUNS = 10
-
-def benchmark_performance(exec_path: str) -> None:
+def benchmark_performance(
+    exec_path: Path, 
+    benchmark_config: BenchmarkConfig
+    ) -> None:
     """ Benchmark performance and persist to artifact
     Args:
-        exec_path (str): Path to compiled executable
-    Returns:
-        None, TODO: Writes to supabase or artifact
+        exec_path (path): Path to compiled executable
+        benchmark_config (BenchmarkConfig): Config args for benchmark passed in
     """
-
-    exec_path = Path(exec_path)
-
     benchmark_results = []
 
     # Run warmups
-    for warmup in range(WARMUPS):
-        warmup_result = subprocess.run([exec_path, f"{RUN_SEED}", f"{EVAL_TICKS}"])
+    for warmup in range(int(benchmark_config.warmups)):
+        warmup_result = run_process(
+            [exec_path, benchmark_config.run_seed, benchmark_config.eval_ticks]
+            )
     
     # Run evals
-    for eval_run in range(EVAL_RUNS):
+    for eval_run in range(int(benchmark_config.eval_runs)):
         print(f"Run: {eval_run}")
-        eval_result = subprocess.run([exec_path, f"{RUN_SEED}", f"{EVAL_TICKS}"], capture_output = True, text = True)
+        eval_result = run_process(
+            [exec_path, benchmark_config.run_seed, benchmark_config.eval_ticks], 
+            capture_output = True, text = True)
+
         match = re.search(r"Avg/tick: (\d+\.?\d*)ms", eval_result.stdout)
         benchmark_results.append(match.group(1))
     

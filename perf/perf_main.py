@@ -6,31 +6,36 @@ This file initiates the benchmark harness.
 
 import sys
 import shutil
+import argparse
 
-from .util.compile_program import compile_program
 from .benchmark.benchmark import benchmark_performance
 from .profiling.profile_program import profile_program
-
-CMAKE_PATH = "./CMakeLists.txt"
-COMPILE_PATH = "./build"
-EXEC_PATH = "./build/bin/main"
-OUTPUT_PATH = "./profile_graphics"
+from .util.compile_program import compile_program
+from .util.read_config import Config
 
 def main():
-    # Delete artifact folders
-    shutil.rmtree(COMPILE_PATH, ignore_errors=True)
-    shutil.rmtree(OUTPUT_PATH, ignore_errors=True)
+    # Intiailize parser
+    parser = argparse.ArgumentParser(description = "EvolutionSim Performance Harness")
+
+    # Add Config Arg
+    parser.add_argument("--config", help="Path to config file", default="./perf/config/config.json")
+    
+    args = parser.parse_args()
+
+    # Read in JSON config
+    config = Config(args.config)
+
 
     print("BEGINNING COMPILING PROGRAM")
     # Compile executable
-    compile_program(CMAKE_PATH, COMPILE_PATH)
+    compile_program(config.paths.cmake_path, config.paths.compile_path)
 
     # Perform benchmarking
     print("PERFORMING BENCHMARKING")
-    benchmark_performance(EXEC_PATH)
+    benchmark_performance(config.paths.exec_path, config.benchmark)
 
     # Perform profiling
-    profile_program(EXEC_PATH, OUTPUT_PATH)
+    profile_program(config.paths.exec_path, config.benchmark, config.paths.flamegraph_dir, config.paths.output_path)
 
     return
 

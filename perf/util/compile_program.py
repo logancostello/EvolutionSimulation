@@ -8,34 +8,34 @@ import subprocess
 
 from pathlib import Path
 
-def compile_program(cmake_path: str, compile_path: str) -> str:
+from ..util.util import run_process
+
+def compile_program(cmake_path: Path, compile_path: Path) -> None:
     """ Compiles EvolutionSim To Certain Location.
     Args:
-        cmake_path (str): Initial path to CMakeLists.txt
-        compile_path (str): Build folder directory for CMake
-    Returns:
-        exec_path (str): Resulting path to executable
+        cmake_path (Path): Initial path to CMakeLists.txt
+        compile_path (Path): Build folder directory for CMake
     """
-    cmake_path = Path(cmake_path)
-    compile_path = Path(compile_path)
-
     # Create build dir for compilation
     print("CREATING BUILD DIR")
-    build_dir = subprocess.run([
-        "cmake", "-S", ".", "-B", compile_path,
-        "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
-        "-DCMAKE_CXX_FLAGS=-O2 -g -fno-omit-frame-pointer",
-        "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
-    ], capture_output=True, text=True)
+    if not compile_path.exists():
+        build_dir = run_process(
+            [
+            "cmake", "-S", ".", "-B", compile_path,
+            "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+            "-DCMAKE_CXX_FLAGS=-O2 -g -fno-omit-frame-pointer",
+            "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+            ], 
+            capture_output=True, text=True)
 
-    if build_dir.returncode != 0:
-        raise RuntimeError(f"CMake configure failed:\n{build_dir.stderr}")
+        if build_dir.returncode != 0:
+            raise RuntimeError(f"CMake configure failed:\n{build_dir.stderr}")
 
     # Compile program
     print("COMPILING PROGRAM")
-    compile_result = subprocess.run([
-        "cmake", "--build", compile_path
-    ], capture_output=True, text=True)
+    compile_result = run_process(
+        ["cmake", "--build", compile_path], 
+        capture_output=True, text=True)
 
     if compile_result.returncode != 0:
         raise RuntimeError(f"CMake build failed:\n{compile_result.stderr}")
