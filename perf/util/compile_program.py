@@ -29,8 +29,7 @@ def compile_program(cmake_path: str, compile_path: str) -> str:
     ], capture_output=True, text=True)
 
     if build_dir.returncode != 0:
-        print(build_dir.stderr)
-        return
+        raise RuntimeError(f"CMake configure failed:\n{build_dir.stderr}")
 
     # Compile program
     print("COMPILING PROGRAM")
@@ -39,5 +38,4 @@ def compile_program(cmake_path: str, compile_path: str) -> str:
     ], capture_output=True, text=True)
 
     if compile_result.returncode != 0:
-        print(compile_result.stderr)
-        return
+        raise RuntimeError(f"CMake build failed:\n{compile_result.stderr}")
