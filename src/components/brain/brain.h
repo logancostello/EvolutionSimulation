@@ -2,6 +2,12 @@
 #include <vector>
 #include "components/brain/node.h"
 
+enum class NodeType {
+    Input, 
+    Output,
+    Hidden
+};
+
 struct Edge {
     int from_node;
     int to_node;
@@ -14,6 +20,7 @@ struct Brain {
     std::vector<InputNode> input_nodes;
     std::vector<OutputNode> output_nodes;
     std::vector<Node> hidden_nodes;
+    std::unordered_map<int, std::pair<NodeType, int>> node_idx_map;
     std::vector<Edge> edges;
 
     Brain() : input_nodes({}), output_nodes({}), hidden_nodes({}), edges({}) {next_node_id = input_nodes.size() + output_nodes.size();};
@@ -26,6 +33,10 @@ struct Brain {
     void populate_outputs(entt::registry& registry, entt::entity& entity);
     void think(float dt, entt::registry& registry, entt::entity& entity);
 
+    void add_input_node(InputSource source);
+    void add_output_node(OutputSource source, ActivationRange range);
+    int add_hidden_node();
+    void remove_node(int id);
     void add_random_edge();
     void remove_random_edge();
     void swap_random_edge();

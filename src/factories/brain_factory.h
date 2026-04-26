@@ -1,5 +1,6 @@
 #include <entt/entt.hpp>
 #include "components/brain/node.h"
+#include "components/brain/brain.h"
 
 class BrainFactory {
     public:
@@ -10,6 +11,6 @@ class BrainFactory {
 
     private:
         entt::registry& registry;
-        std::vector<InputNode> get_basic_inputs();
-        std::vector<OutputNode> get_basic_outputs();
+        void add_basic_inputs(Brain& brain);
+        void add_basic_outputs(Brain& brain);
 };

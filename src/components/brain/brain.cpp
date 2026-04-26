@@ -1,6 +1,47 @@
 #include "components/brain/brain.h"
 #include "random.h"
 
+void Brain::add_input_node(InputSource source) {
+    InputNode node = InputNode(next_node_id++, source);
+    node_idx_map.emplace(node.id, std::make_pair(NodeType::Input, input_nodes.size()));
+    input_nodes.push_back(node);
+}
+
+void Brain::add_output_node(OutputSource source, ActivationRange range) {
+    OutputNode node = OutputNode(next_node_id++, source, range);
+    node_idx_map.emplace(node.id, std::make_pair(NodeType::Output, output_nodes.size()));
+    output_nodes.push_back(node);
+}
+
+int Brain::add_hidden_node() {
+    Node node = Node(next_node_id++);
+    node_idx_map.emplace(node.id, std::make_pair(NodeType::Hidden, hidden_nodes.size()));
+    hidden_nodes.push_back(node);
+    return node.id;
+}
+
+void Brain::remove_node(int id) {
+    auto it = node_idx_map.find(id);
+    if (it == node_idx_map.end()) return;
+
+    auto [node_type, node_idx] = it->second;
+
+    auto& vec = (node_type == NodeType::Input)  ? (std::vector<Node>&)input_nodes
+              : (node_type == NodeType::Output) ? (std::vector<Node>&)output_nodes
+              :                                   hidden_nodes;
+
+    int last_id = vec.back().id;
+
+    // Swap target with last, then pop
+    // Update the idx of the moved node
+    std::swap(vec[node_idx], vec.back());
+    node_idx_map[last_id].second = node_idx;
+
+    vec.pop_back();
+    node_idx_map.erase(it);
+}
+
+
 void Brain::load_inputs(entt::registry& registry, entt::entity& entity, float dt) {
     for (InputNode& input : input_nodes) {
         input.load_input(registry, entity, dt);
@@ -13,27 +54,17 @@ void Brain::populate_outputs(entt::registry& registry, entt::entity& entity) {
     }
 }
 
-// Naive for now, improved in future
 Node& Brain::get_node(int id) {
-    for (InputNode& node : input_nodes) {
-        if (node.id == id) {
-            return node;
-        }
-    }
+    auto iter = node_idx_map.find(id);
+    if (iter == node_idx_map.end())
+        throw std::runtime_error("Node not found: " + std::to_string(id));
 
-    for (OutputNode& node : output_nodes) {
-        if (node.id == id) {
-            return node;
-        }
+    auto [type, idx] = iter->second;
+    switch (type) {
+        case NodeType::Input: return input_nodes[idx];
+        case NodeType::Output: return output_nodes[idx];
+        case NodeType::Hidden: return hidden_nodes[idx];
     }
-
-    for (Node& node : hidden_nodes) {
-        if (node.id == id) {
-            return node;
-        }
-    }
-
-    throw std::runtime_error("Node not found: " + std::to_string(id));
 }
 
 void Brain::think(float dt, entt::registry& registry, entt::entity& entity) {
@@ -130,8 +161,7 @@ void Brain::swap_random_edge() {
 }
 
 void Brain::add_random_unconnected_node() {
-    Node node = Node(next_node_id++);
-    hidden_nodes.push_back(node);
+    add_hidden_node();
 }
 
 void Brain::add_random_connected_node() {
@@ -139,15 +169,14 @@ void Brain::add_random_connected_node() {
     int index = Random::int_range(0, edges.size() - 1);
     Edge edge = edges[index];
 
-    Node node = Node(next_node_id++);
-    hidden_nodes.push_back(node);
+    int id = add_hidden_node();
 
     if (Random::float_range() < 0.5) {
-        edges.push_back(Edge(edge.from_node, node.id, edge.weight));
-        edges.push_back(Edge(node.id, edge.to_node, 1));
+        edges.push_back(Edge(edge.from_node, id, edge.weight));
+        edges.push_back(Edge(id, edge.to_node, 1));
     } else {
-        edges.push_back(Edge(edge.from_node, node.id, 1));
-        edges.push_back(Edge(node.id, edge.to_node, edge.weight));
+        edges.push_back(Edge(edge.from_node, id, 1));
+        edges.push_back(Edge(id, edge.to_node, edge.weight));
     }
 
     edges.erase(edges.begin() + index);
@@ -200,7 +229,7 @@ void Brain::remove_random_node() {
         edges.end()
     );
 
-    hidden_nodes.erase(hidden_nodes.begin() + index);
+    remove_node(remove_id);
 }
 
 
@@ -211,5 +240,6 @@ Brain Brain::clone() const {
     copy.hidden_nodes = hidden_nodes;
     copy.edges = edges;
     copy.next_node_id = next_node_id;
+    copy.node_idx_map = node_idx_map;
     return copy;
 }
