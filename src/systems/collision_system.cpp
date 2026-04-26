@@ -6,14 +6,14 @@ CollisionSystem::CollisionSystem(entt::registry& registry) : registry(registry) 
 
 void CollisionSystem::update(QuadTree& lookup_tree, float dt) {
 
-    auto movables = registry.view<Position, Size>(entt::exclude<Dead>);
-    for (auto [a, a_pos, a_size] : movables.each()) {
+    auto movables = registry.view<Velocity, Position, Size>(entt::exclude<Dead>);
+    for (auto [a, a_vel, a_pos, a_size] : movables.each()) {
 
         touching.clear();
         lookup_tree.query(a_pos.x, a_pos.y, a_size.radius, touching);
 
         for (entt::entity b : touching) {
-            if (b <= a) continue; // skip self and already-processed pairs
+            if (b == a) continue; // skip self
             if (registry.all_of<Dead>(b)) continue;
 
             auto& b_pos = registry.get<Position>(b);
@@ -27,10 +27,6 @@ void CollisionSystem::update(QuadTree& lookup_tree, float dt) {
             if (a_is_creature && b_is_food) {
                 handle_eating(a, b, dt);
                 if (registry.all_of<Dead>(b)) continue;
-            }
-            if (b_is_creature && a_is_food) {
-                handle_eating(b, a, dt);
-                if (registry.all_of<Dead>(a)) continue;
             }
 
             float dx = a_pos.x - b_pos.x;
