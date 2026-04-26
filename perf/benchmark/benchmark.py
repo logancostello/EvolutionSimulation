@@ -16,11 +16,10 @@ WARMUPS = 2
 
 EVAL_RUNS = 10
 
-def benchmark_performance(exec_path: str, commit_id: str) -> None:
+def benchmark_performance(exec_path: str) -> None:
     """ Benchmark performance and persist to artifact
     Args:
         exec_path (str): Path to compiled executable
-        commit_id (str): ID of benchmarked commit
     Returns:
         None, TODO: Writes to supabase or artifact
     """
@@ -39,7 +38,5 @@ def benchmark_performance(exec_path: str, commit_id: str) -> None:
         eval_result = subprocess.run([exec_path, f"{RUN_SEED}", f"{EVAL_TICKS}"], capture_output = True, text = True)
         match = re.search(r"Avg/tick: (\d+\.?\d*)ms", eval_result.stdout)
         benchmark_results.append(match.group(1))
-
-    print(benchmark_results)
     
     return

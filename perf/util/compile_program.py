@@ -16,24 +16,28 @@ def compile_program(cmake_path: str, compile_path: str) -> str:
     Returns:
         exec_path (str): Resulting path to executable
     """
-    
     cmake_path = Path(cmake_path)
     compile_path = Path(compile_path)
 
     # Create build dir for compilation
     print("CREATING BUILD DIR")
-    build_dir = subprocess.run(["cmake", "-S", ".", "-B", f"{compile_path}"], capture_output = True, text = True)
+    build_dir = subprocess.run([
+        "cmake", "-S", ".", "-B", compile_path,
+        "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+        "-DCMAKE_CXX_FLAGS=-O2 -g -fno-omit-frame-pointer",
+        "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+    ], capture_output=True, text=True)
 
-    # Print error message
     if build_dir.returncode != 0:
         print(build_dir.stderr)
         return
 
     # Compile program
     print("COMPILING PROGRAM")
-    compile_program = subprocess.run(["cmake", "--build", "build"], capture_output = True, text = True)
-    if compile_program.returncode != 0:
-        print(compile_program.stderr)
-        return
+    compile_result = subprocess.run([
+        "cmake", "--build", compile_path
+    ], capture_output=True, text=True)
 
-    return
+    if compile_result.returncode != 0:
+        print(compile_result.stderr)
+        return
