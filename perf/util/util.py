@@ -7,14 +7,14 @@ import subprocess
 import platform
 
 def run_process(cmd: list, **kwargs) -> subprocess.CompletedProcess:
-    """Run a command
-    Args:
-        None
-    Returns:
-        None
-    """
-    return subprocess.run(cmd, check=True, **kwargs)
-
+    try:
+        return subprocess.run(cmd, check=True, **kwargs)
+    except subprocess.CalledProcessError as e:
+        if e.stderr:
+            print(e.stderr)
+        if e.stdout:
+            print(e.stdout)
+        raise
 
 def current_os() -> str:
     """ Checks current OS 
