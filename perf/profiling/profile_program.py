@@ -4,11 +4,11 @@ Given an executable path, generates flamegraph SVGs
 import os
 import subprocess
 import sys
+import webbrowser
 from pathlib import Path
 
-from ..util.util import run_process, current_os
+from ..util.util import run_process, current_os, open_in_browser
 from ..util.read_config import PathConfig, BenchmarkConfig
-
 
 # Profilers
 def profile_linux(
@@ -29,12 +29,23 @@ def profile_linux(
     out_path          = output_path / "out.perf"
     fold_path         = output_path / "out.folded"
     flamegraph_path   = output_path / "flamegraph.svg"
+    top_fn_path       = output_path / "top_functions.txt"
     fold_script       = flamegraph_dir / "stackcollapse-perf.pl"
     flamegraph_script = flamegraph_dir / "flamegraph.pl"
 
     # Sample
     run_process(["sudo", "perf", "record", "-g", "-o", data_path,
                  exec_path, benchmark_config.run_seed, benchmark_config.eval_ticks])
+
+    # Top 20 hottest functions (flat, no children)
+    result = run_process(
+        ["sudo", "perf", "report", "-i", data_path,
+         "--stdio", "--no-children", "--sort=symbol"],
+        capture_output=True, text=True,
+    )
+    top_lines = [l for l in result.stdout.splitlines() if not l.startswith("#")][:25]
+    top_text  = "\n".join(top_lines)
+    top_fn_path.write_text(top_text)
 
     # Convert binary
     result = run_process(["sudo", "perf", "script", "-i", data_path],
@@ -52,6 +63,7 @@ def profile_linux(
     flamegraph_path.write_text(result.stdout)
 
     print(f"Flamegraph written to: {flamegraph_path}")
+    open_in_browser(flamegraph_path)
 
 
 def profile_macos(
@@ -108,6 +120,7 @@ def profile_macos(
     flamegraph_path.write_text(result.stdout)
 
     print(f"Flamegraph written to: {flamegraph_path}")
+    open_in_browser(flamegraph_path)
 
 
 def _xctrace_xml_to_folded(xml_path: Path, fold_path: Path) -> None:
@@ -152,6 +165,7 @@ def _xctrace_xml_to_folded(xml_path: Path, fold_path: Path) -> None:
             lines.append(";".join(reversed(frames)) + " 1")
 
     fold_path.write_text("\n".join(lines))
+
 
 def profile_program(
     exec_path:        Path,
