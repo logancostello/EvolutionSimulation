@@ -40,7 +40,8 @@
 # debug information files
 *.dwo
 
-/build
+/build/
+/web-build/
 .vscode
 build_profile
 profiles

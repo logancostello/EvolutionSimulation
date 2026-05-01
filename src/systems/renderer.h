@@ -1,3 +1,4 @@
+#pragma once
 #include "raylib.h"
 #include <entt/entt.hpp>
 
