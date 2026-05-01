@@ -7,14 +7,23 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_BUILD_TYPE Release)
 add_compile_options(-O2 -g)
 
-include(FetchContent)
-FetchContent_Declare(SFML
-    GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG 3.0.2
-    GIT_SHALLOW ON
-    EXCLUDE_FROM_ALL
-    SYSTEM)
-FetchContent_MakeAvailable(SFML)
+# Dependencies
+set(RAYLIB_VERSION 6.0)
+find_package(raylib ${RAYLIB_VERSION} QUIET)
+if (NOT raylib_FOUND)
+    include(FetchContent)
+    FetchContent_Declare(
+        raylib
+        DOWNLOAD_EXTRACT_TIMESTAMP OFF
+        URL https://github.com/raysan5/archive/refs/tags/${RAYLIB_VERSION}.tar.gz
+    )
+
+    FetchContent_GetProperties(raylib)
+    if (NOT raylib_POPULATED)
+        set(FETCHCONTENT_QUEIT NO)
+        FetchContent_MakeAvailable(raylib)
+    endif()
+endif()
 
 include(FetchContent)
 FetchContent_Declare(EnTT
