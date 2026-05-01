@@ -15,7 +15,7 @@ if (NOT raylib_FOUND)
     FetchContent_Declare(
         raylib
         DOWNLOAD_EXTRACT_TIMESTAMP OFF
-        URL https://github.com/raysan5/archive/refs/tags/${RAYLIB_VERSION}.tar.gz
+        URL https://github.com/raysan5/raylib/archive/refs/tags/${RAYLIB_VERSION}.tar.gz
     )
 
     FetchContent_GetProperties(raylib)
