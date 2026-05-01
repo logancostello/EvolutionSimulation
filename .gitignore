@@ -44,3 +44,8 @@
 .vscode
 build_profile
 profiles
+
+# Perf harness
+/perf/perfvenv
+**/__pycache__
+/profile_graphics
