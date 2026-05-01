@@ -16,7 +16,7 @@ void CreatureFactory::spawn_random() {
     registry.emplace<Position>(creature, x, y);
     registry.emplace<OldPosition>(creature);
     registry.emplace<Velocity>(creature, 0.0f, 0.0f);
-    registry.emplace<Color>(creature, 255, 255, 255);
+    registry.emplace<ColorComponent>(creature, 255, 255, 255);
     registry.emplace<Size>(creature, 8.0f);
     registry.emplace<CreatureEnergy>(creature, 20.0f, 20.0f);
     registry.emplace<Creature>(creature);
@@ -48,7 +48,7 @@ entt::entity CreatureFactory::spawn_child(entt::entity parent) {
     registry.emplace<Position>(child, spawn_x, spawn_y);
     registry.emplace<OldPosition>(child);
     registry.emplace<Velocity>(child, parent_vel.mag, parent_vel.dir);
-    registry.emplace<Color>(child, 255, 255, 255);
+    registry.emplace<ColorComponent>(child, 255, 255, 255);
     registry.emplace<Size>(child, 8.0f);
     registry.emplace<CreatureEnergy>(child, 20.0f, 20.0f);
     registry.emplace<Creature>(child);

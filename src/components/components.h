@@ -7,7 +7,7 @@ struct Position {
 };
 struct OldPosition { float x, y; };
 struct Velocity { float mag, dir, turn_rate; };
-struct Color { int r, g, b; };
+struct ColorComponent { int r, g, b; };
 struct Size { float radius; };
 struct CreatureEnergy { float energy, max; };
 struct Dead {};

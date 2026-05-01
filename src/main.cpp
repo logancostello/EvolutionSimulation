@@ -1,4 +1,6 @@
-#include <SFML/Graphics.hpp>
+#include "raylib.h"
+#include "rlgl.h"
+#include "raymath.h"
 #include <entt/entt.hpp>
 #include <iostream>
 #include <iomanip>
@@ -9,7 +11,6 @@
 #include "systems/renderer.h"
 
 int main(int argc, char* argv[]) {
-
     if (argc > 1) {
         try {
             uint32_t seed = std::stoul(argv[1]);
@@ -23,12 +24,7 @@ int main(int argc, char* argv[]) {
     }
     std::cout << "Seed: " << Random::get_seed() << std::endl;
 
-    // -------------------------------------------------------------------------
     // Headless mode: ./main <seed> <ticks>
-    //
-    // Runs the simulation for exactly <ticks> updates with no window or
-    // renderer, then prints timing and a determinism checksum.
-    // -------------------------------------------------------------------------
     if (argc > 2) {
         int max_ticks = 0;
         try {
@@ -53,9 +49,6 @@ int main(int argc, char* argv[]) {
         auto t_end = std::chrono::steady_clock::now();
         double elapsed = std::chrono::duration<double>(t_end - t_start).count();
 
-        // Determinism checksum — sum of all entity positions.
-        // Run twice with the same seed/ticks: checksums must match.
-        // If they don't after a refactor, you broke determinism.
         double checksum = 0.0;
         auto view = registry.view<Position>();
         for (auto [entity, pos] : view.each()) {
@@ -70,19 +63,31 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    // -------------------------------------------------------------------------
-    // Normal windowed mode (unchanged)
-    // -------------------------------------------------------------------------
-    sf::RenderWindow window(
-        sf::VideoMode({1600, 1000}),
-        "Evolution Simulation"
+    // Normal windowed mode
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+
+    const int screen_width = 1600;
+    const int screen_height = 1000;
+    InitWindow(screen_width, screen_height, "Evolution Simulation");
+
+    const float world_width  = 7500.0f;
+    const float world_height = 7500.0f;
+
+    // Compute initial zoom so the entire world fits inside the window
+    float initial_zoom = std::min(
+        screen_width  / world_width,
+        screen_height / world_height
     );
 
-    window.setFramerateLimit(60);
+    Camera2D camera = {};
 
-    sf::Vector2f window_size((float)window.getSize().x, (float)window.getSize().y);
-    sf::View view(sf::FloatRect(-window_size / 2.f, window_size));
-    window.setView(view);
+    // Fit world inside initial view
+    camera.target = Vector2{ 0.0f, 2.0f }; 
+    camera.offset = Vector2{ 0.0f, 0.0f }; 
+    camera.zoom   = initial_zoom;
+
+    int current_fps = 60;
+    SetTargetFPS(current_fps);
 
     entt::registry registry;
     auto sim = std::make_unique<Simulation>(registry);
@@ -92,81 +97,46 @@ int main(int argc, char* argv[]) {
 
     sim->initialize();
 
-    bool panning = false;
-    sf::Vector2i last_mouse_pos;
-
     bool paused = false;
     bool uncapped_frames = false;
 
-    while (window.isOpen()) {
-        while (const std::optional event = window.pollEvent()) {
-            if (event->is<sf::Event::Closed>())
-                window.close();
-            if (const auto* key = event->getIf<sf::Event::KeyPressed>()) {
-                if (key->code == sf::Keyboard::Key::Escape) {
-                    window.close();
-                } else if (key->code == sf::Keyboard::Key::Space) {
-                    paused = !paused;
-                } else if (key->code == sf::Keyboard::Key::F) {
-                    uncapped_frames = !uncapped_frames;
-                    if (uncapped_frames) {
-                        window.setFramerateLimit(0);
-                    } else {
-                        window.setFramerateLimit(60);
-                    }
-                }
-            }
-
-            if (const auto* resized = event->getIf<sf::Event::Resized>()) {
-                sf::Vector2f new_size(resized->size);
-                view.setSize(new_size);
-                window.setView(view);
-            }
-            if (const auto* scroll = event->getIf<sf::Event::MouseWheelScrolled>()) {
-                float zoom_factor = 1.0f - (scroll->delta * 0.1f);
-                zoom_factor = std::clamp(zoom_factor, 0.5f, 2.0f);
-
-                sf::Vector2f mouse_world_before = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-
-                view.zoom(zoom_factor);
-                window.setView(view);
-
-                sf::Vector2f mouse_world_after = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-
-                view.move(mouse_world_before - mouse_world_after);
-                window.setView(view);
-            }
-            if (const auto* mouse = event->getIf<sf::Event::MouseButtonPressed>()) {
-                if (mouse->button == sf::Mouse::Button::Left) {
-                    panning = true;
-                    last_mouse_pos = sf::Mouse::getPosition(window);
-                }
-            }
-            if (const auto* mouse = event->getIf<sf::Event::MouseButtonReleased>()) {
-                if (mouse->button == sf::Mouse::Button::Left) {
-                    panning = false;
-                }
-            }
-            if (const auto* mouse = event->getIf<sf::Event::MouseMoved>()) {
-                if (panning) {
-                    sf::Vector2i current_pos = sf::Vector2i(mouse->position.x, mouse->position.y);
-                    sf::Vector2i delta = last_mouse_pos - current_pos;
-
-                    float zoom_level = view.getSize().x / window.getSize().x;
-                    view.move(sf::Vector2f(delta) * zoom_level);
-
-                    last_mouse_pos = current_pos;
-                    window.setView(view);
-                }
-            }
+    while (!WindowShouldClose()) {
+        // Keyboard input
+        if (IsKeyPressed(KEY_SPACE)) paused = !paused;
+        else if (IsKeyPressed(KEY_F)) {
+            uncapped_frames = !uncapped_frames;
+            SetTargetFPS(uncapped_frames ? 0 : current_fps);
         }
 
-        window.clear(sf::Color(15, 15, 20));
+        // Pan with left click
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+            Vector2 delta = GetMouseDelta();
+            delta = Vector2Scale(delta, -1.0f / camera.zoom);
+            camera.target = Vector2Add(camera.target, delta);
+        }
+
+        // Zoom with mouse wheel
+        float wheel = GetMouseWheelMove();
+        if (wheel != 0) {
+            Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
+            camera.offset = GetMousePosition();
+            camera.target = mouseWorldPos;
+            float scale = 0.2f * wheel;
+            camera.zoom = Clamp(expf(logf(camera.zoom) + scale), 0.125f, 64.0f);
+        }
+
+        // Recenter camera when window resized
+        if (IsWindowResized()) {
+            camera.offset = Vector2{ GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };
+        }
 
         if (!paused) sim->update(dt);
 
-        renderer.draw(window, registry);
-
-        window.display();
+        BeginDrawing();
+            ClearBackground(Color{15, 15, 20, 255});
+            BeginMode2D(camera);
+                renderer.draw(registry);
+            EndMode2D();
+        EndDrawing();
     }
 }

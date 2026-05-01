@@ -1,7 +1,7 @@
-#include <SFML/Graphics.hpp>
+#include "raylib.h"
 #include <entt/entt.hpp>
 
 class Renderer {
     public:
-        void draw(sf::RenderWindow& window, entt::registry& registry);
+        void draw(entt::registry& registry);
 };
