@@ -1,7 +1,7 @@
 #include "raylib.h"
 #include "rlgl.h"
-#include "raymath.h"
 #include <entt/entt.hpp>
+#include <cmath>
 #include <iostream>
 #include <iomanip>
 #include <chrono>
@@ -81,9 +81,8 @@ int main(int argc, char* argv[]) {
 
     Camera2D camera = {};
 
-    // Fit world inside initial view
-    camera.target = Vector2{ 0.0f, 2.0f }; 
-    camera.offset = Vector2{ 0.0f, 0.0f }; 
+    camera.target = Vector2{ 0.0f, 0.0f };  
+    camera.offset = Vector2{ screen_width / 2.0f, screen_height / 2.0f }; 
     camera.zoom   = initial_zoom;
 
     int current_fps = 60;
@@ -111,8 +110,9 @@ int main(int argc, char* argv[]) {
         // Pan with left click
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
             Vector2 delta = GetMouseDelta();
-            delta = Vector2Scale(delta, -1.0f / camera.zoom);
-            camera.target = Vector2Add(camera.target, delta);
+            float zoom_scale = -1.0f / camera.zoom;
+            delta = Vector2{delta.x * zoom_scale, delta.y * zoom_scale};
+            camera.target = Vector2{camera.target.x + delta.x, camera.target.y + delta.y};
         }
 
         // Zoom with mouse wheel
@@ -122,7 +122,7 @@ int main(int argc, char* argv[]) {
             camera.offset = GetMousePosition();
             camera.target = mouseWorldPos;
             float scale = 0.2f * wheel;
-            camera.zoom = Clamp(expf(logf(camera.zoom) + scale), 0.125f, 64.0f);
+            camera.zoom = std::clamp(expf(logf(camera.zoom) + scale), 0.125f, 64.0f);
         }
 
         // Recenter camera when window resized
