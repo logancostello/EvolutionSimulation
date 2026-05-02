@@ -2,7 +2,7 @@ name: Perf
 
 on:
   push:
-    branches: [main, 78-add-base-jekyll-site-for-wasm]
+    branches: [main]
   pull_request:
     branches: [main]
 
