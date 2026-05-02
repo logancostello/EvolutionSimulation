@@ -23,7 +23,7 @@ def main():
 
     # Compile Jekyll site
     print("Building Jekyll Site")
-    jekyll_compile()
+    # jekyll_compile()
     return
 
 if __name__ == "__main__":

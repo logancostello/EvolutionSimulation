@@ -18,16 +18,17 @@ jobs:
         uses: mymindstorm/setup-emsdk@v14
         with:
           version: latest
-
-      - name: Install Jekyll & dependencies
-        run: |
-          sudo apt-get install -y ruby-full build-essential zlib1g-dev
-          sudo gem install bundler
-          cd ./website/jekyll_site
-          bundle install
-          cd ../../
     
-      - name: Compile WASM & Website
+      - name: Compile WASM
         run:  python3 -m website.compile_site
+
+      - name: Switch To Jekyll Dir
+        run: cd ./website/jekyll_site
+      
+      - name: Compile Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./website/jekyll_site
+          destination: ./website/jekyll_site/_site
 
       # TODO: Update Github pages to reflect new WASM
