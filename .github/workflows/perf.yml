@@ -33,21 +33,6 @@ jobs:
             libxi-dev \
             libgl1-mesa-dev
 
-      - name: Cache Jekyll gems
-        uses: actions/cache@v4
-        with:
-          path: website/jekyll_site/vendor/bundle
-          key: ${{ runner.os }}-jekyll-${{ hashFiles('website/jekyll_site/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-jekyll-
-
-      - name: Install Jekyll & dependencies
-        run: |
-          sudo apt-get install -y ruby-full build-essential zlib1g-dev
-          sudo gem install bundler
-          cd ./website/jekyll_site
-          bundle install --path vendor/bundle
-
       - name: Run performance benchmarking
         run: python3 -m perf.perf_main
 
