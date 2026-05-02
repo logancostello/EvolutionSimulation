@@ -13,6 +13,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+
+      - name: Install Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: latest
     
       - name: Compile WASM & Website
         run:  python3 -m website.compile_site
