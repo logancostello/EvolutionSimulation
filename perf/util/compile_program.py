@@ -24,7 +24,8 @@ def compile_program(cmake_path: Path, compile_path: Path) -> None:
             "cmake", "-S", ".", "-B", compile_path,
             "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
             "-DCMAKE_CXX_FLAGS=-O2 -g -fno-omit-frame-pointer",
-            "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+            "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+            "-DPLATFORM=Null"
             ], 
             capture_output=True, text=True)
 
