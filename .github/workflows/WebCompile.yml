@@ -1,0 +1,48 @@
+name: WebCompile
+
+on:
+  push:
+    branches: [main, 78-add-base-jekyll-site-for-wasm]
+  pull_request:
+    branches: [main]
+
+jobs:
+  WebCompile:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Cache Emscripten
+        uses: actions/cache@v4
+        with:
+          path: emsdk-cache
+          key: ${{ runner.os }}-emsdk-${{ hashFiles('.emscripten') }}
+          restore-keys: |
+            ${{ runner.os }}-emsdk-
+
+      - name: Install Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: latest
+          actions-cache-folder: emsdk-cache
+
+      - name: Compile WASM
+        run: python3 -m website.compile_site
+
+      - name: Cache Jekyll gems
+        uses: actions/cache@v4
+        with:
+          path: website/jekyll_site/vendor/bundle
+          key: ${{ runner.os }}-jekyll-${{ hashFiles('website/jekyll_site/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-jekyll-
+
+      - name: Compile Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./website/jekyll_site
+          destination: ./website/jekyll_site/_site
+
+      # TODO: Update Github pages to reflect new WASM
