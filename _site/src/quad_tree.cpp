@@ -1,0 +1,262 @@
+#include "quad_tree.h"
+#include <stack>
+
+bool QuadOverflow::is_full() { return count == OVERFLOW_SIZE; }; 
+
+bool QuadEntity::touches_circle(float cirlce_x, float cirlce_y, float circle_radius) {
+    float dx = x - cirlce_x;
+    float dy = y - cirlce_y;
+    float touch_dist = r + circle_radius;
+    return dx*dx + dy*dy <= touch_dist * touch_dist;
+}
+
+
+bool QuadNode::is_leaf() { return children[0] == -1; };
+bool QuadNode::is_full() { return count == BUCKET_SIZE; };
+
+bool QuadNode::contains(float x, float y) {
+    return xmin <= x && x < xmax && ymin <= y && y < ymax;
+};
+
+bool QuadNode::intersects_circle(float x, float y, float r) {
+    float closest_x = std::clamp(x, xmin, xmax);
+    float closest_y = std::clamp(y, ymin, ymax);
+    float dx = x - closest_x;
+    float dy = y - closest_y;
+    return dx * dx + dy * dy <= r * r;
+}
+
+bool QuadNode::intersects_circle_sqr(float x, float y, float r_sqr) {
+    float closest_x = std::clamp(x, xmin, xmax);
+    float closest_y = std::clamp(y, ymin, ymax);
+    float dx = x - closest_x;
+    float dy = y - closest_y;
+    return dx * dx + dy * dy <= r_sqr;
+}
+
+QuadTree::QuadTree(float world_size_x, float world_size_y) {
+    node_pool_size = 0;
+    overflow_pool_size = 0;
+
+    // Add extra space to quad tree to gracefully handle entities that exit the world bounding box
+    global_xmin = -(world_size_x / 2) * 1.1;
+    global_xmax = (world_size_x / 2) * 1.1;
+    global_ymin = -(world_size_y / 2) * 1.1;
+    global_ymax = (world_size_y / 2) * 1.1;
+
+    root = alloc_node(global_xmin, global_xmax, global_ymin, global_ymax, 0); 
+}
+
+void QuadTree::reset() {
+    node_pool_size = 0;
+    overflow_pool_size = 0;
+    root = alloc_node(global_xmin, global_xmax, global_ymin, global_ymax, 0);
+}
+
+void QuadTree::update_bounds(float x, float y) {
+    if (x < global_xmin) global_xmin = x;
+    if (x > global_xmax) global_xmax = x;
+    if (y < global_ymin) global_ymin = y;
+    if (y > global_ymax) global_ymax = y;
+}
+
+int QuadTree::get_child(QuadNode& parent, float x, float y) {
+    float xmid = (parent.xmin + parent.xmax) * 0.5f;
+    float ymid = (parent.ymin + parent.ymax) * 0.5f;
+    int xi = x >= xmid ? 1 : 0;
+    int yi = y >= ymid ? 1 : 0;
+    return parent.children[yi * 2 + xi];
+}
+
+int QuadTree::alloc_node(float xmin, float xmax, float ymin, float ymax, int depth) {
+    int index = node_pool_size++;
+    QuadNode& n  = node_pool[index];
+
+    n.xmin = xmin;
+    n.xmax = xmax;
+    n.ymin = ymin;
+    n.ymax = ymax;
+    n.count = 0;
+    n.depth = depth;
+    n.children[0] = -1;
+    n.children[1] = -1;
+    n.children[2] = -1;
+    n.children[3] = -1;
+    n.overflow = -1;
+
+    return index;
+};
+
+int QuadTree::alloc_overflow() {
+    int index = overflow_pool_size++;
+    QuadOverflow& o = overflow_pool[index];
+    o.count = 0;
+    return index;
+}
+
+void QuadTree::insert(int node_idx, entt::entity entity, float x, float y, float r, EntityTag tag) {
+
+    QuadNode& node = node_pool[node_idx];
+
+    if (!node.contains(x, y)) return; // Skip entities that leave world space + buffer room
+
+    if (node.is_leaf() && !node.is_full()) {
+        node.entities[node.count++] = QuadEntity(entity, x, y, r, tag);
+        return;
+    } else if (node.is_leaf()) {
+        if (node.depth <= MAX_DEPTH) divide_node(node_idx);
+    } 
+    // Insert into correct child
+    int correct_child_idx = get_child(node, x, y);
+    if (correct_child_idx >= 0) {
+        insert(correct_child_idx, entity, x, y, r, tag);
+    } else {
+        insert_overflow(node_idx, entity, x, y, r, tag);
+    }   
+}
+
+void QuadTree::insert_overflow(int node_idx, entt::entity entity, float x, float y, float r, EntityTag tag) {
+    QuadNode& node = node_pool[node_idx];
+
+    if (node.overflow == -1) {
+        node.overflow = alloc_overflow();
+    }
+
+    QuadOverflow& overflow = overflow_pool[node.overflow];
+
+    if (overflow.is_full()) return; // Branch and overflow are full, dont add this entry
+    overflow.entities[overflow.count++] = QuadEntity(entity, x, y, r, tag);
+}
+
+void QuadTree::divide_node(int node_idx) {
+
+    QuadNode& node = node_pool[node_idx];
+
+    float xmid = (node.xmin + node.xmax) * 0.5f;
+    float ymid = (node.ymin + node.ymax) * 0.5f;
+
+    // Create empty children
+    node.children[0] = alloc_node(node.xmin, xmid, node.ymin, ymid, node.depth+1);
+    node.children[1] = alloc_node(xmid, node.xmax, node.ymin, ymid, node.depth+1);
+    node.children[2] = alloc_node(node.xmin, xmid, ymid, node.ymax, node.depth+1);
+    node.children[3] = alloc_node(xmid, node.xmax, ymid, node.ymax, node.depth+1);
+
+    // Move contents to children
+    for (int i = 0; i < BUCKET_SIZE; i++) {
+        QuadEntity& e = node.entities[i];
+        int correct_child_idx = get_child(node, e.x, e.y);
+        QuadNode& child_node = node_pool[correct_child_idx];
+        child_node.entities[child_node.count++] = e;
+    }
+
+    node.count = 0;
+}
+
+void QuadTree::remove(int node_idx, entt::entity entity, float x, float y) {
+    QuadNode& node = node_pool[node_idx];
+
+    if (!node.contains(x, y)) return;
+
+    if (node.is_leaf()) {
+        for (int i = 0; i < node.count; i++) {
+            if (node.entities[i].entity == entity) {
+                node.entities[i].entity = entt::null;
+                return;
+            }
+        }
+
+        if (node.overflow != -1) {
+            QuadOverflow& overflow = overflow_pool[node.overflow];
+            for (int i = 0; i < overflow.count; i++) {
+                if (overflow.entities[i].entity == entity) {
+                    overflow.entities[i].entity = entt::null;
+                    return;
+                }
+            }
+        }
+
+    } else {
+        int correct_child_idx = get_child(node, x, y);
+        remove(correct_child_idx, entity, x, y);
+    }
+}
+
+void QuadTree::query(float x, float y, float radius, std::vector<entt::entity>& out) {
+    query_node(root, x, y, radius, out);
+}
+
+void QuadTree::query_node(int node_idx, float x, float y, float radius, std::vector<entt::entity>& out) {
+    QuadNode& node = node_pool[node_idx];
+
+    if (!node.intersects_circle(x, y, radius)) return;
+
+    if (node.is_leaf()) {
+        collect_leaf(node_idx, x, y, radius, out);
+    } else {
+        for (int i = 0; i < 4; i++) {
+            query_node(node.children[i], x, y, radius, out);
+        }
+    }
+}
+
+void QuadTree::collect_leaf(int node_idx, float x, float y, float r, std::vector<entt::entity>& out) {
+    QuadNode& node = node_pool[node_idx];
+
+    for (int i = 0; i < node.count; i++) {
+        if (node.entities[i].entity == entt::null) continue;
+        if (node.entities[i].touches_circle(x, y, r)) out.push_back(node.entities[i].entity);
+    }
+
+    if (node.overflow != -1) {
+        QuadOverflow& overflow = overflow_pool[node.overflow];
+        for (int i = 0; i < overflow.count; i++) {
+            if (overflow.entities[i].entity == entt::null) continue;
+            if (overflow.entities[i].touches_circle(x, y, r)) out.push_back(overflow.entities[i].entity);
+        }
+    }
+}
+
+void QuadTree::check_closest(QuadEntity& e, entt::entity self, float x, float y, EntityTag tag, float& closest_sqr_dist, entt::entity& closest_entity) {
+    if (e.entity == self || e.entity == entt::null) return;
+    if (tag != EntityTag::Any && tag != e.tag) return;
+    float dx = x - e.x;
+    float dy = y - e.y;
+    float sqr_dist = dx * dx + dy * dy;
+    if (sqr_dist < closest_sqr_dist) {
+        closest_sqr_dist = sqr_dist;
+        closest_entity = e.entity;
+    }
+}
+
+entt::entity QuadTree::query_closest(entt::entity self, float x, float y, float max_dist, EntityTag tag) {
+    entt::entity closest_entity = entt::null;
+    float closest_sqr_dist = max_dist * max_dist;
+    std::stack<int> stack;
+    stack.push(root);
+
+    while (!stack.empty()) {
+        int node_idx = stack.top();
+        stack.pop();
+
+        QuadNode& node = node_pool[node_idx];
+
+        if (node.is_leaf()) {
+            for (int i = 0; i < node.count; i++)
+                check_closest(node.entities[i], self, x, y, tag, closest_sqr_dist, closest_entity);
+
+            if (node.overflow != -1) {
+                QuadOverflow& overflow = overflow_pool[node.overflow];
+                for (int i = 0; i < overflow.count; i++)
+                    check_closest(overflow.entities[i], self, x, y, tag, closest_sqr_dist, closest_entity);
+            }
+
+        } else {
+            for (int child_idx : node.children) {
+                QuadNode& child_node = node_pool[child_idx];
+                if (child_node.intersects_circle_sqr(x, y, closest_sqr_dist))
+                    stack.push(child_idx);
+            }
+        }
+    }
+    return closest_entity;
+}

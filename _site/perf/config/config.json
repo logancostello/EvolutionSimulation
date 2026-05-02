@@ -1,0 +1,16 @@
+{
+  "path": {
+    "CMAKE_PATH": "./CMakeLists.txt",
+    "COMPILE_PATH": "./build",
+    "EXEC_PATH": "./build/bin/main",
+    "OUTPUT_PATH": "./profile_graphics",
+    "FLAMEGRAPH_DIR": "./perf/flamegraph",
+    "PROFILE_DIR": "./profile_graphics"
+  },
+  "benchmark": {
+    "RUN_SEED": "9282024",
+    "EVAL_TICKS": "10000",
+    "WARMUPS": "2",
+    "EVAL_RUNS": "5"
+  }
+}
