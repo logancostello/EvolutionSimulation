@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  perf:
+  wasm:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +22,7 @@ jobs:
       - name: Install Jekyll & dependencies
         run: |
           sudo apt-get install -y ruby-full build-essential zlib1g-dev
-          gem install bundler
+          sudo gem install bundler
           cd ./website/jekyll_site
           bundle install
           cd ../../
