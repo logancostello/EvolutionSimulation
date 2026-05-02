@@ -1,0 +1,20 @@
+name: Perf
+
+on:
+  push:
+    branches: [main, 78-add-base-jekyll-site-for-wasm]
+  pull request:
+    branches: [main]
+
+jobs:
+  perf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+    
+      - name: Compile WASM & Website
+        run:  python3 -m website.compile_site
+
+      # TODO: Update Github pages to reflect new WASM

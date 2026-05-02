@@ -1,0 +1,20 @@
+name: Perf
+
+on:
+  push:
+    branches: [main, 78-add-base-jekyll-site-for-wasm]
+  pull_request:
+    branches: [main]
+
+jobs:
+  perf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Run performance benchmarking
+        run: python3 -m perf.perf_main
+
+      # TODO: Add updated flamegraph and analytics to webpage

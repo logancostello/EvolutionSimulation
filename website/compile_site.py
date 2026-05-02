@@ -18,9 +18,11 @@ def main():
     """
 
     # Build web compilation
+    print("Compiling WASM")
     web_compile()
 
     # Compile Jekyll site
+    print("Building Jekyll Site")
     jekyll_compile()
     return
 
