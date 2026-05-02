@@ -1,4 +1,4 @@
-name: Perf
+name: WASM
 
 on:
   push:
@@ -18,6 +18,14 @@ jobs:
         uses: mymindstorm/setup-emsdk@v14
         with:
           version: latest
+
+      - name: Install Jekyll & dependencies
+        run: |
+          sudo apt-get install -y ruby-full build-essential zlib1g-dev
+          gem install bundler
+          cd ./website/jekyll_site
+          bundle install
+          cd ../../
     
       - name: Compile WASM & Website
         run:  python3 -m website.compile_site

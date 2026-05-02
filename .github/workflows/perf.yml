@@ -24,6 +24,9 @@ jobs:
             libxcursor-dev \
             libxi-dev \
             libgl1-mesa-dev
+        
+      - name: Install Jekyll & dependencies
+        run: |
 
       - name: Run performance benchmarking
         run: python3 -m perf.perf_main
