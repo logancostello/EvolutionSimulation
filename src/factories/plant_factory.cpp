@@ -11,7 +11,7 @@ void PlantFactory::spawn_random() {
     auto [x, y] = Fertility::random_location();
     registry.emplace<Position>(plant, x, y);
     registry.emplace<OldPosition>(plant);
-    registry.emplace<Color>(plant, 66, 247, 98);
+    registry.emplace<ColorComponent>(plant, 66, 247, 98);
     registry.emplace<Size>(plant, 5.0f);
     registry.emplace<FoodEnergy>(plant, 10.0f);
     registry.emplace<Plant>(plant);

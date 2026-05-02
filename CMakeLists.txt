@@ -3,28 +3,38 @@ project(sim LANGUAGES CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
 set(CMAKE_BUILD_TYPE Release)
 add_compile_options(-O2 -g)
 
-include(FetchContent)
-FetchContent_Declare(SFML
-    GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG 3.0.2
-    GIT_SHALLOW ON
-    EXCLUDE_FROM_ALL
-    SYSTEM)
-FetchContent_MakeAvailable(SFML)
+# Raylib
+set(RAYLIB_VERSION 6.0)
+find_package(raylib ${RAYLIB_VERSION} QUIET)
+if (NOT raylib_FOUND)
+    include(FetchContent)
+    FetchContent_Declare(
+        raylib
+        DOWNLOAD_EXTRACT_TIMESTAMP OFF
+        URL https://github.com/raysan5/raylib/archive/refs/tags/${RAYLIB_VERSION}.tar.gz
+    )
+    FetchContent_GetProperties(raylib)
+    if (NOT raylib_POPULATED)
+        set(FETCHCONTENT_QUIET NO)
+        FetchContent_MakeAvailable(raylib)
+    endif()
+endif()
 
+# EnTT
 include(FetchContent)
 FetchContent_Declare(EnTT
     GIT_REPOSITORY https://github.com/skypjack/entt.git
     GIT_TAG v3.16.0)
 FetchContent_MakeAvailable(EnTT)
 
-add_executable(main 
+# Sources
+set(SOURCES
     src/main.cpp
     src/simulation.cpp
+    src/game_state.cpp
     src/systems/renderer.cpp
     src/factories/creature_factory.cpp
     src/factories/plant_factory.cpp
@@ -48,12 +58,35 @@ add_executable(main
     src/systems/environment_system.cpp
     src/systems/digestion_system.cpp
     src/fertility.cpp
-    profile.sh
 )
 
+# Target
+if (EMSCRIPTEN)
+    set(CMAKE_EXECUTABLE_SUFFIX ".html")
+    add_executable(main ${SOURCES})
+    target_compile_definitions(main PRIVATE PLATFORM_WEB)
+    target_link_options(main PRIVATE
+        -sUSE_GLFW=3
+        -sWASM=1
+        -sALLOW_MEMORY_GROWTH=1
+        -sTOTAL_MEMORY=134217728
+        -sASSERTIONS=1
+    )
+else()
+    add_executable(main ${SOURCES} profile.sh)
+    if (APPLE)
+        target_link_libraries(main PRIVATE
+            "-framework IOKit"
+            "-framework Cocoa"
+            "-framework OpenGL"
+        )
+    endif()
+endif()
+
+# Common Settings
 target_include_directories(main PRIVATE src/ ${CMAKE_SOURCE_DIR}/include)
 target_compile_features(main PRIVATE cxx_std_17)
 target_compile_options(main PRIVATE -Wall -Wextra)
-target_link_libraries(main PRIVATE SFML::Graphics EnTT::EnTT)
+target_link_libraries(main PRIVATE raylib EnTT::EnTT)
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT main)
