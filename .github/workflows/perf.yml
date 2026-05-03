@@ -49,6 +49,7 @@ jobs:
           git add -f website/jekyll_site/perf/flamegraphs/*.svg
           git add -f website/jekyll_site/perf/benchmark.csv
           git add -f website/jekyll_site/perf/benchmark_plot.html
+          git add -f website/jekyll_site/_posts/*.md
 
           if git diff --cached --quiet; then
             echo "No perf changes to commit"
