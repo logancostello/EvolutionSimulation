@@ -58,7 +58,7 @@ jobs:
 
   WebCompile:
     runs-on: ubuntu-latest
-    needs: perf
+    needs: Perf
 
     permissions:
       contents: write

@@ -4,15 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Evolution Simulation</title>
-  <link rel="stylesheet" href="/assets/styles.css" />
+  <link rel="stylesheet" href="{{ site.baseurl }}/assets/styles.css" />
 </head>
 <body>
 
   <nav>
-    <a class="brand" href="/">Evolution Simulation</a>
+    <a class="brand" href="{{ site.baseurl }}/">Evolution Simulation</a>
     <div class="nav-links">
-      <a class="nav-tab" href="/performance">Performance</a>
-      <a class="nav-tab" href="/about">About</a>
+      <a class="nav-tab" href="{{ site.baseurl }}/performance">Performance</a>
+      <a class="nav-tab" href="{{ site.baseurl }}/about">About</a>
     </div>
   </nav>
 
@@ -21,7 +21,7 @@
     <script>
       var Module = {canvas: document.getElementById('canvas')};
     </script>
-    <script defer src="/scripts/main.js"></script>
+    <script defer src="{{ site.baseurl }}/scripts/main.js"></script>
   </main>
 
 </body>
