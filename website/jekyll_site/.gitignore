@@ -5,4 +5,4 @@ _site
 vendor
 perf
 websitevenv/
-# _posts/
+_posts/
