@@ -5,12 +5,12 @@ baseurl: "/EvolutionSimulation"
 url: "https://logancostello.github.io"
 
 # exclude:
-#   - .sass-cache/
-#   - .jekyll-cache/
-#   - Gemfile
-#   - Gemfile.lock
-#   - node_modules/
-#   - vendor/bundle/
-#   - vendor/cache/
-#   - vendor/gems/
-#   - vendor/ruby/
+  - .sass-cache/
+  - .jekyll-cache/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
