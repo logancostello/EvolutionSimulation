@@ -115,8 +115,6 @@ jobs:
             git push
           fi
 
-          steps:
-
       - name: Recheckout for new posts
         uses: actions/checkout@v4
         with:
