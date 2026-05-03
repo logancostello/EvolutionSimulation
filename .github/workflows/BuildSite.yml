@@ -1,0 +1,137 @@
+name: BuildSite
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  perf:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: ${{ runner.os }}-apt-x11-${{ hashFiles('.github/workflows/build_site.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-apt-x11-
+
+      - name: Install X11 and graphics dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libx11-dev \
+            libxrandr-dev \
+            libxinerama-dev \
+            libxcursor-dev \
+            libxi-dev \
+            libgl1-mesa-dev
+
+      - name: Run performance benchmarking
+        run: python3 -m perf.perf_main
+
+      - name: Commit flamegraphs and benchmark data
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add -f website/jekyll_site/perf/flamegraphs/*.svg
+          git add -f website/jekyll_site/perf/benchmark.csv
+
+          if git diff --cached --quiet; then
+            echo "No perf changes to commit"
+          else
+            git commit -m "chore: update perf data [skip ci]"
+            git push
+          fi
+
+  WebCompile:
+    runs-on: ubuntu-latest
+    needs: perf
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python deps
+        run: pip install -r ./website/requirements.txt
+
+      - name: Cache Emscripten
+        uses: actions/cache@v4
+        with:
+          path: emsdk-cache
+          key: ${{ runner.os }}-emsdk-${{ hashFiles('.emscripten') }}
+          restore-keys: |
+            ${{ runner.os }}-emsdk-
+
+      - name: Install Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: latest
+          actions-cache-folder: emsdk-cache
+
+      - name: Compile WASM
+        run: python3 -m website.compile_site
+
+      - name: Commit posts and benchmark html
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add -f website/jekyll_site/perf/benchmark_plot.html
+          git add -f website/jekyll_site/_posts/*.md
+
+          if git diff --cached --quiet; then
+            echo "No perf changes to commit"
+          else
+            git commit -m "chore: update perf data [skip ci]"
+            git push
+          fi
+
+      - name: Cache Jekyll gems
+        uses: actions/cache@v4
+        with:
+          path: website/jekyll_site/vendor/bundle
+          key: ${{ runner.os }}-jekyll-${{ hashFiles('website/jekyll_site/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-jekyll-
+
+      - name: Compile Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./website/jekyll_site
+          destination: ./website/jekyll_site/_site
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./website/jekyll_site/_site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
