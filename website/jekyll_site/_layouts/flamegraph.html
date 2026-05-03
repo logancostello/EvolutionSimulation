@@ -11,18 +11,21 @@
   <nav>
     <a class="brand" href="/">Evolution Simulation</a>
     <div class="nav-links">
-      <a class="nav-tab" href="/performance">Performance</a>
+      <a class="nav-tab active" href="/performance">Performance</a>
       <a class="nav-tab" href="/about">About</a>
     </div>
   </nav>
 
-  <main class="center">
-    <canvas id="canvas"></canvas>    
-    <script>
-      var Module = {canvas: document.getElementById('canvas')};
-    </script>
-    <script defer src="/scripts/main.js"></script>
-  </main>
+  <div class="flamegraph-center">
+    <div class="flamegraph-card">
+      <object
+        class="flamegraph-object"
+        data="{{ page.flamegraph_url }}"
+        type="image/svg+xml"
+      >
+      </object>
+    </div>
+  </div>
 
 </body>
 </html>

@@ -10,9 +10,14 @@ jobs:
   perf:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Cache apt packages
         uses: actions/cache@v4
@@ -36,4 +41,18 @@ jobs:
       - name: Run performance benchmarking
         run: python3 -m perf.perf_main
 
-      # TODO: Add updated flamegraph and analytics to webpage
+      - name: Commit flamegraphs and benchmark data
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add -f website/jekyll_site/perf/flamegraphs/*.svg
+          git add -f website/jekyll_site/perf/benchmark.csv
+          git add -f website/jekyll_site/perf/benchmark_plot.html
+
+          if git diff --cached --quiet; then
+            echo "No perf changes to commit"
+          else
+            git commit -m "chore: update perf data [skip ci]"
+            git push
+          fi

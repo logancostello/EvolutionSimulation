@@ -7,7 +7,7 @@ This file compiles the sim for web and compiles the latest jekyll site.
 import sys
 
 from .compile.web_compile import web_compile
-from .compile.jekyll_compile import jekyll_compile
+from .compile.jekyll_update import jekyll_update
 
 def main():
     """ Site and WASM compilation runner
@@ -22,8 +22,8 @@ def main():
     web_compile()
 
     # Compile Jekyll site
-    print("Building Jekyll Site")
-    # jekyll_compile()
+    print("Updating Jekyll Site")
+    jekyll_update()
     return
 
 if __name__ == "__main__":

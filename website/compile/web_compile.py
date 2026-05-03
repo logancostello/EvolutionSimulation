@@ -39,4 +39,5 @@ def web_compile():
     for item in compile_dir.iterdir():
         print(f"Move {str(item)}, {destination_dir}, {item.name}")
         shutil.move(str(item), destination_dir / item.name)
+        
     return

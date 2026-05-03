@@ -12,25 +12,26 @@ from ..util.read_config import PathConfig, BenchmarkConfig
 
 # Profilers
 def profile_linux(
-    exec_path:        Path,
+    exec_path: Path,
     benchmark_config: BenchmarkConfig,
-    flamegraph_dir:   Path,
-    output_path:      Path,
+    flamegraph_dir: Path,
+    output_path: Path,
+    current_time: str
 ) -> None:
     """Profile an executable on Linux using perf and generate a flamegraph SVG.
 
     Args:
-        exec_path (Path):                   Path to the compiled executable.
+        exec_path (Path): Path to the compiled executable.
         benchmark_config (BenchmarkConfig): Config containing benchmarking info.
-        flamegraph_dir (Path):              Path to flamegraph executables.
-        output_path (Path):                 Directory in which to store profiling artefacts.
+        flamegraph_dir (Path): Path to flamegraph executables.
+        output_path (Path): Directory in which to store profiling artefacts.
     """
-    data_path         = output_path / "perf.data"
-    out_path          = output_path / "out.perf"
-    fold_path         = output_path / "out.folded"
-    flamegraph_path   = output_path / "flamegraph.svg"
-    top_fn_path       = output_path / "top_functions.txt"
-    fold_script       = flamegraph_dir / "stackcollapse-perf.pl"
+    data_path = output_path / "perf.data"
+    out_path = output_path / "out.perf"
+    fold_path = output_path / "out.folded"
+    flamegraph_path = output_path / "flamegraphs" / f"{current_time}.svg"
+    top_fn_path = output_path / "top_functions.txt"
+    fold_script = flamegraph_dir / "stackcollapse-perf.pl"
     flamegraph_script = flamegraph_dir / "flamegraph.pl"
 
     # Sample
@@ -67,22 +68,23 @@ def profile_linux(
 
 
 def profile_macos(
-    exec_path:        Path,
+    exec_path: Path,
     benchmark_config: BenchmarkConfig,
-    flamegraph_dir:   Path,
-    output_path:      Path,
+    flamegraph_dir: Path,
+    output_path: Path,
+    current_time: str
 ) -> None:
     """Profile an executable on MacOS using perf and generate a flamegraph SVG.
 
     Args:
-        exec_path (Path):                   Path to the compiled executable.
+        exec_path (Path): Path to the compiled executable.
         benchmark_config (BenchmarkConfig): Config containing benchmarking info.
-        flamegraph_dir (Path):              Path to flamegraph executables.
-        output_path (Path):                 Directory in which to store profiling artefacts.
+        flamegraph_dir (Path): Path to flamegraph executables.
+        output_path (Path): Directory in which to store profiling artefacts.
     """
 
     trace_path = output_path / "capture.trace"
-    flamegraph_path = output_path / "flamegraph.svg"
+    flamegraph_path   = output_path / "flamegraphs" / f"{current_time}.svg"
 
     # Remove old trace if it exists (xctrace won't overwrite)
     if trace_path.exists():
@@ -168,28 +170,50 @@ def _xctrace_xml_to_folded(xml_path: Path, fold_path: Path) -> None:
 
 
 def profile_program(
-    exec_path:        Path,
+    exec_path: Path,
     benchmark_config: BenchmarkConfig,
-    flamegraph_dir:   Path,
-    output_path:      Path,
+    flamegraph_dir: Path,
+    output_path: Path,
+    current_time: str
 ) -> None:
     """Benchmark an executable and write a flamegraph SVG
 
     Args:
-        exec_path (Path):                   Path to the compiled executable.
+        exec_path (Path): Path to the compiled executable.
         benchmark_config (BenchmarkConfig): Config containing benchmarking info.
-        flamegraph_dir (Path):              Path to flamegraph executables.
-        output_path (Path):                 Directory in which to store profiling artefacts.
+        flamegraph_dir (Path): Path to flamegraph executables.
+        output_path (Path): Directory in which to store profiling artifacts.
     """
     if not exec_path.exists():
         raise FileNotFoundError(f"Executable not found: {exec_path}")
 
-    output_path.mkdir(parents=True, exist_ok=True)
-
     os_type = current_os()
     print(f"Detected platform: {os_type}")
 
+    flamegraph_path = output_path / "flamegraphs"
+    flamegraph_path.mkdir(parents=True, exist_ok=True)
+
     if os_type == "linux":
-        profile_linux(exec_path, benchmark_config, flamegraph_dir, output_path)
+        profile_linux(
+            exec_path,
+            benchmark_config,
+            flamegraph_dir,
+            output_path,
+            current_time
+        )
     else:
-        profile_macos(exec_path, benchmark_config, flamegraph_dir, output_path)
+        profile_macos(
+            exec_path,
+            benchmark_config,
+            flamegraph_dir,
+            output_path,
+            current_time
+        )
+    
+    # Folder cleanup
+    os.remove(output_path / "out.folded")
+    os.remove(output_path / "out.perf")
+    os.remove(output_path / "top_functions.txt")
+    os.remove(output_path / "perf.data")
+
+    return
