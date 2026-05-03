@@ -115,6 +115,15 @@ jobs:
             git push
           fi
 
+          steps:
+
+      - name: Recheckout for new posts
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Cache Jekyll gems
         uses: actions/cache@v4
         with:
