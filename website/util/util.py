@@ -6,6 +6,13 @@ This file provides various util helpers.
 import subprocess
 
 def run_process(cmd: list, **kwargs) -> subprocess.CompletedProcess:
+    """ Runs given process on shell
+    Args:
+        cmd: List of args on command line
+        **kwards: Keyword args like capture_text = True
+    Returns:
+        Sys Exit Return Code
+    """
     try:
         return subprocess.run(cmd, check=True, **kwargs)
     except subprocess.CalledProcessError as e:
