@@ -50,3 +50,6 @@ profiles
 /perf/perfvenv/
 **/__pycache__/
 /profile_graphics
+
+# Website compile harness
+/website/WebsiteVenv/

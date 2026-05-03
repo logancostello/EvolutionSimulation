@@ -73,7 +73,7 @@ if (EMSCRIPTEN)
         -sASSERTIONS=1
     )
 else()
-    add_executable(main ${SOURCES} profile.sh)
+    add_executable(main ${SOURCES})
     if (APPLE)
         target_link_libraries(main PRIVATE
             "-framework IOKit"

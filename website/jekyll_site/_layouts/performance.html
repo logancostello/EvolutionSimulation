@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evolution Simulation</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+
+  <nav>
+    <a class="brand" href="/">Evolution Simulation</a>
+    <div class="nav-links">
+      <a class="nav-tab active" href="/performance">Performance</a>
+      <a class="nav-tab" href="/about">About</a>
+    </div>
+  </nav>
+
+  <div class="perf-section">
+    <h1>Benchmark</h1>
+    <p class="subtitle">Average tick time per run (ms), click any point to view its flamegraph.</p>
+
+    <div class="chart-card">
+      <iframe src="/perf/benchmark_plot.html" title="Benchmark chart"></iframe>
+      <p class="chart-caption">Each point represents one recorded run.</p>
+    </div>
+  </div>
+
+</body>
+</html>
