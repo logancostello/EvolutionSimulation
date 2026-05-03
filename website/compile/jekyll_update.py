@@ -2,10 +2,13 @@
 
 import os
 import glob
+
+import yaml
+
 import pandas as pd
 import plotly.graph_objects as go
 
-from ..util.util import dt_str_to_slug, slug_to_url
+from ..util.util import dt_str_to_slug
 
 
 def jekyll_update():
@@ -18,15 +21,20 @@ def jekyll_update():
 
     os.chdir("./website/jekyll_site")
 
+    with open("./_config.yml") as f:
+        config = yaml.safe_load(f)
+
+    baseurl = config.get("baseurl", "").rstrip("/")
+
     benchmark_file = "./perf/benchmark.csv"
     flamegraph_dir = "./perf/flamegraphs"
     posts_dir = "./_posts"
 
-    create_flamegraph_posts(flamegraph_dir, posts_dir)
-    create_benchmark_plot(benchmark_file, flamegraph_dir, output_path="./perf/benchmark_plot.html")
+    create_flamegraph_posts(flamegraph_dir, posts_dir, baseurl)
+    create_benchmark_plot(benchmark_file, flamegraph_dir, "./perf/benchmark_plot.html", baseurl)
 
 
-def create_flamegraph_posts(flamegraph_dir: str, posts_dir: str) -> None:
+def create_flamegraph_posts(flamegraph_dir: str, posts_dir: str, baseurl: str) -> None:
     """ Creates one _posts .md file per flamegraph SVG
     Args:
         flamegraph_dir: Path to directory containing SVG flamegraphs, named e.g. '2026-05-02-17:27:04.svg'
@@ -40,14 +48,13 @@ def create_flamegraph_posts(flamegraph_dir: str, posts_dir: str) -> None:
         dt_str = os.path.basename(svg_path).replace(".svg", "")
         slug = dt_str_to_slug(dt_str)
         date_part = slug[:10]
-        svg_url = f"/perf/flamegraphs/{dt_str}.svg"
+        svg_url = f"{baseurl}/perf/flamegraphs/{dt_str}.svg"
 
         # Weird spacing intentional for MD injection
         post_content = f"""---
 layout: flamegraph
 title: "Flamegraph {dt_str}"
 date: {date_part}
-permalink: {slug_to_url(slug)}
 flamegraph_url: {svg_url}
 ---
 """
@@ -58,13 +65,14 @@ flamegraph_url: {svg_url}
         print(f"Created post: {os.path.basename(post_path)}")
 
 
-def create_benchmark_plot(csv_path: str, flamegraph_dir: str, output_path: str) -> None:
+def create_benchmark_plot(csv_path: str, flamegraph_dir: str, output_path: str, baseurl: str = "") -> None:
     """ Reads benchmark CSV and writes an embeddable Plotly chart
         Clicking a dot opens that datetime's flamegraph post in a new tab
     Args:
         csv_path: Path to benchmark.csv with columns: datetime, AvgTick (ms)
         flamegraph_dir: Path to directory containing SVG flamegraphs
         output_path: Destination path for the embeddable HTML chart fragment
+        baseurl: Jekyll baseurl from _config.yml, prepended to all post URLs
     Returns:
         None, writes embeddable HTML to output_path
     """
@@ -73,8 +81,12 @@ def create_benchmark_plot(csv_path: str, flamegraph_dir: str, output_path: str) 
     df["datetime"] = pd.to_datetime(df["datetime"], format="%Y-%m-%d-%H:%M:%S")
 
     def row_to_url(dt):
-        dt_str = dt.strftime("%Y-%m-%d-%H:%M:%S")
-        return slug_to_url(dt_str_to_slug(dt_str))
+        slug = dt_str_to_slug(dt.strftime("%Y-%m-%d-%H:%M:%S"))
+        # Jekyll default: /:year/:month/:day/:title/
+        date_part = slug[:10] # "2026-05-02"
+        title = slug[11:] + "-flamegraph" # "17-27-04-flamegraph"
+        y, m, d = date_part.split("-")
+        return f"{baseurl}/{y}/{m}/{d}/{title}/"
 
     post_urls = df["datetime"].apply(row_to_url).tolist()
 
