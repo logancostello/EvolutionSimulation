@@ -82,11 +82,11 @@ def create_benchmark_plot(csv_path: str, flamegraph_dir: str, output_path: str, 
 
     def row_to_url(dt):
         slug = dt_str_to_slug(dt.strftime("%Y-%m-%d-%H:%M:%S"))
-        # Jekyll default: /:year/:month/:day/:title/
+        # Jekyll default: /:year/:month/:day/:title
         date_part = slug[:10] # "2026-05-02"
         title = slug[11:] + "-flamegraph" # "17-27-04-flamegraph"
         y, m, d = date_part.split("-")
-        return f"{baseurl}/{y}/{m}/{d}/{title}/"
+        return f"{baseurl}/{y}/{m}/{d}/{title}"
 
     post_urls = df["datetime"].apply(row_to_url).tolist()
 

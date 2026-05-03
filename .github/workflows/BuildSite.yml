@@ -122,9 +122,6 @@ jobs:
           fetch-depth: 1
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Pull latest
-        run: git pull origin main
-
       - name: Cache Jekyll gems
         uses: actions/cache@v4
         with:
